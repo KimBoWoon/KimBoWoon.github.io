@@ -21,50 +21,49 @@ public static Boolean valueOf(boolean b) {
 정적 팩토리 메소드를 사용하면 같은 객체를 반복해서 반환할 수 있으므로 어떤 시점에 어떤 객체가 얼마나 존재할지를 정밀하게 제어할 수 있다. 이런 기능을 갖춘 클래스를 개체 통제 클래스(instance-controlled class)라고 부른다. 개체 수를 제어하면 싱글톤 패턴을 따를 수 있고, 객체 생성이 불가능한 클래스를 만들 수도 있다. 변경 불가능의 클래스의 경우 두 개의 같은 객체가 존재하지 못하도록 할 수도 있다.
 3. 생성자와는 달리 반환값 자료형의 하위 자료형 객체를 반환할 수 있다는 것이다.
 public으로 선언되지 않은 클래스의 객체를 반환하는 API를 만들 수 있다. 그러면 구현 세부사항을 감출 수 있으므로 아주 간결한 API가 가능하다. 인터페이스 기반 프레인워크(interface-based framework)구현에 적합한데, 이 프레임워크에서는 정적 팩토리 메소드의 반환값 자료형으로 이용된다. 인터페이스는 정적 메소드를 가질 수 없으므로, 관습상 반환값 자료형이 Type이라는 이름의 인터페이스인 정적 팩토리 메소드는 Type라는 이름의 객체 생성 불가능 클래스안에 둔다.
-
-```java
-// 서비스 인터페이스
-public interface Service {
-    ... // 서비스에 고유한 메소드들이 이 자리에 온다
-}
-
-//서비스 제공자 인터페이스
-public interface Provider {
-    Service newService();
-}
-
-// 서비스 등록과 접근에 사용되는 객체 생성 불가능 클래스
-public class Service {
-    private Service() {} // 인스턴스 생성 X
-
-    private static final Map<String, Provider> providers = 
-        new ConcurrentHashMap<String, Provider>();
-    public static final String DEFAULT_PROVIDER_NAME = "<def>";
-
-    // 제공자 등록 API
-    public static void registerDefaultProvider(Provider p) {
-        registerProvider(DEFAULT_PROVIDER_NAME, p);
+    ```java
+    // 서비스 인터페이스
+    public interface Service {
+        ... // 서비스에 고유한 메소드들이 이 자리에 온다
     }
 
-    public static void registerProvider(String name, Provider p) {
-        providers.put(name, p);
+    //서비스 제공자 인터페이스
+    public interface Provider {
+        Service newService();
     }
 
-    // 서비스 접근 API
-    public static Service newInstance() {
-        return newInstance(DEFAULT_PROVIDER_NAME);
-    }
+    // 서비스 등록과 접근에 사용되는 객체 생성 불가능 클래스
+    public class Service {
+        private Service() {} // 인스턴스 생성 X
 
-    public static Service newInstance(String name) {
-        Provider p = providers.get(name);
-        if (p == null) {
-            throw new IllegalArgumentException(
-                "No provider registered with name: " + name);
+        private static final Map<String, Provider> providers = 
+            new ConcurrentHashMap<String, Provider>();
+        public static final String DEFAULT_PROVIDER_NAME = "<def>";
+
+        // 제공자 등록 API
+        public static void registerDefaultProvider(Provider p) {
+            registerProvider(DEFAULT_PROVIDER_NAME, p);
         }
-        return p.newService();
+
+        public static void registerProvider(String name, Provider p) {
+            providers.put(name, p);
+        }
+
+        // 서비스 접근 API
+        public static Service newInstance() {
+            return newInstance(DEFAULT_PROVIDER_NAME);
+        }
+
+        public static Service newInstance(String name) {
+            Provider p = providers.get(name);
+            if (p == null) {
+                throw new IllegalArgumentException(
+                    "No provider registered with name: " + name);
+            }
+            return p.newService();
+        }
     }
-}
-```
+    ```
 
 4. 형인자 자료형(parameterized type) 객체를 만들 때 편하다
 ```java
