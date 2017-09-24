@@ -1,5 +1,5 @@
 ---
-title: 정적 팩토리 메소드
+title: "[Effective Java] 정적 팩토리 메소드"
 date: 2017-09-12 16:30:00
 categories:
 - Effective Java

@@ -1,5 +1,5 @@
 ---
-title: Builder Pattern
+title: "[Effective Java] Builder Pattern"
 date: 2017-09-13 16:30:00
 categories:
 - Effective Java
