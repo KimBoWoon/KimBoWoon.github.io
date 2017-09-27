@@ -1,6 +1,6 @@
 ---
 title: "[Effective Java] 불필요한 객체는 만들지 말라"
-date: 2017-09-21 01:23:45
+date: 2017-09-27 01:23:45
 categories:
 - Effective Java
 ---
@@ -31,7 +31,7 @@ public class ImmutableObject {
 }
 ```
 
-![](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/string_address.png)
+![](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/effectivejava/string_address.png)
 
 변경 불가능한 객체인 경우 정적 팩토리 메소드를 사용하면 새로운 객체를 만들지 않는다. 변경 가능한 객체도 재사용할 수 있다. 단, 변경하지 않는다면 말이다. 다음의 예를 보자
 
