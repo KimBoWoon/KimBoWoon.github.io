@@ -1,6 +1,6 @@
 ---
 title: "[Effective Java] 객체 생성을 막을 때는 private 생성자를 사용하라"
-date: 2017-09-21 01:23:45
+date: 2017-09-24 01:23:45
 categories:
 - Effective Java
 ---

@@ -1,6 +1,6 @@
 ---
 title: "[Effective Java] private 생성자나 enum 자료형은 싱글턴 패턴을 따르도록 설계하라"
-date: 2017-09-21 01:23:45
+date: 2017-09-23 01:23:45
 categories:
 - Effective Java
 ---
