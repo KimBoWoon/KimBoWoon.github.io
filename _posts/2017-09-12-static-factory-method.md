@@ -23,47 +23,84 @@ public static Boolean valueOf(boolean b) {
 public으로 선언되지 않은 클래스의 객체를 반환하는 API를 만들 수 있다. 그러면 구현 세부사항을 감출 수 있으므로 아주 간결한 API가 가능하다. 인터페이스 기반 프레인워크(interface-based framework)구현에 적합한데, 이 프레임워크에서는 정적 팩토리 메소드의 반환값 자료형으로 이용된다. 인터페이스는 정적 메소드를 가질 수 없으므로, 관습상 반환값 자료형이 Type이라는 이름의 인터페이스인 정적 팩토리 메소드는 Type라는 이름의 객체 생성 불가능 클래스안에 둔다.
     ```java
     // 서비스 인터페이스
-    public interface Service {
-        ... // 서비스에 고유한 메소드들이 이 자리에 온다
-    }
+	public interface ServiceInterface {
+    	int add(int x, int y);
+   		int mul(int x, int y);
+            ... // 서비스에 고유한 메소드들이 이 자리에 온다
+	}
+	```
+	```java
+	public class ServiceImplement implements ServiceInterface {
+    	@Override
+    	public int add(int x, int y) {
+	        return x + y;
+	    }
 
+    	@Override
+    	public int mul(int x, int y) {
+    	    return x * y;
+    	}
+	}
+	```
+	```java
     //서비스 제공자 인터페이스
-    public interface Provider {
-        Service newService();
-    }
-
-    // 서비스 등록과 접근에 사용되는 객체 생성 불가능 클래스
-    public class Service {
-        private Service() {} // 인스턴스 생성 X
-
-        private static final Map<String, Provider> providers = 
-            new ConcurrentHashMap<String, Provider>();
-        public static final String DEFAULT_PROVIDER_NAME = "<def>";
-
-        // 제공자 등록 API
-        public static void registerDefaultProvider(Provider p) {
-            registerProvider(DEFAULT_PROVIDER_NAME, p);
-        }
-
-        public static void registerProvider(String name, Provider p) {
-            providers.put(name, p);
-        }
-
-        // 서비스 접근 API
-        public static Service newInstance() {
-            return newInstance(DEFAULT_PROVIDER_NAME);
-        }
-
-        public static Service newInstance(String name) {
-            Provider p = providers.get(name);
-            if (p == null) {
-                throw new IllegalArgumentException(
-                    "No provider registered with name: " + name);
-            }
-            return p.newService();
-        }
-    }
+	public interface ProviderInterface {
+    	ServiceInterface newService();
+	}
+	```
+	```java
+	public class ProviderImplement implements ProviderInterface {
+    	@Override
+    	public ServiceInterface newService() {
+        	return new ServiceImplement();
+    	}
+	}
+	```
+	```java
+	    // 서비스 등록과 접근에 사용되는 객체 생성 불가능 클래스
+	public class ServiceProvider {
+	    private ServiceProvider() {} // 인스턴스 생성 X
+	
+	    private static final Map<String, ProviderInterface> providers =
+	            new ConcurrentHashMap<String, ProviderInterface>();
+	    public static final String DEFAULT_PROVIDER_NAME = "<def>";
+	
+	    // 제공자 등록 API
+	    public static void registerDefaultProvider(ProviderInterface p) {
+	        registerProvider(DEFAULT_PROVIDER_NAME, p);
+	    }
+	
+	    public static void registerProvider(String name, ProviderInterface p) {
+	        providers.put(name, p);
+	    }
+	
+	    // 서비스 접근 API
+	    public static ServiceInterface newInstance() {
+	        return newInstance(DEFAULT_PROVIDER_NAME);
+	    }
+	
+	    public static ServiceInterface newInstance(String name) {
+	        ProviderInterface p = providers.get(name);
+	        if (p == null) {
+	            throw new IllegalArgumentException(
+	                    "No provider registered with name: " + name);
+	        }
+	        return p.newService();
+	    }
+	}
     ```
+	```java
+	public class ServiceMain {
+	    public static void main(String[] args) {
+	        ServiceProvider.registerDefaultProvider(new ProviderImplement());
+	        ServiceProvider.registerProvider("BoWoon", new ProviderImplement());
+	
+	        System.out.println(ServiceProvider.newInstance().add(1, 4));
+	        System.out.println(ServiceProvider.newInstance().mul(2, 2));
+	        System.out.println(ServiceProvider.newInstance("BoWoon").add(5, 5));
+	    }
+	}
+	```
 
 4. 형인자 자료형(parameterized type) 객체를 만들 때 편하다
 ```java
