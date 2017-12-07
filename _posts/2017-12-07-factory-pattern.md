@@ -19,7 +19,7 @@ public class FactoryPatternPractice {
         System.out.println(historyBook.getName());
     }
 }
-드드
+
 interface Book {
     String getName();
 }
