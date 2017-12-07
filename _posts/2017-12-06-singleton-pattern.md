@@ -1,8 +1,8 @@
 ---
-title: "[Java] Singleton Pattern 잘쓰기"
+title: "[pattern] Singleton Pattern 잘쓰기"
 date: 2017-12-06 01:23:45
 categories:
-- Java
+- Pattern
 ---
 
 # Eager Initialization
