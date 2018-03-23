@@ -1,7 +1,7 @@
 ---
 title: "[Effective Java] public 클래스 안에는 public 필드를 두지 말고 접근자 메소드를 사용하라"
 date: 2017-12-19 01:23:45
-comments: true
+layout: post
 categories:
 - Effective Java
 ---
