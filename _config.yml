@@ -12,15 +12,6 @@ author: Kim BoWoon
 language: ko
 date_format: '%Y-%m-%d'
 
-# Disqus
-disqus:
-  enable: true
-  shortname: kimbowoon
-  count: true
-  # hide comments (visitors need to click to load the comments)
-  # count need to be false when hide is true
-  hide: false
-
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com' and baseurl as '/child'
 url:
@@ -388,12 +379,12 @@ han: false
 
 # Disqus
 disqus:
-  enable: false
-  shortname:
-  count: true
-  # hide comments (visitors need to click to load the comments)
-  # count need to be false when hide is true
-  hide: false
+    enable: true
+    shortname: kimbowoon
+    count: true
+    # hide comments (visitors need to click to load the comments)
+    # count need to be false when hide is true
+    hide: false
 
 # Hypercomments
 #hypercomments_id:

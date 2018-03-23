@@ -1,0 +1,935 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next muse use-motion" lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Notepad" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="정적 팩토리 메소드 클래스를 통해 객체를 만드는 방법은 public으로 선언된 생성자를 사용하는 것이다. 또 다른 방법은 클래스의 public으로 선언된 정적 팩토리 메소드(Static Factory Method)를 사용하는 것이다. 이 메소드는 static로 선언되어 있어서 외부에서 바로 접근할 수 있다. 정적 팩토리 메소드의 장점 생성자와는 달리 이름이 있다. 생정자의 전달되는 인자들은 어떤 객체가 생성되는지를 설명하지 못하지만, 정적 팩토리 메소드는 이름만 잘 짓는다면 어떤 객체가 만들어 지는지 설명할 수 있다. 생성자와는 달리 호출할 때마다 새로운 객체를 생성할 필요가 없다. 변경 불가능 클래스라면 이미 만들어둔 객체를 활용할 수도 있고, 만든 객체를 캐시 해놓고 재사용하여 같은 객체가 불필요하게 거듭 생성되는 일을 피할 수도 있다. 동일한 객체가 요청되는 일이 잦고, 특히 객체를 만드는 비용이 클 때 적용하면 성능을 크게 개선할 수 있다. 다음과 같은 코드가 정적 팩토리 메소드를 적용한 것이다. public static Boolean valueOf(boolean b) { return b ? Boolean.TRUE : Boolean.FALSE; } 정적 팩토리 메소드를 사용하면 같은 객체를 반복해서 반환할 수 있으므로 어떤 시점에 어떤 객체가 얼마나 존재할지를 정밀하게 제어할 수 있다. 이런 기능을 갖춘 클래스를 개체 통제 클래스(instance-controlled class)라고 부른다. 개체 수를 제어하면 싱글톤 패턴을 따를 수 있고, 객체 생성이 불가능한 클래스를 만들 수도 있다. 변경 불가능의 클래스의 경우 두 개의 같은 객체가 존재하지 못하도록 할 수도 있다. 생성자와는 달리 반환값 자료형의 하위 자료형 객체를 반환할 수 있다는 것이다. public으로 선언되지 않은 클래스의 객체를 반환하는 API를 만들 수 있다. 그러면 구현 세부사항을 감출 수 있으므로 아주 간결한 API가 가능하다. 인터페이스 기반 프레인워크(interface-based framework)구현에 적합한데, 이 프레임워크에서는 정적 팩토리 메소드의 반환값 자료형으로 이용된다. 인터페이스는 정적 메소드를 가질 수 없으므로, 관습상 반환값 자료형이 Type이라는 이름의 인터페이스인 정적 팩토리 메소드는 Type라는 이름의 객체 생성 불가능 클래스안에 둔다. // 서비스 인터페이스 public interface ServiceInterface { int add(int x, int y); int mul(int x, int y); ... // 서비스에 고유한 메소드들이 이 자리에 온다 } public class ServiceImplement implements ServiceInterface { @Override public int add(int x, int y) { return x + y; } @Override public int mul(int x, int y) { return x * y; } } //서비스 제공자 인터페이스 public interface ProviderInterface { ServiceInterface newService(); } public class ProviderImplement implements ProviderInterface { @Override public ServiceInterface newService() { return new ServiceImplement(); } } // 서비스 등록과 접근에 사용되는 객체 생성 불가능 클래스 public class ServiceProvider { private ServiceProvider() {} // 인스턴스 생성 X private static final Map&amp;lt;String, ProviderInterface&amp;gt; providers = new ConcurrentHashMap&amp;lt;String, ProviderInterface&amp;gt;(); public static final String DEFAULT_PROVIDER_NAME = &quot;&amp;lt;def&amp;gt;&quot;; // 제공자 등록 API public static void registerDefaultProvider(ProviderInterface p) { registerProvider(DEFAULT_PROVIDER_NAME, p); } public static void registerProvider(String name, ProviderInterface p) { providers.put(name, p); } // 서비스 접근 API public static ServiceInterface newInstance() { return newInstance(DEFAULT_PROVIDER_NAME); } public static ServiceInterface newInstance(String name) { ProviderInterface p = providers.get(name); if (p == null) { throw new IllegalArgumentException( &quot;No provider registered with name: &quot; + name); } return p.newService(); } } public class ServiceMain { public static void main(String[] args) { ServiceProvider.registerDefaultProvider(new ProviderImplement()); ServiceProvider.registerProvider(&quot;BoWoon&quot;, new ProviderImplement()); System.out.println(ServiceProvider.newInstance().add(1, 4)); System.out.println(ServiceProvider.newInstance().mul(2, 2)); System.out.println(ServiceProvider.newInstance(&quot;BoWoon&quot;).add(5, 5)); } } 형인자 자료형(parameterized type) 객체를 만들 때 편하다 Map&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt; m = new HashMap&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt;(); 자료형 명세를 중복하면 형인자가 늘어남에 따라 길고 복잡한 코드가 만들어진다. 하지만 정적 팩토리 메소드를 사용하면 컴파일러가 형인자를 스스로 알아내도록 할 수 있다. 이런 기법을 자료형 유추(type inference)라고 부른다. public static &amp;lt;K, V&amp;gt; HashMap&amp;lt;K, V&amp;gt; newInstance() { return new HashMap&amp;lt;K, V&amp;gt;(); } 이런 메소드가 있으면 아까와 같은 코드를 간결하게 작성할 수 있다. Map &amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt; m = HashMap.newInstance(); 정적 팩토리 메소드의 단점 public이나 protected로 선언된 생성자가 없으므로 하위 클래스를 만들 수 없다 정적 팩토리 메소드가 다른 정적 메소드와 확연히 구분되지 않는다는 것">
+<meta name="keywords" content="Jekyll, NexT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Effective Java] 정적 팩토리 메소드">
+<meta property="og:url" content="http://localhost:4000/effective%20java/2017/09/13/static-factory-method/">
+<meta property="og:site_name" content="Notepad">
+<meta property="og:description" content="정적 팩토리 메소드 클래스를 통해 객체를 만드는 방법은 public으로 선언된 생성자를 사용하는 것이다. 또 다른 방법은 클래스의 public으로 선언된 정적 팩토리 메소드(Static Factory Method)를 사용하는 것이다. 이 메소드는 static로 선언되어 있어서 외부에서 바로 접근할 수 있다. 정적 팩토리 메소드의 장점 생성자와는 달리 이름이 있다. 생정자의 전달되는 인자들은 어떤 객체가 생성되는지를 설명하지 못하지만, 정적 팩토리 메소드는 이름만 잘 짓는다면 어떤 객체가 만들어 지는지 설명할 수 있다. 생성자와는 달리 호출할 때마다 새로운 객체를 생성할 필요가 없다. 변경 불가능 클래스라면 이미 만들어둔 객체를 활용할 수도 있고, 만든 객체를 캐시 해놓고 재사용하여 같은 객체가 불필요하게 거듭 생성되는 일을 피할 수도 있다. 동일한 객체가 요청되는 일이 잦고, 특히 객체를 만드는 비용이 클 때 적용하면 성능을 크게 개선할 수 있다. 다음과 같은 코드가 정적 팩토리 메소드를 적용한 것이다. public static Boolean valueOf(boolean b) { return b ? Boolean.TRUE : Boolean.FALSE; } 정적 팩토리 메소드를 사용하면 같은 객체를 반복해서 반환할 수 있으므로 어떤 시점에 어떤 객체가 얼마나 존재할지를 정밀하게 제어할 수 있다. 이런 기능을 갖춘 클래스를 개체 통제 클래스(instance-controlled class)라고 부른다. 개체 수를 제어하면 싱글톤 패턴을 따를 수 있고, 객체 생성이 불가능한 클래스를 만들 수도 있다. 변경 불가능의 클래스의 경우 두 개의 같은 객체가 존재하지 못하도록 할 수도 있다. 생성자와는 달리 반환값 자료형의 하위 자료형 객체를 반환할 수 있다는 것이다. public으로 선언되지 않은 클래스의 객체를 반환하는 API를 만들 수 있다. 그러면 구현 세부사항을 감출 수 있으므로 아주 간결한 API가 가능하다. 인터페이스 기반 프레인워크(interface-based framework)구현에 적합한데, 이 프레임워크에서는 정적 팩토리 메소드의 반환값 자료형으로 이용된다. 인터페이스는 정적 메소드를 가질 수 없으므로, 관습상 반환값 자료형이 Type이라는 이름의 인터페이스인 정적 팩토리 메소드는 Type라는 이름의 객체 생성 불가능 클래스안에 둔다. // 서비스 인터페이스 public interface ServiceInterface { int add(int x, int y); int mul(int x, int y); ... // 서비스에 고유한 메소드들이 이 자리에 온다 } public class ServiceImplement implements ServiceInterface { @Override public int add(int x, int y) { return x + y; } @Override public int mul(int x, int y) { return x * y; } } //서비스 제공자 인터페이스 public interface ProviderInterface { ServiceInterface newService(); } public class ProviderImplement implements ProviderInterface { @Override public ServiceInterface newService() { return new ServiceImplement(); } } // 서비스 등록과 접근에 사용되는 객체 생성 불가능 클래스 public class ServiceProvider { private ServiceProvider() {} // 인스턴스 생성 X private static final Map&amp;lt;String, ProviderInterface&amp;gt; providers = new ConcurrentHashMap&amp;lt;String, ProviderInterface&amp;gt;(); public static final String DEFAULT_PROVIDER_NAME = &quot;&amp;lt;def&amp;gt;&quot;; // 제공자 등록 API public static void registerDefaultProvider(ProviderInterface p) { registerProvider(DEFAULT_PROVIDER_NAME, p); } public static void registerProvider(String name, ProviderInterface p) { providers.put(name, p); } // 서비스 접근 API public static ServiceInterface newInstance() { return newInstance(DEFAULT_PROVIDER_NAME); } public static ServiceInterface newInstance(String name) { ProviderInterface p = providers.get(name); if (p == null) { throw new IllegalArgumentException( &quot;No provider registered with name: &quot; + name); } return p.newService(); } } public class ServiceMain { public static void main(String[] args) { ServiceProvider.registerDefaultProvider(new ProviderImplement()); ServiceProvider.registerProvider(&quot;BoWoon&quot;, new ProviderImplement()); System.out.println(ServiceProvider.newInstance().add(1, 4)); System.out.println(ServiceProvider.newInstance().mul(2, 2)); System.out.println(ServiceProvider.newInstance(&quot;BoWoon&quot;).add(5, 5)); } } 형인자 자료형(parameterized type) 객체를 만들 때 편하다 Map&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt; m = new HashMap&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt;(); 자료형 명세를 중복하면 형인자가 늘어남에 따라 길고 복잡한 코드가 만들어진다. 하지만 정적 팩토리 메소드를 사용하면 컴파일러가 형인자를 스스로 알아내도록 할 수 있다. 이런 기법을 자료형 유추(type inference)라고 부른다. public static &amp;lt;K, V&amp;gt; HashMap&amp;lt;K, V&amp;gt; newInstance() { return new HashMap&amp;lt;K, V&amp;gt;(); } 이런 메소드가 있으면 아까와 같은 코드를 간결하게 작성할 수 있다. Map &amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt; m = HashMap.newInstance(); 정적 팩토리 메소드의 단점 public이나 protected로 선언된 생성자가 없으므로 하위 클래스를 만들 수 없다 정적 팩토리 메소드가 다른 정적 메소드와 확연히 구분되지 않는다는 것">
+<meta property="og:locale" content="ko">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Effective Java] 정적 팩토리 메소드">
+<meta name="twitter:description" content="정적 팩토리 메소드 클래스를 통해 객체를 만드는 방법은 public으로 선언된 생성자를 사용하는 것이다. 또 다른 방법은 클래스의 public으로 선언된 정적 팩토리 메소드(Static Factory Method)를 사용하는 것이다. 이 메소드는 static로 선언되어 있어서 외부에서 바로 접근할 수 있다. 정적 팩토리 메소드의 장점 생성자와는 달리 이름이 있다. 생정자의 전달되는 인자들은 어떤 객체가 생성되는지를 설명하지 못하지만, 정적 팩토리 메소드는 이름만 잘 짓는다면 어떤 객체가 만들어 지는지 설명할 수 있다. 생성자와는 달리 호출할 때마다 새로운 객체를 생성할 필요가 없다. 변경 불가능 클래스라면 이미 만들어둔 객체를 활용할 수도 있고, 만든 객체를 캐시 해놓고 재사용하여 같은 객체가 불필요하게 거듭 생성되는 일을 피할 수도 있다. 동일한 객체가 요청되는 일이 잦고, 특히 객체를 만드는 비용이 클 때 적용하면 성능을 크게 개선할 수 있다. 다음과 같은 코드가 정적 팩토리 메소드를 적용한 것이다. public static Boolean valueOf(boolean b) { return b ? Boolean.TRUE : Boolean.FALSE; } 정적 팩토리 메소드를 사용하면 같은 객체를 반복해서 반환할 수 있으므로 어떤 시점에 어떤 객체가 얼마나 존재할지를 정밀하게 제어할 수 있다. 이런 기능을 갖춘 클래스를 개체 통제 클래스(instance-controlled class)라고 부른다. 개체 수를 제어하면 싱글톤 패턴을 따를 수 있고, 객체 생성이 불가능한 클래스를 만들 수도 있다. 변경 불가능의 클래스의 경우 두 개의 같은 객체가 존재하지 못하도록 할 수도 있다. 생성자와는 달리 반환값 자료형의 하위 자료형 객체를 반환할 수 있다는 것이다. public으로 선언되지 않은 클래스의 객체를 반환하는 API를 만들 수 있다. 그러면 구현 세부사항을 감출 수 있으므로 아주 간결한 API가 가능하다. 인터페이스 기반 프레인워크(interface-based framework)구현에 적합한데, 이 프레임워크에서는 정적 팩토리 메소드의 반환값 자료형으로 이용된다. 인터페이스는 정적 메소드를 가질 수 없으므로, 관습상 반환값 자료형이 Type이라는 이름의 인터페이스인 정적 팩토리 메소드는 Type라는 이름의 객체 생성 불가능 클래스안에 둔다. // 서비스 인터페이스 public interface ServiceInterface { int add(int x, int y); int mul(int x, int y); ... // 서비스에 고유한 메소드들이 이 자리에 온다 } public class ServiceImplement implements ServiceInterface { @Override public int add(int x, int y) { return x + y; } @Override public int mul(int x, int y) { return x * y; } } //서비스 제공자 인터페이스 public interface ProviderInterface { ServiceInterface newService(); } public class ProviderImplement implements ProviderInterface { @Override public ServiceInterface newService() { return new ServiceImplement(); } } // 서비스 등록과 접근에 사용되는 객체 생성 불가능 클래스 public class ServiceProvider { private ServiceProvider() {} // 인스턴스 생성 X private static final Map&amp;lt;String, ProviderInterface&amp;gt; providers = new ConcurrentHashMap&amp;lt;String, ProviderInterface&amp;gt;(); public static final String DEFAULT_PROVIDER_NAME = &quot;&amp;lt;def&amp;gt;&quot;; // 제공자 등록 API public static void registerDefaultProvider(ProviderInterface p) { registerProvider(DEFAULT_PROVIDER_NAME, p); } public static void registerProvider(String name, ProviderInterface p) { providers.put(name, p); } // 서비스 접근 API public static ServiceInterface newInstance() { return newInstance(DEFAULT_PROVIDER_NAME); } public static ServiceInterface newInstance(String name) { ProviderInterface p = providers.get(name); if (p == null) { throw new IllegalArgumentException( &quot;No provider registered with name: &quot; + name); } return p.newService(); } } public class ServiceMain { public static void main(String[] args) { ServiceProvider.registerDefaultProvider(new ProviderImplement()); ServiceProvider.registerProvider(&quot;BoWoon&quot;, new ProviderImplement()); System.out.println(ServiceProvider.newInstance().add(1, 4)); System.out.println(ServiceProvider.newInstance().mul(2, 2)); System.out.println(ServiceProvider.newInstance(&quot;BoWoon&quot;).add(5, 5)); } } 형인자 자료형(parameterized type) 객체를 만들 때 편하다 Map&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt; m = new HashMap&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt;(); 자료형 명세를 중복하면 형인자가 늘어남에 따라 길고 복잡한 코드가 만들어진다. 하지만 정적 팩토리 메소드를 사용하면 컴파일러가 형인자를 스스로 알아내도록 할 수 있다. 이런 기법을 자료형 유추(type inference)라고 부른다. public static &amp;lt;K, V&amp;gt; HashMap&amp;lt;K, V&amp;gt; newInstance() { return new HashMap&amp;lt;K, V&amp;gt;(); } 이런 메소드가 있으면 아까와 같은 코드를 간결하게 작성할 수 있다. Map &amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt; m = HashMap.newInstance(); 정적 팩토리 메소드의 단점 public이나 protected로 선언된 생성자가 없으므로 하위 클래스를 만들 수 없다 정적 팩토리 메소드가 다른 정적 메소드와 확연히 구분되지 않는다는 것">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '작성자'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>[Effective Java] 정적 팩토리 메소드</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="ko">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Notepad</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            홈
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            아카이브
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            태그
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/09/13/static-factory-method/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            [Effective Java] 정적 팩토리 메소드
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2017-09-13T01:30:00+09:00">
+                2017-09-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2017/09/13/static-factory-method/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2017/09/13/static-factory-method/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="정적-팩토리-메소드">정적 팩토리 메소드</h1>
+<p>클래스를 통해 객체를 만드는 방법은 public으로 선언된 생성자를 사용하는 것이다. 또 다른 방법은 클래스의 public으로 선언된 정적 팩토리 메소드(Static Factory Method)를 사용하는 것이다. 이 메소드는 static로 선언되어 있어서 외부에서 바로 접근할 수 있다.</p>
+
+<h2 id="정적-팩토리-메소드의-장점">정적 팩토리 메소드의 장점</h2>
+<ol>
+  <li>생성자와는 달리 이름이 있다.
+생정자의 전달되는 인자들은 어떤 객체가 생성되는지를 설명하지 못하지만, 정적 팩토리 메소드는 이름만 잘 짓는다면 어떤 객체가 만들어 지는지 설명할 수 있다.</li>
+  <li>생성자와는 달리 호출할 때마다 새로운 객체를 생성할 필요가 없다.
+변경 불가능 클래스라면 이미 만들어둔 객체를 활용할 수도 있고, 만든 객체를 캐시 해놓고 재사용하여 같은 객체가 불필요하게 거듭 생성되는 일을 피할 수도 있다. 동일한 객체가 요청되는 일이 잦고, 특히 객체를 만드는 비용이 클 때 적용하면 성능을 크게 개선할 수 있다. 다음과 같은 코드가 정적 팩토리 메소드를 적용한 것이다.
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kd">public</span> <span class="kd">static</span> <span class="n">Boolean</span> <span class="nf">valueOf</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+         <span class="k">return</span> <span class="n">b</span> <span class="o">?</span> <span class="n">Boolean</span><span class="o">.</span><span class="na">TRUE</span> <span class="o">:</span> <span class="n">Boolean</span><span class="o">.</span><span class="na">FALSE</span><span class="o">;</span>
+     <span class="o">}</span>
+</code></pre></div>    </div>
+    <p>정적 팩토리 메소드를 사용하면 같은 객체를 반복해서 반환할 수 있으므로 어떤 시점에 어떤 객체가 얼마나 존재할지를 정밀하게 제어할 수 있다. 이런 기능을 갖춘 클래스를 개체 통제 클래스(instance-controlled class)라고 부른다. 개체 수를 제어하면 싱글톤 패턴을 따를 수 있고, 객체 생성이 불가능한 클래스를 만들 수도 있다. 변경 불가능의 클래스의 경우 두 개의 같은 객체가 존재하지 못하도록 할 수도 있다.</p>
+  </li>
+  <li>생성자와는 달리 반환값 자료형의 하위 자료형 객체를 반환할 수 있다는 것이다.
+public으로 선언되지 않은 클래스의 객체를 반환하는 API를 만들 수 있다. 그러면 구현 세부사항을 감출 수 있으므로 아주 간결한 API가 가능하다. 인터페이스 기반 프레인워크(interface-based framework)구현에 적합한데, 이 프레임워크에서는 정적 팩토리 메소드의 반환값 자료형으로 이용된다. 인터페이스는 정적 메소드를 가질 수 없으므로, 관습상 반환값 자료형이 Type이라는 이름의 인터페이스인 정적 팩토리 메소드는 Type라는 이름의 객체 생성 불가능 클래스안에 둔다.
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="c1">// 서비스 인터페이스</span>
+ <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ServiceInterface</span> <span class="o">{</span>
+     <span class="kt">int</span> <span class="nf">add</span><span class="o">(</span><span class="kt">int</span> <span class="n">x</span><span class="o">,</span> <span class="kt">int</span> <span class="n">y</span><span class="o">);</span>
+     <span class="kt">int</span> <span class="nf">mul</span><span class="o">(</span><span class="kt">int</span> <span class="n">x</span><span class="o">,</span> <span class="kt">int</span> <span class="n">y</span><span class="o">);</span>
+     <span class="o">...</span> <span class="c1">// 서비스에 고유한 메소드들이 이 자리에 온다</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kd">public</span> <span class="kd">class</span> <span class="nc">ServiceImplement</span> <span class="kd">implements</span> <span class="n">ServiceInterface</span> <span class="o">{</span>
+     <span class="nd">@Override</span>
+     <span class="kd">public</span> <span class="kt">int</span> <span class="nf">add</span><span class="o">(</span><span class="kt">int</span> <span class="n">x</span><span class="o">,</span> <span class="kt">int</span> <span class="n">y</span><span class="o">)</span> <span class="o">{</span>
+         <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="o">;</span>
+     <span class="o">}</span>
+
+     <span class="nd">@Override</span>
+     <span class="kd">public</span> <span class="kt">int</span> <span class="nf">mul</span><span class="o">(</span><span class="kt">int</span> <span class="n">x</span><span class="o">,</span> <span class="kt">int</span> <span class="n">y</span><span class="o">)</span> <span class="o">{</span>
+         <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="o">;</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="c1">//서비스 제공자 인터페이스</span>
+ <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ProviderInterface</span> <span class="o">{</span>
+     <span class="n">ServiceInterface</span> <span class="nf">newService</span><span class="o">();</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProviderImplement</span> <span class="kd">implements</span> <span class="n">ProviderInterface</span> <span class="o">{</span>
+     <span class="nd">@Override</span>
+     <span class="kd">public</span> <span class="n">ServiceInterface</span> <span class="nf">newService</span><span class="o">()</span> <span class="o">{</span>
+         <span class="k">return</span> <span class="k">new</span> <span class="nf">ServiceImplement</span><span class="o">();</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="c1">// 서비스 등록과 접근에 사용되는 객체 생성 불가능 클래스</span>
+ <span class="kd">public</span> <span class="kd">class</span> <span class="nc">ServiceProvider</span> <span class="o">{</span>
+     <span class="kd">private</span> <span class="nf">ServiceProvider</span><span class="o">()</span> <span class="o">{}</span> <span class="c1">// 인스턴스 생성 X</span>
+	
+     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ProviderInterface</span><span class="o">&gt;</span> <span class="n">providers</span> <span class="o">=</span>
+         <span class="k">new</span> <span class="n">ConcurrentHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ProviderInterface</span><span class="o">&gt;();</span>
+     <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">DEFAULT_PROVIDER_NAME</span> <span class="o">=</span> <span class="s">"&lt;def&gt;"</span><span class="o">;</span>
+	
+     <span class="c1">// 제공자 등록 API</span>
+     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">registerDefaultProvider</span><span class="o">(</span><span class="n">ProviderInterface</span> <span class="n">p</span><span class="o">)</span> <span class="o">{</span>
+         <span class="n">registerProvider</span><span class="o">(</span><span class="n">DEFAULT_PROVIDER_NAME</span><span class="o">,</span> <span class="n">p</span><span class="o">);</span>
+     <span class="o">}</span>
+	
+     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">registerProvider</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">ProviderInterface</span> <span class="n">p</span><span class="o">)</span> <span class="o">{</span>
+         <span class="n">providers</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">p</span><span class="o">);</span>
+     <span class="o">}</span>
+	
+     <span class="c1">// 서비스 접근 API</span>
+     <span class="kd">public</span> <span class="kd">static</span> <span class="n">ServiceInterface</span> <span class="nf">newInstance</span><span class="o">()</span> <span class="o">{</span>
+         <span class="k">return</span> <span class="nf">newInstance</span><span class="o">(</span><span class="n">DEFAULT_PROVIDER_NAME</span><span class="o">);</span>
+     <span class="o">}</span>
+	
+     <span class="kd">public</span> <span class="kd">static</span> <span class="n">ServiceInterface</span> <span class="nf">newInstance</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+         <span class="n">ProviderInterface</span> <span class="n">p</span> <span class="o">=</span> <span class="n">providers</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+         <span class="k">if</span> <span class="o">(</span><span class="n">p</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+             <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span>
+                 <span class="s">"No provider registered with name: "</span> <span class="o">+</span> <span class="n">name</span><span class="o">);</span>
+         <span class="o">}</span>
+         <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="na">newService</span><span class="o">();</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kd">public</span> <span class="kd">class</span> <span class="nc">ServiceMain</span> <span class="o">{</span>
+     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+         <span class="n">ServiceProvider</span><span class="o">.</span><span class="na">registerDefaultProvider</span><span class="o">(</span><span class="k">new</span> <span class="n">ProviderImplement</span><span class="o">());</span>
+         <span class="n">ServiceProvider</span><span class="o">.</span><span class="na">registerProvider</span><span class="o">(</span><span class="s">"BoWoon"</span><span class="o">,</span> <span class="k">new</span> <span class="n">ProviderImplement</span><span class="o">());</span>
+	
+         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">ServiceProvider</span><span class="o">.</span><span class="na">newInstance</span><span class="o">().</span><span class="na">add</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">4</span><span class="o">));</span>
+         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">ServiceProvider</span><span class="o">.</span><span class="na">newInstance</span><span class="o">().</span><span class="na">mul</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">2</span><span class="o">));</span>
+         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">ServiceProvider</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="s">"BoWoon"</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="mi">5</span><span class="o">,</span> <span class="mi">5</span><span class="o">));</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>형인자 자료형(parameterized type) 객체를 만들 때 편하다
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">m</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;();</span>
+</code></pre></div>    </div>
+    <p>자료형 명세를 중복하면 형인자가 늘어남에 따라 길고 복잡한 코드가 만들어진다. 하지만 정적 팩토리 메소드를 사용하면 컴파일러가 형인자를 스스로 알아내도록 할 수 있다. 이런 기법을 자료형 유추(type inference)라고 부른다.</p>
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="nf">newInstance</span><span class="o">()</span> <span class="o">{</span>
+     <span class="k">return</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;();</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
+    <p>이런 메소드가 있으면 아까와 같은 코드를 간결하게 작성할 수 있다.</p>
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">Map</span> <span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">m</span> <span class="o">=</span> <span class="n">HashMap</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h2 id="정적-팩토리-메소드의-단점">정적 팩토리 메소드의 단점</h2>
+<ol>
+  <li>public이나 protected로 선언된 생성자가 없으므로 하위 클래스를 만들 수 없다</li>
+  <li>정적 팩토리 메소드가 다른 정적 메소드와 확연히 구분되지 않는다는 것</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/effective%20java/2017/09/14/builder-pattern/" rel="next" title="[Effective Java] Builder Pattern">
+                <i class="fa fa-chevron-left"></i> [Effective Java] Builder Pattern
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            목차
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            흝어보기
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/assets/images/avatar.gif"
+               alt="Kim BoWoon" />
+          <p class="site-author-name" itemprop="name">Kim BoWoon</p>
+           
+              <p class="site-description motion-element" itemprop="description">https://kimbowoon.github.io/</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">포스트</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">카테고리</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+        
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#정적-팩토리-메소드"> <span class="nav-number">1</span> <span class="nav-text">정적 팩토리 메소드</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#정적-팩토리-메소드의-장점"> <span class="nav-number">1.1</span> <span class="nav-text">정적 팩토리 메소드의 장점</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#정적-팩토리-메소드의-단점"> <span class="nav-number">1.2</span> <span class="nav-text">정적 팩토리 메소드의 단점</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child">
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kim BoWoon</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://jekyllrb.com">Jekyll</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/simpleyyt/jekyll-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://kimbowoon.disqus.com/count.js" async></script>
+    
+
+    
+      
+      <script type="text/javascript">
+          var disqus_config = function () {
+              this.page.url = 'http://localhost:4000/effective%20java/2017/09/13/static-factory-method/';
+              this.page.identifier = '/effective%20java/2017/09/13/static-factory-method/';
+              this.page.title = '[Effective Java] 정적 팩토리 메소드';
+          };
+          var d = document, s = d.createElement('script');
+          s.src = 'https://kimbowoon.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', '' + +new Date());
+          (d.head || d.body).appendChild(s);
+      </script>
+      
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+

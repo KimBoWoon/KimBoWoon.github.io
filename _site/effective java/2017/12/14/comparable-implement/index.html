@@ -1,0 +1,905 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next muse use-motion" lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Notepad" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Comparable 이 인터페이스는 다른 인터페이스와 달리 하나의 메소드를 가지고 있다. compareTo 메소들을 가지고 있는데 이 메소드는 Object 클래스에는 포함되어 있지 않으며 오직 Comparable만이 가지고 있다. Comparable을 구현하는 클래스의 객체들은 모두 자연적 순서를 가지고 있다. 또한 최대/최소치를 계산하기도 간단하며, 그 컬렉션을 정렬된 상태로 유지하도 쉽다. 그리고 다양한 제네릭 알고리즘 및 Comparable 인터페이스를 이용하도록 작성된 컬렉션 구현체와도 전부 연동할 수 있다. compareTo 메소드의 일반 규약 자신과 주어진 객체를 비교하는데 자신이 주어진 객체보다 작으면 음수를, 같으면 0, 크다면 양수를 반환한다. 만약 비교 불가능한 객체가 전달된다면 ClassCastException 예외를 던진다. 모든 x와 y에 대해 x.compareTo(y) == y.compareTo(x)는 같아야 한다. 만약 예외를 던진다면 역도 반드시 그래야한다. compareTo를 구현할 때는 추이성이 만족되도록 해야한다. (x.compareTo(y) &amp;gt; 0 &amp;amp;&amp;amp; y.compareTo(z) &amp;gt; 0 이면 x.compareTo(z) &amp;gt; 이어야한다.) x.compareTo(y) == 0 이면 x.compareTo(z) == y.compareTo(z)의 관계가 모든 z에 대해 성립해야한다. (x.compareTo(y) == 0) == x.equals(y) 이 규약은 강력히 추천하지만 절대적으로 요구되는 것이 아니다. 일반적으로, Compareable 인터페이스를 구현하면서 이 조건을 만족하지 않는 클래스는 반드시 그 사실을 명시해야한다. 이 규약들은 모두 한 클래스 객체 사이에 자연적 순서가 존재하기만 하면 어떤 것이든 이 규약을 만족할 것이다. 코드 public class ComparablePractice { public static void main(String[] args) { Fruit[] fruits = new Fruit[5]; fruits[0] = new Fruit(&quot;사과&quot;, 10); fruits[1] = new Fruit(&quot;오렌지&quot;, 34); fruits[2] = new Fruit(&quot;포도&quot;, 24); fruits[3] = new Fruit(&quot;배&quot;, 19); fruits[4] = new Fruit(&quot;키위&quot;, 37); Arrays.sort(fruits); for (int i = 0; i &amp;lt; 5; i++) { System.out.println(fruits[i].getName()); } System.out.println(&quot;----------------------------&quot;); Arrays.sort(fruits, new Comparator&amp;lt;Fruit&amp;gt;() { @Override public int compare(Fruit o1, Fruit o2) { return o2.getName().compareTo(o1.getName()); } }); for (int i = 0; i &amp;lt; 5; i++) { System.out.println(fruits[i].getName()); } } } class Fruit implements Comparable&amp;lt;Fruit&amp;gt; { private String name; private int price; public Fruit(String name, int price) { this.name = name; this.price = price; } public String getName() { return name; } public void setName(String name) { this.name = name; } public int getPrice() { return price; } public void setPrice(int price) { this.price = price; } @Override public int compareTo(Fruit o) { return name.compareTo(o.getName()); } } compareTo 메소드에서 사용자가 원하는 값을 기준으로 정렬해야한다. Comparable와 Comparator 차이 서로 같은일을 하는 인터페이스지만 왜 따로 존재하냐면 Comparable는 자기 자신과 다른 객체 하나를 비교하고 Comparator은 다른 두개의 객체를 비교한다. Comparator 인터페이스를 구현한 객체를 기준으로 다른 두개의 객체를 비교한다는 말이다.">
+<meta name="keywords" content="Jekyll, NexT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Effective Java] Comparable 구현을 고려하라">
+<meta property="og:url" content="http://localhost:4000/effective%20java/2017/12/14/comparable-implement/">
+<meta property="og:site_name" content="Notepad">
+<meta property="og:description" content="Comparable 이 인터페이스는 다른 인터페이스와 달리 하나의 메소드를 가지고 있다. compareTo 메소들을 가지고 있는데 이 메소드는 Object 클래스에는 포함되어 있지 않으며 오직 Comparable만이 가지고 있다. Comparable을 구현하는 클래스의 객체들은 모두 자연적 순서를 가지고 있다. 또한 최대/최소치를 계산하기도 간단하며, 그 컬렉션을 정렬된 상태로 유지하도 쉽다. 그리고 다양한 제네릭 알고리즘 및 Comparable 인터페이스를 이용하도록 작성된 컬렉션 구현체와도 전부 연동할 수 있다. compareTo 메소드의 일반 규약 자신과 주어진 객체를 비교하는데 자신이 주어진 객체보다 작으면 음수를, 같으면 0, 크다면 양수를 반환한다. 만약 비교 불가능한 객체가 전달된다면 ClassCastException 예외를 던진다. 모든 x와 y에 대해 x.compareTo(y) == y.compareTo(x)는 같아야 한다. 만약 예외를 던진다면 역도 반드시 그래야한다. compareTo를 구현할 때는 추이성이 만족되도록 해야한다. (x.compareTo(y) &amp;gt; 0 &amp;amp;&amp;amp; y.compareTo(z) &amp;gt; 0 이면 x.compareTo(z) &amp;gt; 이어야한다.) x.compareTo(y) == 0 이면 x.compareTo(z) == y.compareTo(z)의 관계가 모든 z에 대해 성립해야한다. (x.compareTo(y) == 0) == x.equals(y) 이 규약은 강력히 추천하지만 절대적으로 요구되는 것이 아니다. 일반적으로, Compareable 인터페이스를 구현하면서 이 조건을 만족하지 않는 클래스는 반드시 그 사실을 명시해야한다. 이 규약들은 모두 한 클래스 객체 사이에 자연적 순서가 존재하기만 하면 어떤 것이든 이 규약을 만족할 것이다. 코드 public class ComparablePractice { public static void main(String[] args) { Fruit[] fruits = new Fruit[5]; fruits[0] = new Fruit(&quot;사과&quot;, 10); fruits[1] = new Fruit(&quot;오렌지&quot;, 34); fruits[2] = new Fruit(&quot;포도&quot;, 24); fruits[3] = new Fruit(&quot;배&quot;, 19); fruits[4] = new Fruit(&quot;키위&quot;, 37); Arrays.sort(fruits); for (int i = 0; i &amp;lt; 5; i++) { System.out.println(fruits[i].getName()); } System.out.println(&quot;----------------------------&quot;); Arrays.sort(fruits, new Comparator&amp;lt;Fruit&amp;gt;() { @Override public int compare(Fruit o1, Fruit o2) { return o2.getName().compareTo(o1.getName()); } }); for (int i = 0; i &amp;lt; 5; i++) { System.out.println(fruits[i].getName()); } } } class Fruit implements Comparable&amp;lt;Fruit&amp;gt; { private String name; private int price; public Fruit(String name, int price) { this.name = name; this.price = price; } public String getName() { return name; } public void setName(String name) { this.name = name; } public int getPrice() { return price; } public void setPrice(int price) { this.price = price; } @Override public int compareTo(Fruit o) { return name.compareTo(o.getName()); } } compareTo 메소드에서 사용자가 원하는 값을 기준으로 정렬해야한다. Comparable와 Comparator 차이 서로 같은일을 하는 인터페이스지만 왜 따로 존재하냐면 Comparable는 자기 자신과 다른 객체 하나를 비교하고 Comparator은 다른 두개의 객체를 비교한다. Comparator 인터페이스를 구현한 객체를 기준으로 다른 두개의 객체를 비교한다는 말이다.">
+<meta property="og:locale" content="ko">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Effective Java] Comparable 구현을 고려하라">
+<meta name="twitter:description" content="Comparable 이 인터페이스는 다른 인터페이스와 달리 하나의 메소드를 가지고 있다. compareTo 메소들을 가지고 있는데 이 메소드는 Object 클래스에는 포함되어 있지 않으며 오직 Comparable만이 가지고 있다. Comparable을 구현하는 클래스의 객체들은 모두 자연적 순서를 가지고 있다. 또한 최대/최소치를 계산하기도 간단하며, 그 컬렉션을 정렬된 상태로 유지하도 쉽다. 그리고 다양한 제네릭 알고리즘 및 Comparable 인터페이스를 이용하도록 작성된 컬렉션 구현체와도 전부 연동할 수 있다. compareTo 메소드의 일반 규약 자신과 주어진 객체를 비교하는데 자신이 주어진 객체보다 작으면 음수를, 같으면 0, 크다면 양수를 반환한다. 만약 비교 불가능한 객체가 전달된다면 ClassCastException 예외를 던진다. 모든 x와 y에 대해 x.compareTo(y) == y.compareTo(x)는 같아야 한다. 만약 예외를 던진다면 역도 반드시 그래야한다. compareTo를 구현할 때는 추이성이 만족되도록 해야한다. (x.compareTo(y) &amp;gt; 0 &amp;amp;&amp;amp; y.compareTo(z) &amp;gt; 0 이면 x.compareTo(z) &amp;gt; 이어야한다.) x.compareTo(y) == 0 이면 x.compareTo(z) == y.compareTo(z)의 관계가 모든 z에 대해 성립해야한다. (x.compareTo(y) == 0) == x.equals(y) 이 규약은 강력히 추천하지만 절대적으로 요구되는 것이 아니다. 일반적으로, Compareable 인터페이스를 구현하면서 이 조건을 만족하지 않는 클래스는 반드시 그 사실을 명시해야한다. 이 규약들은 모두 한 클래스 객체 사이에 자연적 순서가 존재하기만 하면 어떤 것이든 이 규약을 만족할 것이다. 코드 public class ComparablePractice { public static void main(String[] args) { Fruit[] fruits = new Fruit[5]; fruits[0] = new Fruit(&quot;사과&quot;, 10); fruits[1] = new Fruit(&quot;오렌지&quot;, 34); fruits[2] = new Fruit(&quot;포도&quot;, 24); fruits[3] = new Fruit(&quot;배&quot;, 19); fruits[4] = new Fruit(&quot;키위&quot;, 37); Arrays.sort(fruits); for (int i = 0; i &amp;lt; 5; i++) { System.out.println(fruits[i].getName()); } System.out.println(&quot;----------------------------&quot;); Arrays.sort(fruits, new Comparator&amp;lt;Fruit&amp;gt;() { @Override public int compare(Fruit o1, Fruit o2) { return o2.getName().compareTo(o1.getName()); } }); for (int i = 0; i &amp;lt; 5; i++) { System.out.println(fruits[i].getName()); } } } class Fruit implements Comparable&amp;lt;Fruit&amp;gt; { private String name; private int price; public Fruit(String name, int price) { this.name = name; this.price = price; } public String getName() { return name; } public void setName(String name) { this.name = name; } public int getPrice() { return price; } public void setPrice(int price) { this.price = price; } @Override public int compareTo(Fruit o) { return name.compareTo(o.getName()); } } compareTo 메소드에서 사용자가 원하는 값을 기준으로 정렬해야한다. Comparable와 Comparator 차이 서로 같은일을 하는 인터페이스지만 왜 따로 존재하냐면 Comparable는 자기 자신과 다른 객체 하나를 비교하고 Comparator은 다른 두개의 객체를 비교한다. Comparator 인터페이스를 구현한 객체를 기준으로 다른 두개의 객체를 비교한다는 말이다.">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '작성자'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>[Effective Java] Comparable 구현을 고려하라</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="ko">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Notepad</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            홈
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            아카이브
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            태그
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/12/14/comparable-implement/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            [Effective Java] Comparable 구현을 고려하라
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2017-12-14T10:23:45+09:00">
+                2017-12-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2017/12/14/comparable-implement/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2017/12/14/comparable-implement/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="comparable">Comparable</h1>
+<p>이 인터페이스는 다른 인터페이스와 달리 하나의 메소드를 가지고 있다. compareTo 메소들을 가지고 있는데 이 메소드는 Object 클래스에는 포함되어 있지 않으며 오직 Comparable만이 가지고 있다. Comparable을 구현하는 클래스의 객체들은 모두 자연적 순서를 가지고 있다. 또한 최대/최소치를 계산하기도 간단하며, 그 컬렉션을 정렬된 상태로 유지하도 쉽다. 그리고 다양한 제네릭 알고리즘 및 Comparable 인터페이스를 이용하도록 작성된 컬렉션 구현체와도 전부 연동할 수 있다.</p>
+
+<h1 id="compareto-메소드의-일반-규약">compareTo 메소드의 일반 규약</h1>
+<ul>
+  <li>자신과 주어진 객체를 비교하는데 자신이 주어진 객체보다 작으면 음수를, 같으면 0, 크다면 양수를 반환한다. 만약 비교 불가능한 객체가 전달된다면 ClassCastException 예외를 던진다.</li>
+  <li>모든 x와 y에 대해 x.compareTo(y) == y.compareTo(x)는 같아야 한다. 만약 예외를 던진다면 역도 반드시 그래야한다.</li>
+  <li>compareTo를 구현할 때는 추이성이 만족되도록 해야한다. (x.compareTo(y) &gt; 0 &amp;&amp; y.compareTo(z) &gt; 0 이면 x.compareTo(z) &gt; 이어야한다.)</li>
+  <li>x.compareTo(y) == 0 이면 x.compareTo(z) == y.compareTo(z)의 관계가 모든 z에 대해 성립해야한다.</li>
+  <li>(x.compareTo(y) == 0) == x.equals(y) 이 규약은 강력히 추천하지만 절대적으로 요구되는 것이 아니다. 일반적으로, Compareable 인터페이스를 구현하면서 이 조건을 만족하지 않는 클래스는 반드시 그 사실을 명시해야한다.</li>
+</ul>
+
+<p>이 규약들은 모두 한 클래스 객체 사이에 자연적 순서가 존재하기만 하면 어떤 것이든 이 규약을 만족할 것이다.</p>
+
+<h1 id="코드">코드</h1>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ComparablePractice</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Fruit</span><span class="o">[]</span> <span class="n">fruits</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Fruit</span><span class="o">[</span><span class="mi">5</span><span class="o">];</span>
+
+        <span class="n">fruits</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Fruit</span><span class="o">(</span><span class="s">"사과"</span><span class="o">,</span> <span class="mi">10</span><span class="o">);</span>
+        <span class="n">fruits</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Fruit</span><span class="o">(</span><span class="s">"오렌지"</span><span class="o">,</span> <span class="mi">34</span><span class="o">);</span>
+        <span class="n">fruits</span><span class="o">[</span><span class="mi">2</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Fruit</span><span class="o">(</span><span class="s">"포도"</span><span class="o">,</span> <span class="mi">24</span><span class="o">);</span>
+        <span class="n">fruits</span><span class="o">[</span><span class="mi">3</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Fruit</span><span class="o">(</span><span class="s">"배"</span><span class="o">,</span> <span class="mi">19</span><span class="o">);</span>
+        <span class="n">fruits</span><span class="o">[</span><span class="mi">4</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Fruit</span><span class="o">(</span><span class="s">"키위"</span><span class="o">,</span> <span class="mi">37</span><span class="o">);</span>
+
+        <span class="n">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">fruits</span><span class="o">);</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">fruits</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">getName</span><span class="o">());</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"----------------------------"</span><span class="o">);</span>
+
+        <span class="n">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">fruits</span><span class="o">,</span> <span class="k">new</span> <span class="n">Comparator</span><span class="o">&lt;</span><span class="n">Fruit</span><span class="o">&gt;()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">int</span> <span class="nf">compare</span><span class="o">(</span><span class="n">Fruit</span> <span class="n">o1</span><span class="o">,</span> <span class="n">Fruit</span> <span class="n">o2</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">o2</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">compareTo</span><span class="o">(</span><span class="n">o1</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">fruits</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">getName</span><span class="o">());</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Fruit</span> <span class="kd">implements</span> <span class="n">Comparable</span><span class="o">&lt;</span><span class="n">Fruit</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">price</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Fruit</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="kt">int</span> <span class="n">price</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">price</span> <span class="o">=</span> <span class="n">price</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getPrice</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">price</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPrice</span><span class="o">(</span><span class="kt">int</span> <span class="n">price</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">price</span> <span class="o">=</span> <span class="n">price</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">compareTo</span><span class="o">(</span><span class="n">Fruit</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">o</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<ul>
+  <li>compareTo 메소드에서 사용자가 원하는 값을 기준으로 정렬해야한다.</li>
+</ul>
+
+<h1 id="comparable와-comparator-차이">Comparable와 Comparator 차이</h1>
+<p>서로 같은일을 하는 인터페이스지만 왜 따로 존재하냐면 Comparable는 자기 자신과 다른 객체 하나를 비교하고 Comparator은 다른 두개의 객체를 비교한다. Comparator 인터페이스를 구현한 객체를 기준으로 다른 두개의 객체를 비교한다는 말이다.</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/effective%20java/2017/12/15/java-access/" rel="next" title="[Effective Java] 클래스와 멤버의 접근 권한은 최소화하라">
+                <i class="fa fa-chevron-left"></i> [Effective Java] 클래스와 멤버의 접근 권한은 최소화하라
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/effective%20java/2017/12/12/cloneable-implement/" rel="prev" title="[Effective Java] clone을 재정의 할 때는 신중하라">
+                [Effective Java] clone을 재정의 할 때는 신중하라 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            목차
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            흝어보기
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/assets/images/avatar.gif"
+               alt="Kim BoWoon" />
+          <p class="site-author-name" itemprop="name">Kim BoWoon</p>
+           
+              <p class="site-description motion-element" itemprop="description">https://kimbowoon.github.io/</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">포스트</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">카테고리</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+        
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#comparable"> <span class="nav-number">1</span> <span class="nav-text">Comparable</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#compareto-메소드의-일반-규약"> <span class="nav-number">2</span> <span class="nav-text">compareTo 메소드의 일반 규약</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#코드"> <span class="nav-number">3</span> <span class="nav-text">코드</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#comparable와-comparator-차이"> <span class="nav-number">4</span> <span class="nav-text">Comparable와 Comparator 차이</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child">
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kim BoWoon</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://jekyllrb.com">Jekyll</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/simpleyyt/jekyll-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://kimbowoon.disqus.com/count.js" async></script>
+    
+
+    
+      
+      <script type="text/javascript">
+          var disqus_config = function () {
+              this.page.url = 'http://localhost:4000/effective%20java/2017/12/14/comparable-implement/';
+              this.page.identifier = '/effective%20java/2017/12/14/comparable-implement/';
+              this.page.title = '[Effective Java] Comparable 구현을 고려하라';
+          };
+          var d = document, s = d.createElement('script');
+          s.src = 'https://kimbowoon.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', '' + +new Date());
+          (d.head || d.body).appendChild(s);
+      </script>
+      
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+

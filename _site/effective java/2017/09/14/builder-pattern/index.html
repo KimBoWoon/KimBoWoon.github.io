@@ -1,0 +1,896 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next muse use-motion" lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Notepad" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Builder Pattern 정적 팩토리 메소드나 생성자는 같은 문제를 가지고 있다. 선택적 인자가 많은 상황에 잘 적응하지 못한다는 것이다. 이럴때에 점층적 생성자 패턴을 적용하기는 하지만 필요없는 인자를 넣어 줘야 할 때도 있고 클라이언트 코드를 작성하기도 어려워진다. 그리고 가독성도 많이 떨어진다. 다른 방법으로 자바빈 패턴이있다. 일단 객체를 생성한 뒤에 세터를 사용해 객체에 값을 넣어주는 방법이다. 하지만 객체를 만들면서 초기화 작업을 하지 못하므로 객체의 일관성이 일시적으로 깨질 수 있다는 것이다. 빌더 패턴을 사용하면 이 문제를 해결 할 수 있다. Code class NutritionFacts { private final int servingSize; private final int servings; private final int calories; private final int fat; private final int sodium; private final int carbohydrate; public static class Builder { // 필수인자 private final int servingSize; private final int servings; // 선택적 인자 - 기본값으로 초기화 private int calories = 0; private int fat = 0; private int sodium = 0; private int carbohydrate = 0; public Builder(int servingSize, int servings) { this.servingSize = servingSize; this.servings = servings; } public Builder calories(int val) { calories = val; return this; } public Builder fat(int val) { fat = val; return this; } public Builder sodium(int val) { sodium = val; return this; } public Builder carbohydrate(int val) { carbohydrate = val; return this; } public NutritionFacts build() { return new NutritionFacts(this); } } private NutritionFacts(Builder builder) { servingSize = builder.servingSize; servings = builder.servings; calories = builder.calories; fat = builder.fat; sodium = builder.sodium; carbohydrate = builder.carbohydrate; } } public class BuilderPattern { public static void main(String[] args) { NutritionFacts n = new NutritionFacts.Builder(0, 1).calories(1).build(); } } NutritionFacts 객체는 변경이 불가능하고 모든 인자의 기본값이 한곳에 모여 있다. 그리고 빌더에 정의된 설정 매소드는 빌더 객체 자신을 반환하므로, 설정 매소드를 호출하는 코드는 쭉 이어서 쓸 수 있다. 또 작성하기도 쉽고 가독성도 뛰어나다. 빌더 패턴 단점 객체를 만들려면 빌더 객체를 생성해야 한다는 것이다. 빌더 객체를 만드는 오버헤드가 문제가 안될 수 도있지만 성능이 중요한 상황에서는 고려해야한다.">
+<meta name="keywords" content="Jekyll, NexT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Effective Java] Builder Pattern">
+<meta property="og:url" content="http://localhost:4000/effective%20java/2017/09/14/builder-pattern/">
+<meta property="og:site_name" content="Notepad">
+<meta property="og:description" content="Builder Pattern 정적 팩토리 메소드나 생성자는 같은 문제를 가지고 있다. 선택적 인자가 많은 상황에 잘 적응하지 못한다는 것이다. 이럴때에 점층적 생성자 패턴을 적용하기는 하지만 필요없는 인자를 넣어 줘야 할 때도 있고 클라이언트 코드를 작성하기도 어려워진다. 그리고 가독성도 많이 떨어진다. 다른 방법으로 자바빈 패턴이있다. 일단 객체를 생성한 뒤에 세터를 사용해 객체에 값을 넣어주는 방법이다. 하지만 객체를 만들면서 초기화 작업을 하지 못하므로 객체의 일관성이 일시적으로 깨질 수 있다는 것이다. 빌더 패턴을 사용하면 이 문제를 해결 할 수 있다. Code class NutritionFacts { private final int servingSize; private final int servings; private final int calories; private final int fat; private final int sodium; private final int carbohydrate; public static class Builder { // 필수인자 private final int servingSize; private final int servings; // 선택적 인자 - 기본값으로 초기화 private int calories = 0; private int fat = 0; private int sodium = 0; private int carbohydrate = 0; public Builder(int servingSize, int servings) { this.servingSize = servingSize; this.servings = servings; } public Builder calories(int val) { calories = val; return this; } public Builder fat(int val) { fat = val; return this; } public Builder sodium(int val) { sodium = val; return this; } public Builder carbohydrate(int val) { carbohydrate = val; return this; } public NutritionFacts build() { return new NutritionFacts(this); } } private NutritionFacts(Builder builder) { servingSize = builder.servingSize; servings = builder.servings; calories = builder.calories; fat = builder.fat; sodium = builder.sodium; carbohydrate = builder.carbohydrate; } } public class BuilderPattern { public static void main(String[] args) { NutritionFacts n = new NutritionFacts.Builder(0, 1).calories(1).build(); } } NutritionFacts 객체는 변경이 불가능하고 모든 인자의 기본값이 한곳에 모여 있다. 그리고 빌더에 정의된 설정 매소드는 빌더 객체 자신을 반환하므로, 설정 매소드를 호출하는 코드는 쭉 이어서 쓸 수 있다. 또 작성하기도 쉽고 가독성도 뛰어나다. 빌더 패턴 단점 객체를 만들려면 빌더 객체를 생성해야 한다는 것이다. 빌더 객체를 만드는 오버헤드가 문제가 안될 수 도있지만 성능이 중요한 상황에서는 고려해야한다.">
+<meta property="og:locale" content="ko">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Effective Java] Builder Pattern">
+<meta name="twitter:description" content="Builder Pattern 정적 팩토리 메소드나 생성자는 같은 문제를 가지고 있다. 선택적 인자가 많은 상황에 잘 적응하지 못한다는 것이다. 이럴때에 점층적 생성자 패턴을 적용하기는 하지만 필요없는 인자를 넣어 줘야 할 때도 있고 클라이언트 코드를 작성하기도 어려워진다. 그리고 가독성도 많이 떨어진다. 다른 방법으로 자바빈 패턴이있다. 일단 객체를 생성한 뒤에 세터를 사용해 객체에 값을 넣어주는 방법이다. 하지만 객체를 만들면서 초기화 작업을 하지 못하므로 객체의 일관성이 일시적으로 깨질 수 있다는 것이다. 빌더 패턴을 사용하면 이 문제를 해결 할 수 있다. Code class NutritionFacts { private final int servingSize; private final int servings; private final int calories; private final int fat; private final int sodium; private final int carbohydrate; public static class Builder { // 필수인자 private final int servingSize; private final int servings; // 선택적 인자 - 기본값으로 초기화 private int calories = 0; private int fat = 0; private int sodium = 0; private int carbohydrate = 0; public Builder(int servingSize, int servings) { this.servingSize = servingSize; this.servings = servings; } public Builder calories(int val) { calories = val; return this; } public Builder fat(int val) { fat = val; return this; } public Builder sodium(int val) { sodium = val; return this; } public Builder carbohydrate(int val) { carbohydrate = val; return this; } public NutritionFacts build() { return new NutritionFacts(this); } } private NutritionFacts(Builder builder) { servingSize = builder.servingSize; servings = builder.servings; calories = builder.calories; fat = builder.fat; sodium = builder.sodium; carbohydrate = builder.carbohydrate; } } public class BuilderPattern { public static void main(String[] args) { NutritionFacts n = new NutritionFacts.Builder(0, 1).calories(1).build(); } } NutritionFacts 객체는 변경이 불가능하고 모든 인자의 기본값이 한곳에 모여 있다. 그리고 빌더에 정의된 설정 매소드는 빌더 객체 자신을 반환하므로, 설정 매소드를 호출하는 코드는 쭉 이어서 쓸 수 있다. 또 작성하기도 쉽고 가독성도 뛰어나다. 빌더 패턴 단점 객체를 만들려면 빌더 객체를 생성해야 한다는 것이다. 빌더 객체를 만드는 오버헤드가 문제가 안될 수 도있지만 성능이 중요한 상황에서는 고려해야한다.">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '작성자'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>[Effective Java] Builder Pattern</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="ko">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Notepad</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            홈
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            아카이브
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            태그
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/09/14/builder-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            [Effective Java] Builder Pattern
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2017-09-14T01:30:00+09:00">
+                2017-09-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2017/09/14/builder-pattern/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2017/09/14/builder-pattern/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="builder-pattern">Builder Pattern</h1>
+<p>정적 팩토리 메소드나 생성자는 같은 문제를 가지고 있다. 선택적 인자가 많은 상황에 잘 적응하지 못한다는 것이다. 이럴때에 점층적 생성자 패턴을 적용하기는 하지만 필요없는 인자를 넣어 줘야 할 때도 있고 클라이언트 코드를 작성하기도 어려워진다. 그리고 가독성도 많이 떨어진다. 다른 방법으로 자바빈 패턴이있다. 일단 객체를 생성한 뒤에 세터를 사용해 객체에 값을 넣어주는 방법이다. 하지만 객체를 만들면서 초기화 작업을 하지 못하므로 객체의 일관성이 일시적으로 깨질 수 있다는 것이다. 빌더 패턴을 사용하면 이 문제를 해결 할 수 있다.</p>
+
+<h2 id="code">Code</h2>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">NutritionFacts</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">servingSize</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">servings</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">calories</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">fat</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">sodium</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">carbohydrate</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Builder</span> <span class="o">{</span>
+        <span class="c1">// 필수인자</span>
+        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">servingSize</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">servings</span><span class="o">;</span>
+        <span class="c1">// 선택적 인자 - 기본값으로 초기화</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">calories</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">fat</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">sodium</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">carbohydrate</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+        <span class="kd">public</span> <span class="nf">Builder</span><span class="o">(</span><span class="kt">int</span> <span class="n">servingSize</span><span class="o">,</span> <span class="kt">int</span> <span class="n">servings</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">servingSize</span> <span class="o">=</span> <span class="n">servingSize</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">servings</span> <span class="o">=</span> <span class="n">servings</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="n">Builder</span> <span class="nf">calories</span><span class="o">(</span><span class="kt">int</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">calories</span> <span class="o">=</span> <span class="n">val</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="n">Builder</span> <span class="nf">fat</span><span class="o">(</span><span class="kt">int</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">fat</span> <span class="o">=</span> <span class="n">val</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="n">Builder</span> <span class="nf">sodium</span><span class="o">(</span><span class="kt">int</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sodium</span> <span class="o">=</span> <span class="n">val</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="n">Builder</span> <span class="nf">carbohydrate</span><span class="o">(</span><span class="kt">int</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">carbohydrate</span> <span class="o">=</span> <span class="n">val</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="n">NutritionFacts</span> <span class="nf">build</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nf">NutritionFacts</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="nf">NutritionFacts</span><span class="o">(</span><span class="n">Builder</span> <span class="n">builder</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">servingSize</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">servingSize</span><span class="o">;</span>
+        <span class="n">servings</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">servings</span><span class="o">;</span>
+        <span class="n">calories</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">calories</span><span class="o">;</span>
+        <span class="n">fat</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">fat</span><span class="o">;</span>
+        <span class="n">sodium</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">sodium</span><span class="o">;</span>
+        <span class="n">carbohydrate</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">carbohydrate</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BuilderPattern</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">NutritionFacts</span> <span class="n">n</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NutritionFacts</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">).</span><span class="na">calories</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+<p>NutritionFacts 객체는 변경이 불가능하고 모든 인자의 기본값이 한곳에 모여 있다. 그리고 빌더에 정의된 설정 매소드는 빌더 객체 자신을 반환하므로, 설정 매소드를 호출하는 코드는 쭉 이어서 쓸 수 있다. 또 작성하기도 쉽고 가독성도 뛰어나다.</p>
+
+<h2 id="빌더-패턴-단점">빌더 패턴 단점</h2>
+<p>객체를 만들려면 빌더 객체를 생성해야 한다는 것이다.  빌더 객체를 만드는 오버헤드가 문제가 안될 수 도있지만 성능이 중요한 상황에서는 고려해야한다.</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/android/2017/09/22/use-retrofit/" rel="next" title="[Android] Retrofit 사용법">
+                <i class="fa fa-chevron-left"></i> [Android] Retrofit 사용법
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/effective%20java/2017/09/13/static-factory-method/" rel="prev" title="[Effective Java] 정적 팩토리 메소드">
+                [Effective Java] 정적 팩토리 메소드 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            목차
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            흝어보기
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/assets/images/avatar.gif"
+               alt="Kim BoWoon" />
+          <p class="site-author-name" itemprop="name">Kim BoWoon</p>
+           
+              <p class="site-description motion-element" itemprop="description">https://kimbowoon.github.io/</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">포스트</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">카테고리</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+        
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#builder-pattern"> <span class="nav-number">1</span> <span class="nav-text">Builder Pattern</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-2"> <a class="nav-link" href="#code"> <span class="nav-number">1.1</span> <span class="nav-text">Code</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#빌더-패턴-단점"> <span class="nav-number">1.2</span> <span class="nav-text">빌더 패턴 단점</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child">
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kim BoWoon</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://jekyllrb.com">Jekyll</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/simpleyyt/jekyll-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://kimbowoon.disqus.com/count.js" async></script>
+    
+
+    
+      
+      <script type="text/javascript">
+          var disqus_config = function () {
+              this.page.url = 'http://localhost:4000/effective%20java/2017/09/14/builder-pattern/';
+              this.page.identifier = '/effective%20java/2017/09/14/builder-pattern/';
+              this.page.title = '[Effective Java] Builder Pattern';
+          };
+          var d = document, s = d.createElement('script');
+          s.src = 'https://kimbowoon.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', '' + +new Date());
+          (d.head || d.body).appendChild(s);
+      </script>
+      
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+
