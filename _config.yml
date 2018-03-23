@@ -11,7 +11,15 @@ author: Kim BoWoon
 # Support language: de, en, fr-FR, id, ja, ko, pt-BR, pt, ru, zh-Hans, zh-hk, zh-tw
 language: ko
 date_format: '%Y-%m-%d'
-disqus_shortname: kimbowoon
+
+# Disqus
+disqus:
+  enable: true
+  shortname: kimbowoon
+  count: true
+  # hide comments (visitors need to click to load the comments)
+  # count need to be false when hide is true
+  hide: false
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com' and baseurl as '/child'
