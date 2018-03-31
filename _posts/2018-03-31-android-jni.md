@@ -22,19 +22,19 @@ categories:
 1. 안드로이드 Empty Activity 프로젝트를 만든다.
 2. ```sdk tools```에서 CMake와 LLDB, NDK를 설치한다.
 
-![그림](/_img/android/sdk-setting.png)
+	![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/sdk-setting.png)
 
 3. ```File -> New Module```를 선택한다.
 
-![그림](/_img/android/new-module.png)
+	![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/new-module.png)
 
 4. android library를 선택한다.
 
-![그림](/_img/android/android-library.png)
+	![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/android-library.png)
 
 5. android library를 생성하고 난 뒤에 ```File -> Setting```에 ```Tool -> ExternalTool```을 다음과 같이 설정한다.
 
-	![그림](/_img/android/setting.png)
+	![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/setting.png)
 	* javah
         ```text
         program : javah.exe
@@ -59,56 +59,57 @@ categories:
 6. ```src -> main``` 아래에 jni폴더를 생성한다. NDK-Build를 진행하게 되면 여기에 ```*.so```파일이 생성된다.
 7. 이제 자신의 패키지명 아래에 java class를 생성한다. class에는 메소드만 선언해주고 나중에 ```javah.exe```를 사용하면 jni폴더 아래에 헤더 파일이 생성된다.
 
-![그림](/_img/android/create-class.png)
+	![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/create-class.png)
 
 8. class를 만들고 난 뒤에 ```javah.exe```를 실행한다. 단, 먼저 빌드가 되어 있어야 순조롭게 진행된다.
 
-    ![그림](/_img/android/make-project.png)
-    
-    ![그림](/_img/android/error-javah.png)
+    ![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/make-project.png)
+
+    ![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/error-javah.png)
     * 실패 했을 때
-    
-    ![그림](/_img/android/success-javah.png)
+
+    ![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/success-javah.png)
     * 성공 했을 때
-    
+
 9. 지금은 참조를 제대로 못하고 있지만 Link를 해주면 정상적으로 참조를 하게 된다.
 
-![그림](/_img/android/c-header.PNG)
+	![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/c-header.PNG)
 
 10. Android.mk와 Application.mk 파일을 만들어 준다.
 	* LOCAL_MODULE := (원하는 module 이름)
 	* FILES := (나중에 만들 cpp file 이름)
 	* APP_ABI := all : android cpu가 지원하는 모든 ABI에 대해 ```*.so``` 파일을 만든다.
 
-	![그림](/_img/android/create-mk-file.PNG)
+	![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/create-mk-file.PNG)
 
 11. ```Link C++ Project With Gradle```을 진행한다.
 
-    ![그림](/_img/android/link.png)
-    
-    ![그림](/_img/android/mk-build-gradle.PNG)
+    ![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/link.png)
+
+    ![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/mk-build-gradle.PNG)
     * 위와 같이 ```build.gradle```에 mk 파일의 경로가 추가된걸 볼 수 있다.
 
 12. 이제 jni 폴더 아래에 cpp 파일을 만들어 원하는대로 구현한다.
 
-![그림](/_img/android/make-csource.png)
+	![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/make-csource.png)
 
-![그림](/_img/android/create-cpp.PNG)
+	![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/create-cpp.PNG)
 
 13. ```ndk-build```를 실행한다. 실행하면 다음과 같이 모든 ABI에 대해 ```*.so``` 파일이 만들어진것을 볼수있다.
 
-![그림](/_img/android/excute-ndk-build.png)
+	![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/excute-ndk-build.png)
 
-![그림](/_img/android/after-excute-ndk-build.PNG)
+	![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/after-excute-ndk-build.PNG)
 
 14. 만들어둔 java class에 대해서는 jar 파일을 만들어야 연동이 가능하다. jar파일이 없으면 해당하는 메소드를 찾을 수 없다고 오류가 발생한다. ```build.gradle```에 다음과 같은 task를 넣는다.
 
-![그림](/_img/android/export-jar.PNG)
+	![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/export-jar.PNG)
 
 15. gradle 창에 other으로 가면 exportJar가 생성된걸 볼 수 있고 실행하면 jar파일이 만들어진것을 볼 수 있다.
 
-![그림](/_img/android/export-jar-gradle.PNG)
+	![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/export-jar-gradle.PNG)
 
 16. 이제 이걸 사용하려면 원하는 프로젝트에 ```app -> libs```에 jar 파일을 넣고 ```src -> main -> jniLibs```에 ```<abi name>/*.so```를 넣고 ```build.gradle```에 ```implementation files('libs/(만들어둔 jar 파일 이름))```을 넣으면 사용이 가능하다.
 
 # 실행 결과
+![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/complate.png)

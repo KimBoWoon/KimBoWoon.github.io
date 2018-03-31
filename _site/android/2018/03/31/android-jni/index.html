@@ -1,0 +1,977 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next muse use-motion" lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Notepad" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="예제 코드 https://github.com/KimBoWoon/Android-Practice/tree/master/MyApplication4 오류 수정 jar 파일을 만들 때 gradle 명령어를 조심히 사용하자 jar 파일을 만들고 나서 확인해보니 libs.com.android.~ 로 시작해서 클래스를 못찾은거 같다 JNI(Java Native Interface) 란 자바가 다른 언어들과 상호작용을 할 수 있도록 도와주는 인터페이스 자바로 구현하기에는 성능이 많이 떨어진다고 생각되면 JNI를 사용해 구현할 수 있다 다른 하드웨어를 제어하기위해 사용하기도 함 C/C++를 사용 Example 안드로이드 Empty Activity 프로젝트를 만든다. sdk tools에서 CMake와 LLDB, NDK를 설치한다. File -&amp;gt; New Module를 선택한다. android library를 선택한다. android library를 생성하고 난 뒤에 File -&amp;gt; Setting에 Tool -&amp;gt; ExternalTool을 다음과 같이 설정한다. javah program : javah.exe argument : -classpath &quot;$Classpath$&quot; -v -jni $FileClass$ working directory : $ProjectFileDir$\&amp;lt;라이브러리 이름&amp;gt;\src\main\jni NDK-Build program : ndk-build.cmd working directory : $ProjectFileDir$\&amp;lt;라이브러리 이름&amp;gt;\src\main NDK-Clean program : ndk-build.cmd argument : clean working directory : $ProjectFileDir$\&amp;lt;라이브러리 이름&amp;gt;\src\main javah.exe : java class 대로 Header File을 만들어준다. 설치된 jdk에 bin에 존재한다. ndk-build.cmd : C/C++로 작성된 코드를 인터페이스에 맞게 build 시켜준다. 설치된 android-sdk에 ndk-bundle에 존재한다.(2번에 NDK를 설치하면 생성됨) 각각의 환경변수가 설정되어 있지 않으면 절대경로를 넣어 설정한다. src -&amp;gt; main 아래에 jni폴더를 생성한다. NDK-Build를 진행하게 되면 여기에 *.so파일이 생성된다. 이제 자신의 패키지명 아래에 java class를 생성한다. class에는 메소드만 선언해주고 나중에 javah.exe를 사용하면 jni폴더 아래에 헤더 파일이 생성된다. class를 만들고 난 뒤에 javah.exe를 실행한다. 단, 먼저 빌드가 되어 있어야 순조롭게 진행된다. 실패 했을 때 성공 했을 때 지금은 참조를 제대로 못하고 있지만 Link를 해주면 정상적으로 참조를 하게 된다. Android.mk와 Application.mk 파일을 만들어 준다. LOCAL_MODULE := (원하는 module 이름) FILES := (나중에 만들 cpp file 이름) APP_ABI := all : android cpu가 지원하는 모든 ABI에 대해 *.so 파일을 만든다. Link C++ Project With Gradle을 진행한다. 위와 같이 build.gradle에 mk 파일의 경로가 추가된걸 볼 수 있다. 이제 jni 폴더 아래에 cpp 파일을 만들어 원하는대로 구현한다. ndk-build를 실행한다. 실행하면 다음과 같이 모든 ABI에 대해 *.so 파일이 만들어진것을 볼수있다. 만들어둔 java class에 대해서는 jar 파일을 만들어야 연동이 가능하다. jar파일이 없으면 해당하는 메소드를 찾을 수 없다고 오류가 발생한다. build.gradle에 다음과 같은 task를 넣는다. gradle 창에 other으로 가면 exportJar가 생성된걸 볼 수 있고 실행하면 jar파일이 만들어진것을 볼 수 있다. 이제 이걸 사용하려면 원하는 프로젝트에 app -&amp;gt; libs에 jar 파일을 넣고 src -&amp;gt; main -&amp;gt; jniLibs에 &amp;lt;abi name&amp;gt;/*.so를 넣고 build.gradle에 implementation files(&apos;libs/(만들어둔 jar 파일 이름))을 넣으면 사용이 가능하다. 실행 결과">
+<meta name="keywords" content="Jekyll, NexT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Android] JNI 사용하기">
+<meta property="og:url" content="http://localhost:4000/android/2018/03/31/android-jni/">
+<meta property="og:site_name" content="Notepad">
+<meta property="og:description" content="예제 코드 https://github.com/KimBoWoon/Android-Practice/tree/master/MyApplication4 오류 수정 jar 파일을 만들 때 gradle 명령어를 조심히 사용하자 jar 파일을 만들고 나서 확인해보니 libs.com.android.~ 로 시작해서 클래스를 못찾은거 같다 JNI(Java Native Interface) 란 자바가 다른 언어들과 상호작용을 할 수 있도록 도와주는 인터페이스 자바로 구현하기에는 성능이 많이 떨어진다고 생각되면 JNI를 사용해 구현할 수 있다 다른 하드웨어를 제어하기위해 사용하기도 함 C/C++를 사용 Example 안드로이드 Empty Activity 프로젝트를 만든다. sdk tools에서 CMake와 LLDB, NDK를 설치한다. File -&amp;gt; New Module를 선택한다. android library를 선택한다. android library를 생성하고 난 뒤에 File -&amp;gt; Setting에 Tool -&amp;gt; ExternalTool을 다음과 같이 설정한다. javah program : javah.exe argument : -classpath &quot;$Classpath$&quot; -v -jni $FileClass$ working directory : $ProjectFileDir$\&amp;lt;라이브러리 이름&amp;gt;\src\main\jni NDK-Build program : ndk-build.cmd working directory : $ProjectFileDir$\&amp;lt;라이브러리 이름&amp;gt;\src\main NDK-Clean program : ndk-build.cmd argument : clean working directory : $ProjectFileDir$\&amp;lt;라이브러리 이름&amp;gt;\src\main javah.exe : java class 대로 Header File을 만들어준다. 설치된 jdk에 bin에 존재한다. ndk-build.cmd : C/C++로 작성된 코드를 인터페이스에 맞게 build 시켜준다. 설치된 android-sdk에 ndk-bundle에 존재한다.(2번에 NDK를 설치하면 생성됨) 각각의 환경변수가 설정되어 있지 않으면 절대경로를 넣어 설정한다. src -&amp;gt; main 아래에 jni폴더를 생성한다. NDK-Build를 진행하게 되면 여기에 *.so파일이 생성된다. 이제 자신의 패키지명 아래에 java class를 생성한다. class에는 메소드만 선언해주고 나중에 javah.exe를 사용하면 jni폴더 아래에 헤더 파일이 생성된다. class를 만들고 난 뒤에 javah.exe를 실행한다. 단, 먼저 빌드가 되어 있어야 순조롭게 진행된다. 실패 했을 때 성공 했을 때 지금은 참조를 제대로 못하고 있지만 Link를 해주면 정상적으로 참조를 하게 된다. Android.mk와 Application.mk 파일을 만들어 준다. LOCAL_MODULE := (원하는 module 이름) FILES := (나중에 만들 cpp file 이름) APP_ABI := all : android cpu가 지원하는 모든 ABI에 대해 *.so 파일을 만든다. Link C++ Project With Gradle을 진행한다. 위와 같이 build.gradle에 mk 파일의 경로가 추가된걸 볼 수 있다. 이제 jni 폴더 아래에 cpp 파일을 만들어 원하는대로 구현한다. ndk-build를 실행한다. 실행하면 다음과 같이 모든 ABI에 대해 *.so 파일이 만들어진것을 볼수있다. 만들어둔 java class에 대해서는 jar 파일을 만들어야 연동이 가능하다. jar파일이 없으면 해당하는 메소드를 찾을 수 없다고 오류가 발생한다. build.gradle에 다음과 같은 task를 넣는다. gradle 창에 other으로 가면 exportJar가 생성된걸 볼 수 있고 실행하면 jar파일이 만들어진것을 볼 수 있다. 이제 이걸 사용하려면 원하는 프로젝트에 app -&amp;gt; libs에 jar 파일을 넣고 src -&amp;gt; main -&amp;gt; jniLibs에 &amp;lt;abi name&amp;gt;/*.so를 넣고 build.gradle에 implementation files(&apos;libs/(만들어둔 jar 파일 이름))을 넣으면 사용이 가능하다. 실행 결과">
+<meta property="og:locale" content="ko">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/sdk-setting.png">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/new-module.png">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/android-library.png">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/setting.png">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/create-class.png">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/make-project.png">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/error-javah.png">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/success-javah.png">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/c-header.PNG">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/create-mk-file.PNG">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/link.png">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/mk-build-gradle.PNG">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/make-csource.png">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/create-cpp.PNG">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/excute-ndk-build.png">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/after-excute-ndk-build.PNG">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/export-jar.PNG">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/export-jar-gradle.PNG">
+<meta property="og:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/complate.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Android] JNI 사용하기">
+<meta name="twitter:description" content="예제 코드 https://github.com/KimBoWoon/Android-Practice/tree/master/MyApplication4 오류 수정 jar 파일을 만들 때 gradle 명령어를 조심히 사용하자 jar 파일을 만들고 나서 확인해보니 libs.com.android.~ 로 시작해서 클래스를 못찾은거 같다 JNI(Java Native Interface) 란 자바가 다른 언어들과 상호작용을 할 수 있도록 도와주는 인터페이스 자바로 구현하기에는 성능이 많이 떨어진다고 생각되면 JNI를 사용해 구현할 수 있다 다른 하드웨어를 제어하기위해 사용하기도 함 C/C++를 사용 Example 안드로이드 Empty Activity 프로젝트를 만든다. sdk tools에서 CMake와 LLDB, NDK를 설치한다. File -&amp;gt; New Module를 선택한다. android library를 선택한다. android library를 생성하고 난 뒤에 File -&amp;gt; Setting에 Tool -&amp;gt; ExternalTool을 다음과 같이 설정한다. javah program : javah.exe argument : -classpath &quot;$Classpath$&quot; -v -jni $FileClass$ working directory : $ProjectFileDir$\&amp;lt;라이브러리 이름&amp;gt;\src\main\jni NDK-Build program : ndk-build.cmd working directory : $ProjectFileDir$\&amp;lt;라이브러리 이름&amp;gt;\src\main NDK-Clean program : ndk-build.cmd argument : clean working directory : $ProjectFileDir$\&amp;lt;라이브러리 이름&amp;gt;\src\main javah.exe : java class 대로 Header File을 만들어준다. 설치된 jdk에 bin에 존재한다. ndk-build.cmd : C/C++로 작성된 코드를 인터페이스에 맞게 build 시켜준다. 설치된 android-sdk에 ndk-bundle에 존재한다.(2번에 NDK를 설치하면 생성됨) 각각의 환경변수가 설정되어 있지 않으면 절대경로를 넣어 설정한다. src -&amp;gt; main 아래에 jni폴더를 생성한다. NDK-Build를 진행하게 되면 여기에 *.so파일이 생성된다. 이제 자신의 패키지명 아래에 java class를 생성한다. class에는 메소드만 선언해주고 나중에 javah.exe를 사용하면 jni폴더 아래에 헤더 파일이 생성된다. class를 만들고 난 뒤에 javah.exe를 실행한다. 단, 먼저 빌드가 되어 있어야 순조롭게 진행된다. 실패 했을 때 성공 했을 때 지금은 참조를 제대로 못하고 있지만 Link를 해주면 정상적으로 참조를 하게 된다. Android.mk와 Application.mk 파일을 만들어 준다. LOCAL_MODULE := (원하는 module 이름) FILES := (나중에 만들 cpp file 이름) APP_ABI := all : android cpu가 지원하는 모든 ABI에 대해 *.so 파일을 만든다. Link C++ Project With Gradle을 진행한다. 위와 같이 build.gradle에 mk 파일의 경로가 추가된걸 볼 수 있다. 이제 jni 폴더 아래에 cpp 파일을 만들어 원하는대로 구현한다. ndk-build를 실행한다. 실행하면 다음과 같이 모든 ABI에 대해 *.so 파일이 만들어진것을 볼수있다. 만들어둔 java class에 대해서는 jar 파일을 만들어야 연동이 가능하다. jar파일이 없으면 해당하는 메소드를 찾을 수 없다고 오류가 발생한다. build.gradle에 다음과 같은 task를 넣는다. gradle 창에 other으로 가면 exportJar가 생성된걸 볼 수 있고 실행하면 jar파일이 만들어진것을 볼 수 있다. 이제 이걸 사용하려면 원하는 프로젝트에 app -&amp;gt; libs에 jar 파일을 넣고 src -&amp;gt; main -&amp;gt; jniLibs에 &amp;lt;abi name&amp;gt;/*.so를 넣고 build.gradle에 implementation files(&apos;libs/(만들어둔 jar 파일 이름))을 넣으면 사용이 가능하다. 실행 결과">
+<meta name="twitter:image" content="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/sdk-setting.png">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '작성자'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>[Android] JNI 사용하기</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="ko">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Notepad</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            홈
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            아카이브
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            태그
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/android/2018/03/31/android-jni/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            [Android] JNI 사용하기
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2018-03-31T10:23:45+09:00">
+                2018-03-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Android" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/android/2018/03/31/android-jni/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/android/2018/03/31/android-jni/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="예제-코드">예제 코드</h1>
+<ul>
+  <li>https://github.com/KimBoWoon/Android-Practice/tree/master/MyApplication4</li>
+</ul>
+
+<h1 id="오류-수정">오류 수정</h1>
+<ul>
+  <li>jar 파일을 만들 때 gradle 명령어를 조심히 사용하자</li>
+  <li>jar 파일을 만들고 나서 확인해보니 <code class="highlighter-rouge">libs.com.android.~</code> 로 시작해서 클래스를 못찾은거 같다</li>
+</ul>
+
+<h1 id="jnijava-native-interface-란">JNI(Java Native Interface) 란</h1>
+<ul>
+  <li>자바가 다른 언어들과 상호작용을 할 수 있도록 도와주는 인터페이스</li>
+  <li>자바로 구현하기에는 성능이 많이 떨어진다고 생각되면 JNI를 사용해 구현할 수 있다</li>
+  <li>다른 하드웨어를 제어하기위해 사용하기도 함</li>
+  <li>C/C++를 사용</li>
+</ul>
+
+<h1 id="example">Example</h1>
+<ol>
+  <li>안드로이드 Empty Activity 프로젝트를 만든다.</li>
+  <li>
+    <p><code class="highlighter-rouge">sdk tools</code>에서 CMake와 LLDB, NDK를 설치한다.</p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/sdk-setting.png" alt="그림" /></p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">File -&gt; New Module</code>를 선택한다.</p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/new-module.png" alt="그림" /></p>
+  </li>
+  <li>
+    <p>android library를 선택한다.</p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/android-library.png" alt="그림" /></p>
+  </li>
+  <li>
+    <p>android library를 생성하고 난 뒤에 <code class="highlighter-rouge">File -&gt; Setting</code>에 <code class="highlighter-rouge">Tool -&gt; ExternalTool</code>을 다음과 같이 설정한다.</p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/setting.png" alt="그림" /></p>
+    <ul>
+      <li>javah
+        <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  program : javah.exe
+  argument : -classpath "$Classpath$" -v -jni $FileClass$
+  working directory : $ProjectFileDir$\&lt;라이브러리 이름&gt;\src\main\jni
+</code></pre></div>        </div>
+      </li>
+      <li>NDK-Build
+        <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  program : ndk-build.cmd
+  working directory : $ProjectFileDir$\&lt;라이브러리 이름&gt;\src\main
+</code></pre></div>        </div>
+      </li>
+      <li>NDK-Clean
+        <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  program : ndk-build.cmd
+  argument : clean
+  working directory : $ProjectFileDir$\&lt;라이브러리 이름&gt;\src\main
+</code></pre></div>        </div>
+      </li>
+      <li><code class="highlighter-rouge">javah.exe</code> : java class 대로 Header File을 만들어준다. 설치된 jdk에 bin에 존재한다.</li>
+      <li><code class="highlighter-rouge">ndk-build.cmd</code> : C/C++로 작성된 코드를 인터페이스에 맞게 build 시켜준다. 설치된 android-sdk에 ndk-bundle에 존재한다.(2번에 NDK를 설치하면 생성됨)</li>
+      <li>각각의 환경변수가 설정되어 있지 않으면 절대경로를 넣어 설정한다.</li>
+    </ul>
+  </li>
+  <li><code class="highlighter-rouge">src -&gt; main</code> 아래에 jni폴더를 생성한다. NDK-Build를 진행하게 되면 여기에 <code class="highlighter-rouge">*.so</code>파일이 생성된다.</li>
+  <li>
+    <p>이제 자신의 패키지명 아래에 java class를 생성한다. class에는 메소드만 선언해주고 나중에 <code class="highlighter-rouge">javah.exe</code>를 사용하면 jni폴더 아래에 헤더 파일이 생성된다.</p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/create-class.png" alt="그림" /></p>
+  </li>
+  <li>
+    <p>class를 만들고 난 뒤에 <code class="highlighter-rouge">javah.exe</code>를 실행한다. 단, 먼저 빌드가 되어 있어야 순조롭게 진행된다.</p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/make-project.png" alt="그림" /></p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/error-javah.png" alt="그림" /></p>
+    <ul>
+      <li>실패 했을 때</li>
+    </ul>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/success-javah.png" alt="그림" /></p>
+    <ul>
+      <li>성공 했을 때</li>
+    </ul>
+  </li>
+  <li>
+    <p>지금은 참조를 제대로 못하고 있지만 Link를 해주면 정상적으로 참조를 하게 된다.</p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/c-header.PNG" alt="그림" /></p>
+  </li>
+  <li>Android.mk와 Application.mk 파일을 만들어 준다.
+    <ul>
+      <li>LOCAL_MODULE := (원하는 module 이름)</li>
+      <li>FILES := (나중에 만들 cpp file 이름)</li>
+      <li>APP_ABI := all : android cpu가 지원하는 모든 ABI에 대해 <code class="highlighter-rouge">*.so</code> 파일을 만든다.</li>
+    </ul>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/create-mk-file.PNG" alt="그림" /></p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">Link C++ Project With Gradle</code>을 진행한다.</p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/link.png" alt="그림" /></p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/mk-build-gradle.PNG" alt="그림" /></p>
+    <ul>
+      <li>위와 같이 <code class="highlighter-rouge">build.gradle</code>에 mk 파일의 경로가 추가된걸 볼 수 있다.</li>
+    </ul>
+  </li>
+  <li>
+    <p>이제 jni 폴더 아래에 cpp 파일을 만들어 원하는대로 구현한다.</p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/make-csource.png" alt="그림" /></p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/create-cpp.PNG" alt="그림" /></p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">ndk-build</code>를 실행한다. 실행하면 다음과 같이 모든 ABI에 대해 <code class="highlighter-rouge">*.so</code> 파일이 만들어진것을 볼수있다.</p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/excute-ndk-build.png" alt="그림" /></p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/after-excute-ndk-build.PNG" alt="그림" /></p>
+  </li>
+  <li>
+    <p>만들어둔 java class에 대해서는 jar 파일을 만들어야 연동이 가능하다. jar파일이 없으면 해당하는 메소드를 찾을 수 없다고 오류가 발생한다. <code class="highlighter-rouge">build.gradle</code>에 다음과 같은 task를 넣는다.</p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/export-jar.PNG" alt="그림" /></p>
+  </li>
+  <li>
+    <p>gradle 창에 other으로 가면 exportJar가 생성된걸 볼 수 있고 실행하면 jar파일이 만들어진것을 볼 수 있다.</p>
+
+    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/export-jar-gradle.PNG" alt="그림" /></p>
+  </li>
+  <li>이제 이걸 사용하려면 원하는 프로젝트에 <code class="highlighter-rouge">app -&gt; libs</code>에 jar 파일을 넣고 <code class="highlighter-rouge">src -&gt; main -&gt; jniLibs</code>에 <code class="highlighter-rouge">&lt;abi name&gt;/*.so</code>를 넣고 <code class="highlighter-rouge">build.gradle</code>에 <code class="highlighter-rouge">implementation files('libs/(만들어둔 jar 파일 이름))</code>을 넣으면 사용이 가능하다.</li>
+</ol>
+
+<h1 id="실행-결과">실행 결과</h1>
+<p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/complate.png" alt="그림" /></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/effective%20java/2017/12/19/geter-seter/" rel="prev" title="[Effective Java] public 클래스 안에는 public 필드를 두지 말고 접근자 메소드를 사용하라">
+                [Effective Java] public 클래스 안에는 public 필드를 두지 말고 접근자 메소드를 사용하라 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            목차
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            흝어보기
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/assets/images/avatar.gif"
+               alt="Kim BoWoon" />
+          <p class="site-author-name" itemprop="name">Kim BoWoon</p>
+           
+              <p class="site-description motion-element" itemprop="description">https://kimbowoon.github.io/</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">포스트</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">카테고리</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+        
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#예제-코드"> <span class="nav-number">1</span> <span class="nav-text">예제 코드</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#오류-수정"> <span class="nav-number">2</span> <span class="nav-text">오류 수정</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#jnijava-native-interface-란"> <span class="nav-number">3</span> <span class="nav-text">JNI(Java Native Interface) 란</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#example"> <span class="nav-number">4</span> <span class="nav-text">Example</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#실행-결과"> <span class="nav-number">5</span> <span class="nav-text">실행 결과</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child">
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kim BoWoon</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://jekyllrb.com">Jekyll</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/simpleyyt/jekyll-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://kimbowoon.disqus.com/count.js" async></script>
+    
+
+    
+      
+      <script type="text/javascript">
+          var disqus_config = function () {
+              this.page.url = 'http://localhost:4000/android/2018/03/31/android-jni/';
+              this.page.identifier = '/android/2018/03/31/android-jni/';
+              this.page.title = '[Android] JNI 사용하기';
+          };
+          var d = document, s = d.createElement('script');
+          s.src = 'https://kimbowoon.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', '' + +new Date());
+          (d.head || d.body).appendChild(s);
+      </script>
+      
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+
