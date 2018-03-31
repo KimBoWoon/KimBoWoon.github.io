@@ -417,22 +417,22 @@
   <li>
     <p><code class="highlighter-rouge">sdk tools</code>에서 CMake와 LLDB, NDK를 설치한다.</p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/sdk-setting.png" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/sdk-setting.png" alt="그림" /></p>
   </li>
   <li>
     <p><code class="highlighter-rouge">File -&gt; New Module</code>를 선택한다.</p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/new-module.png" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/new-module.png" alt="그림" /></p>
   </li>
   <li>
     <p>android library를 선택한다.</p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/android-library.png" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/android-library.png" alt="그림" /></p>
   </li>
   <li>
     <p>android library를 생성하고 난 뒤에 <code class="highlighter-rouge">File -&gt; Setting</code>에 <code class="highlighter-rouge">Tool -&gt; ExternalTool</code>을 다음과 같이 설정한다.</p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/setting.png" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/setting.png" alt="그림" /></p>
     <ul>
       <li>javah
         <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  program : javah.exe
@@ -460,19 +460,19 @@
   <li>
     <p>이제 자신의 패키지명 아래에 java class를 생성한다. class에는 메소드만 선언해주고 나중에 <code class="highlighter-rouge">javah.exe</code>를 사용하면 jni폴더 아래에 헤더 파일이 생성된다.</p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/create-class.png" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/create-class.png" alt="그림" /></p>
   </li>
   <li>
     <p>class를 만들고 난 뒤에 <code class="highlighter-rouge">javah.exe</code>를 실행한다. 단, 먼저 빌드가 되어 있어야 순조롭게 진행된다.</p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/make-project.png" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/make-project.png" alt="그림" /></p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/error-javah.png" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/error-javah.png" alt="그림" /></p>
     <ul>
       <li>실패 했을 때</li>
     </ul>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/success-javah.png" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/success-javah.png" alt="그림" /></p>
     <ul>
       <li>성공 했을 때</li>
     </ul>
@@ -480,7 +480,7 @@
   <li>
     <p>지금은 참조를 제대로 못하고 있지만 Link를 해주면 정상적으로 참조를 하게 된다.</p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/c-header.PNG" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/c-header.PNG" alt="그림" /></p>
   </li>
   <li>Android.mk와 Application.mk 파일을 만들어 준다.
     <ul>
@@ -489,14 +489,14 @@
       <li>APP_ABI := all : android cpu가 지원하는 모든 ABI에 대해 <code class="highlighter-rouge">*.so</code> 파일을 만든다.</li>
     </ul>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/create-mk-file.PNG" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/create-mk-file.PNG" alt="그림" /></p>
   </li>
   <li>
     <p><code class="highlighter-rouge">Link C++ Project With Gradle</code>을 진행한다.</p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/link.png" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/link.png" alt="그림" /></p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/mk-build-gradle.PNG" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/mk-build-gradle.PNG" alt="그림" /></p>
     <ul>
       <li>위와 같이 <code class="highlighter-rouge">build.gradle</code>에 mk 파일의 경로가 추가된걸 볼 수 있다.</li>
     </ul>
@@ -504,32 +504,32 @@
   <li>
     <p>이제 jni 폴더 아래에 cpp 파일을 만들어 원하는대로 구현한다.</p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/make-csource.png" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/make-csource.png" alt="그림" /></p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/create-cpp.PNG" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/create-cpp.PNG" alt="그림" /></p>
   </li>
   <li>
     <p><code class="highlighter-rouge">ndk-build</code>를 실행한다. 실행하면 다음과 같이 모든 ABI에 대해 <code class="highlighter-rouge">*.so</code> 파일이 만들어진것을 볼수있다.</p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/excute-ndk-build.png" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/excute-ndk-build.png" alt="그림" /></p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/after-excute-ndk-build.PNG" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/after-excute-ndk-build.PNG" alt="그림" /></p>
   </li>
   <li>
     <p>만들어둔 java class에 대해서는 jar 파일을 만들어야 연동이 가능하다. jar파일이 없으면 해당하는 메소드를 찾을 수 없다고 오류가 발생한다. <code class="highlighter-rouge">build.gradle</code>에 다음과 같은 task를 넣는다.</p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/export-jar.PNG" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/export-jar.PNG" alt="그림" /></p>
   </li>
   <li>
     <p>gradle 창에 other으로 가면 exportJar가 생성된걸 볼 수 있고 실행하면 jar파일이 만들어진것을 볼 수 있다.</p>
 
-    <p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/export-jar-gradle.PNG" alt="그림" /></p>
+    <p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/export-jar-gradle.PNG" alt="그림" /></p>
   </li>
   <li>이제 이걸 사용하려면 원하는 프로젝트에 <code class="highlighter-rouge">app -&gt; libs</code>에 jar 파일을 넣고 <code class="highlighter-rouge">src -&gt; main -&gt; jniLibs</code>에 <code class="highlighter-rouge">&lt;abi name&gt;/*.so</code>를 넣고 <code class="highlighter-rouge">build.gradle</code>에 <code class="highlighter-rouge">implementation files('libs/(만들어둔 jar 파일 이름))</code>을 넣으면 사용이 가능하다.</li>
 </ol>
 
 <h1 id="실행-결과">실행 결과</h1>
-<p><img src="https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/complate.png" alt="그림" /></p>
+<p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/complate.png" alt="그림" /></p>
 
           <!--noindex-->
           <div class="post-button text-center">
