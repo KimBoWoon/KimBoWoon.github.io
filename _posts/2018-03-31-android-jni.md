@@ -5,6 +5,9 @@ categories:
 - Android
 ---
 
+# 예제 코드
+* https://github.com/KimBoWoon/Android-Practice/tree/master/MyApplication4
+
 # 오류 수정
 * jar 파일을 만들 때 gradle 명령어를 조심히 사용하자
 * jar 파일을 만들고 나서 확인해보니 ```libs.com.android.~``` 로 시작해서 클래스를 못찾은거 같다
