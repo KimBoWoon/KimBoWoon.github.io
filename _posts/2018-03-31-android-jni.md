@@ -6,11 +6,13 @@ categories:
 ---
 
 # 예제 코드
-* https://github.com/KimBoWoon/Android-Practice/tree/master/MyApplication4
+* https://github.com/KimBoWoon/Android-Practice/tree/master/JNI
 
 # 오류 수정
 * jar 파일을 만들 때 gradle 명령어를 조심히 사용하자
 * jar 파일을 만들고 나서 확인해보니 ```libs.com.android.~``` 로 시작해서 클래스를 못찾은거 같다
+* 인터넷에서 본 exportJar 라는 gradle task가 안된다.
+* ```build/intermediates/bundle```라는 폴더가 생성이 안되서 command line으로 실행
 
 # JNI(Java Native Interface) 란
 * 자바가 다른 언어들과 상호작용을 할 수 있도록 도와주는 인터페이스
@@ -113,3 +115,5 @@ categories:
 
 # 실행 결과
 ![그림](https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/complate.png)
+
+* x와 y를 더한 값을 반환하는 JNI Library를 만들었고 Toast로 결과값을 확인
