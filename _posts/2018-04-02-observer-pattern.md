@@ -8,7 +8,7 @@ categories:
 # Observer Pattern
 어떤 클래스에 변화가 있을 때 변화를 알려주는 패턴
 
-# 
+# 코드
 ```
 interface Observer {
     void update(String title, String news);
