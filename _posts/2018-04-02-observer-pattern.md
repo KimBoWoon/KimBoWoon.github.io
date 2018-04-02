@@ -1,3 +1,10 @@
+---
+title: "[pattern] Observer Pattern"
+date: 2018-04-02 01:23:45
+categories:
+- Pattern
+---
+
 # Observer Pattern
 어떤 클래스에 변화가 있을 때 변화를 알려주는 패턴
 
