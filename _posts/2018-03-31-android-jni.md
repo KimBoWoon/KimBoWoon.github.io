@@ -117,3 +117,7 @@ categories:
 ![그림](https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/complate.png)
 
 * x와 y를 더한 값을 반환하는 JNI Library를 만들었고 Toast로 결과값을 확인
+
+# 참조
+* https://developer.android.com/studio/projects/android-library.html?hl=ko
+* http://duzi077.tistory.com/134
