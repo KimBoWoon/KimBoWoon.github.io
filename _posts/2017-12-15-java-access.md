@@ -16,7 +16,7 @@ categories:
 
 public은 항상 조심해야한다. 스레드에도 안전하지 않고 누구나 접근이 가능해서 값이 변경되기 때문이다. 또한 길이가 0이 아닌 배열은 언제나 변경 가능하므로, public static final 배열 필드를 두거나, 배열 필드를 반환하는 접근자를 정의하면 안 된다. 클라이언트가 배열 내용을 변경할 수 있기 때문에 보안에 문제가 생긴다. 따라서 다음과 같이 사용하는게 좋다.
 
-public으로 선언되었던 배열은 private로 바꾸고, 변경이 불가능한 puvlic 리스트를 하나 만드는 것이다.
+public으로 선언되었던 배열은 private로 바꾸고, 변경이 불가능한 public 리스트를 하나 만드는 것이다.
 ```java
 private static final Integer[] PRIVATE_VALUES = {};
 public static final List<Integer> VALUES = Collections.unmodifiableList(Arrays.asList(PRIVATE_VALUES));
