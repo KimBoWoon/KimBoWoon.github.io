@@ -62,6 +62,8 @@ categories:
 7. 이제 자신의 패키지명 아래에 java class를 생성한다. class에는 메소드만 선언해주고 나중에 ```javah.exe```를 사용하면 jni폴더 아래에 헤더 파일이 생성된다.
 
 	![그림](https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/create-class.png)
+    * ```System.loadLibrary()```은 전달인자와 같은 이름의 모듈을 로드시킨다는 의미
+    * 나중에 mk 파일에서 LOCAL_MODULE의 이름을 적어주면 된다.
 
 8. class를 만들고 난 뒤에 ```javah.exe```를 실행한다. 단, 먼저 빌드가 되어 있어야 순조롭게 진행된다.
 
