@@ -1,6 +1,6 @@
 ---
 title: "[Effective Java] 변경 가능성을 최소화하라"
-date: 2017-12-19 01:23:45
+date: 2018-07-17 01:23:45
 categories:
 - Effective Java
 ---
