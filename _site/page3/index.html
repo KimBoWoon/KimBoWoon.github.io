@@ -283,6 +283,1303 @@
   
 
   <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/09/27/unnecessary-object/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+                
+                <a class="post-title-link" href="/effective%20java/2017/09/27/unnecessary-object/" itemprop="url">
+                [Effective Java] 불필요한 객체는 만들지 말라
+              </a>
+            
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2017-09-27T10:23:45+09:00">
+                2017-09-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2017/09/27/unnecessary-object/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2017/09/27/unnecessary-object/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="불필요한-객체는-만들지-말라">불필요한 객체는 만들지 말라</h1>
+<p>기능적으로 객체를 새로 만드는 것보다 재사용하는 편이 훨씬 빠르다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">"Hello, World"</span><span class="o">);</span>
+</code></pre></div></div>
+<p>이런식으로 객체를 만들면 호출 될 때마다 항상 새로운 객체가 만들어지기 때문에 이러한 방법은 피하는 편이 좋고 아래와 같은 방법을 쓰는것이 좋다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"Hello, World"</span><span class="o">;</span>
+</code></pre></div></div>
+
+<p>실제로 다음과 같은 코드를 실행시키면 다음과 같은 결과를 얻는다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ImmutableObject</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">a</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">"Hello, World"</span><span class="o">);</span>
+        <span class="n">String</span> <span class="n">b</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">"Hello, World"</span><span class="o">);</span>
+
+        <span class="n">String</span> <span class="n">c</span> <span class="o">=</span> <span class="s">"Hello, World"</span><span class="o">;</span>
+        <span class="n">String</span> <span class="n">d</span> <span class="o">=</span> <span class="s">"Hello, World"</span><span class="o">;</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">c</span> <span class="o">==</span> <span class="n">d</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="/_img/effectivejava/string_address.png" alt="" /></p>
+
+<p>변경 불가능한 객체인 경우 정적 팩토리 메소드를 사용하면 새로운 객체를 만들지 않는다. 변경 가능한 객체도 재사용할 수 있다. 단, 변경하지 않는다면 말이다. 다음의 예를 보자</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Date</span> <span class="n">birthDate</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isBabyBoomer</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">Calendar</span> <span class="n">gmtCal</span> <span class="o">=</span> <span class="n">Calendar</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="n">TimeZone</span><span class="o">.</span><span class="na">getTimeZone</span><span class="o">(</span><span class="s">"GMT"</span><span class="o">));</span>
+
+        <span class="n">gmtCal</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="mi">1946</span><span class="o">,</span> <span class="n">Calendar</span><span class="o">.</span><span class="na">JANUARY</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+        <span class="n">Date</span> <span class="n">boomStart</span> <span class="o">=</span> <span class="n">gmtCal</span><span class="o">.</span><span class="na">getTime</span><span class="o">();</span>
+        <span class="n">gmtCal</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="mi">1965</span><span class="o">,</span> <span class="n">Calendar</span><span class="o">.</span><span class="na">JANUARY</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+        <span class="n">Date</span> <span class="n">boomEnd</span> <span class="o">=</span> <span class="n">gmtCal</span><span class="o">.</span><span class="na">getTime</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">birthDate</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">boomStart</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">birthDate</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">boomEnd</span><span class="o">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>이렇게 만들면 해당 메소드를 호출될 때마다 Calendar 객체 하나, TimeZone 객체 하나, 그리고 Date 객체 두 개를 쓸데없이 만들어 낸다. 이렇게 비효율적인 코드는 정적 초기화 블록(static initializer)을 통해 개선하는 것이 좋다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Date</span> <span class="n">birthDate</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Date</span> <span class="n">BOOM_START</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Date</span> <span class="n">BOOM_END</span><span class="o">;</span>
+    
+    <span class="kd">static</span> <span class="o">{</span>
+        <span class="n">Calendar</span> <span class="n">gmtCal</span> <span class="o">=</span> <span class="n">Calendar</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="n">TimeZone</span><span class="o">.</span><span class="na">getTimeZone</span><span class="o">(</span><span class="s">"GMT"</span><span class="o">));</span>
+        <span class="n">gmtCal</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="mi">1946</span><span class="o">,</span> <span class="n">Calendar</span><span class="o">.</span><span class="na">JANUARY</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+        <span class="n">BOOM_START</span> <span class="o">=</span> <span class="n">gmtCal</span><span class="o">.</span><span class="na">getTime</span><span class="o">();</span>
+        <span class="n">gmtCal</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="mi">1965</span><span class="o">,</span> <span class="n">Calendar</span><span class="o">.</span><span class="na">JANUARY</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+        <span class="n">BOOM_END</span> <span class="o">=</span> <span class="n">gmtCal</span><span class="o">.</span><span class="na">getTime</span><span class="o">();</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isBabyBoomer</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">birthDate</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">BOOM_START</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">birthDate</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">BOOM_END</span><span class="o">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>이 클래스는 클래스가 초기화 될 때 한 번만 만든다. 그리고 BOOM_START와 BOOM_END가 한번만 초기화 되는 상수라는 사실도 알수있다. 또 객체 자료형보다 기본 자료형을 사용하는 것이 좋다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Integer</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">3</span><span class="o">;</span>
+<span class="c1">// Integer i = new Integer(3);</span>
+</code></pre></div></div>
+<p>auto-boxing이 되면서 불필요한 객체를 만들기 때문이다.</p>
+
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/effective%20java/2017/09/27/unnecessary-object/#" rel="contents">
+              더 읽어보기 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+        
+        
+        
+        
+          <div class="post-eof"></div>
+        
+      
+    </footer>
+  </article>
+
+  
+    
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/09/24/private-constructor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+                
+                <a class="post-title-link" href="/effective%20java/2017/09/24/private-constructor/" itemprop="url">
+                [Effective Java] 객체 생성을 막을 때는 private 생성자를 사용하라
+              </a>
+            
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2017-09-24T10:23:45+09:00">
+                2017-09-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2017/09/24/private-constructor/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2017/09/24/private-constructor/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="객체-생성을-막을-때는-private-생성자를-사용하라">객체 생성을 막을 때는 private 생성자를 사용하라</h1>
+<p>코딩을 하다 보면 상수나 배열 등을 모아둔 유틸리티 클래스를 만들 때도 있다. 이러한 클래스들은 객체가 생성되면 안된다. 생성자를 만들지 않으면 컴파일러가 public 생성자를 넣기 때문에 안되고 abstract로 만들면 이 클래스를 상속받는 하위 클래스들을 사용해서 객체를 만들 수 있기 때문에 안된다. 그래서 private 생성자를 두어 객체 생성을 막는다.</p>
+
+
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/effective%20java/2017/09/24/private-constructor/#" rel="contents">
+              더 읽어보기 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+        
+        
+        
+        
+          <div class="post-eof"></div>
+        
+      
+    </footer>
+  </article>
+
+  
+    
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/09/23/private-enum-singleton-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+                
+                <a class="post-title-link" href="/effective%20java/2017/09/23/private-enum-singleton-pattern/" itemprop="url">
+                [Effective Java] private 생성자나 enum 자료형은 싱글턴 패턴을 따르도록 설계하라
+              </a>
+            
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2017-09-23T10:23:45+09:00">
+                2017-09-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2017/09/23/private-enum-singleton-pattern/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2017/09/23/private-enum-singleton-pattern/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="private-생성자나-enum-자료형은-싱글턴-패턴을-따르도록-설계하라">private 생성자나 enum 자료형은 싱글턴 패턴을 따르도록 설계하라</h1>
+<p>싱글턴 패턴은 객체를 하나만 만들 수 있는 클래스이다. 창 관리자나 파일 시스템같은 것들이 그 예이다. 하지만 AccessibleObject.setAccessible 메소드의 도움을 받아 권한을 획득한 클라이언트는 리플렉션 기능을 통해 private 생성자를 다시 호출할 수 있다. 이러한 공격을 방어하려면 두 번째 객체를 생성하라는 요철을 받으면 예욀르 던지도록 생성자를 고쳐야 한다. 또 다른 방법은 public으로 선언된 정적 팩토리 메소드를 이용한다. 정적 팩토리 메소드를 이용해서 첫 번째 방법으로 공격하면 막지 못한다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Book</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Book</span> <span class="n">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Book</span><span class="o">();</span>
+
+    <span class="kd">private</span> <span class="nf">Book</span><span class="o">()</span> <span class="o">{</span>
+		<span class="o">...</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Book</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>싱글턴 클래스를 직렬화 가능 클래스로 만들려면 클래스 선언에 implements Serializable을 추가하는 것으로는 부족하다. 모든 필드를 transient로 선언하고 readResolve 메소드를 추가해야한다. 그렇지 않으면 serialize된 객체가 역직화 될 때마다 새로운 객체가 생기게 된다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 싱글턴 상태를 유지하기 위한 readResolve 구현</span>
+<span class="kd">private</span> <span class="n">Object</span> <span class="nf">readResolve</span><span class="o">()</span> <span class="o">{</span>
+	<span class="c1">// 동일한 Book 객체가 반환되도록 하는 동시에, 가짜 Book 객체는</span>
+    <span class="c1">// 쓰레기 수집기가 처리하도록 만든다.</span>
+	<span class="k">return</span> <span class="n">INSTANCE</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>jdk 1.5부터는 싱글턴을 구현할 때 새로운 방법을 사용할 수 있다. 원소가 하나뿐인 enum자료형을 정의하는 것이다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="n">Book</span> <span class="o">{</span>
+	<span class="n">INSTANCE</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">readBook</span><span class="o">()</span> <span class="o">{...}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>이렇게 만들면 직렬화가 자동으로 처리된다는 것이다. 여러 객체가 생길일이 없고 리플렉션을 통한 공격에도 안전하다. 원소가 하나뿐인 enum 자료형이야말로 싱글턴을 구현하는 가장 좋은 방법이다. 클래스를 싱글턴으로 만들면 클라이언트를 테스트하기가 어려워질 수가 있다. 싱글턴이 어떤 인터페이스를 구현하는 것이 아니면 가짜 구현으로 대체할 수 없기 때문이다.</p>
+
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/effective%20java/2017/09/23/private-enum-singleton-pattern/#" rel="contents">
+              더 읽어보기 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+        
+        
+        
+        
+          <div class="post-eof"></div>
+        
+      
+    </footer>
+  </article>
+
+  
+    
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/android/2017/09/22/use-retrofit/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+                
+                <a class="post-title-link" href="/android/2017/09/22/use-retrofit/" itemprop="url">
+                [Android] Retrofit 사용법
+              </a>
+            
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2017-09-22T10:23:45+09:00">
+                2017-09-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Android" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/android/2017/09/22/use-retrofit/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/android/2017/09/22/use-retrofit/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="android-retrofit-사용법">Android Retrofit 사용법</h1>
+<p>Retrofit은 Square Open Source에서 만든 REST API 통신을 위한 안드로이드 라이브러리이다. 안드로이드 서비스를 개발하려면 서버와의 통신은 꼭 필요합니다. 다른 라이브러리를 사용하면 불필요하고 귀찮은 작업이 많습니다. Retrofit은 불필요한 작업을 최소화 하고 쓰기 쉽게 만들어진 라이브러리입니다.</p>
+
+<p>먼저 gradle을 추가합니다.</p>
+<div class="language-gradle highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">compile</span> <span class="s1">'io.reactivex.rxjava2:rxandroid:2.0.1'</span>
+<span class="n">compile</span> <span class="s1">'io.reactivex.rxjava2:rxjava:2.1.3'</span>
+<span class="n">compile</span> <span class="s1">'com.squareup.retrofit2:retrofit:2.3.0'</span>
+<span class="n">compile</span> <span class="s1">'com.google.code.gson:gson:2.7'</span>
+<span class="n">compile</span> <span class="s1">'com.android.support:recyclerview-v7:25.1.0'</span>
+<span class="n">compile</span> <span class="s1">'com.squareup.retrofit2:converter-gson:2.1.0'</span>
+<span class="n">compile</span> <span class="s1">'com.squareup.picasso:picasso:2.5.2'</span>
+</code></pre></div></div>
+
+<p>간단하게 파싱할 https://randomuser.me/api의 데이터입니다.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="err">results</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="err">gender</span><span class="p">:</span><span class="w"> </span><span class="s2">"male"</span><span class="p">,</span><span class="w">
+            </span><span class="err">name</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="err">title</span><span class="p">:</span><span class="w"> </span><span class="s2">"mr"</span><span class="p">,</span><span class="w">
+                </span><span class="err">first</span><span class="p">:</span><span class="w"> </span><span class="s2">"jimi"</span><span class="p">,</span><span class="w">
+                </span><span class="err">last</span><span class="p">:</span><span class="w"> </span><span class="s2">"polon"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="err">location</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="err">street</span><span class="p">:</span><span class="w"> </span><span class="s2">"9350 itsenäisyydenkatu"</span><span class="p">,</span><span class="w">
+                </span><span class="err">city</span><span class="p">:</span><span class="w"> </span><span class="s2">"kristinestad"</span><span class="p">,</span><span class="w">
+                </span><span class="err">state</span><span class="p">:</span><span class="w"> </span><span class="s2">"south karelia"</span><span class="p">,</span><span class="w">
+                </span><span class="err">postcode</span><span class="p">:</span><span class="w"> </span><span class="mi">14156</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="err">email</span><span class="p">:</span><span class="w"> </span><span class="s2">"jimi.polon@example.com"</span><span class="p">,</span><span class="w">
+            </span><span class="err">login</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="err">username</span><span class="p">:</span><span class="w"> </span><span class="s2">"blackdog726"</span><span class="p">,</span><span class="w">
+                </span><span class="err">password</span><span class="p">:</span><span class="w"> </span><span class="s2">"ranger"</span><span class="p">,</span><span class="w">
+                </span><span class="err">salt</span><span class="p">:</span><span class="w"> </span><span class="s2">"cFE2HMuR"</span><span class="p">,</span><span class="w">
+                </span><span class="err">md</span><span class="mi">5</span><span class="p">:</span><span class="w"> </span><span class="s2">"c7caf7af79bc56b4ddeee96bb9f90d85"</span><span class="p">,</span><span class="w">
+                </span><span class="err">sha</span><span class="mi">1</span><span class="p">:</span><span class="w"> </span><span class="s2">"c2a0382305915dc106e2b75a48b2f454aef4f334"</span><span class="p">,</span><span class="w">
+                </span><span class="err">sha</span><span class="mi">256</span><span class="p">:</span><span class="w"> </span><span class="s2">"ff6fbdd32246bd365b3a095c91408503a1f73620526e4f24da4759f439427096"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="err">dob</span><span class="p">:</span><span class="w"> </span><span class="s2">"1967-10-03 16:02:57"</span><span class="p">,</span><span class="w">
+            </span><span class="err">registered</span><span class="p">:</span><span class="w"> </span><span class="s2">"2009-07-19 00:26:27"</span><span class="p">,</span><span class="w">
+            </span><span class="err">phone</span><span class="p">:</span><span class="w"> </span><span class="s2">"02-657-116"</span><span class="p">,</span><span class="w">
+            </span><span class="err">cell</span><span class="p">:</span><span class="w"> </span><span class="s2">"042-656-81-18"</span><span class="p">,</span><span class="w">
+            </span><span class="err">id</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="err">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"HETU"</span><span class="p">,</span><span class="w">
+                </span><span class="err">value</span><span class="p">:</span><span class="w"> </span><span class="s2">"1167-163D"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="err">picture</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="err">large</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://randomuser.me/api/portraits/men/76.jpg"</span><span class="p">,</span><span class="w">
+                </span><span class="err">medium</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://randomuser.me/api/portraits/med/men/76.jpg"</span><span class="p">,</span><span class="w">
+                </span><span class="err">thumbnail</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://randomuser.me/api/portraits/thumb/men/76.jpg"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="err">nat</span><span class="p">:</span><span class="w"> </span><span class="s2">"FI"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="err">...</span><span class="w">
+    </span><span class="err">info</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="err">seed</span><span class="p">:</span><span class="w"> </span><span class="s2">"468e4162245cdf64"</span><span class="p">,</span><span class="w">
+    </span><span class="err">results</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="err">page</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="err">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.1"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>일단 데이터를 얻어오기 위해 interface를 정의합니다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">APIInterface</span> <span class="o">{</span>
+    <span class="nd">@GET</span><span class="o">(</span><span class="s">"/api/"</span><span class="o">)</span>
+    <span class="n">Call</span><span class="o">&lt;</span><span class="n">PersonModel</span><span class="o">&gt;</span> <span class="nf">getUsers</span><span class="o">(</span><span class="nd">@Query</span><span class="o">(</span><span class="s">"results"</span><span class="o">)</span> <span class="kt">int</span> <span class="n">results</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>실제로 요청하는 url은 https://randomuser.me/api/?results=1 입니다. 여기 result에 따라 몇 개의 데이터를 얻어올지 결정합니다.
+그리고 인터페이스에 있는 메소드의 인자들은 url에 있는 ? 뒤에 query를 설명합니다.</p>
+
+<p>model도 적절하게 생성합니다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Name</span> <span class="o">{</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"title"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">title</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"first"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">first</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"last"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">last</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getTitle</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">title</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setTitle</span><span class="o">(</span><span class="n">String</span> <span class="n">title</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getFirst</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">first</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setFirst</span><span class="o">(</span><span class="n">String</span> <span class="n">first</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">first</span> <span class="o">=</span> <span class="n">first</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getLast</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">last</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setLast</span><span class="o">(</span><span class="n">String</span> <span class="n">last</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">last</span> <span class="o">=</span> <span class="n">last</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">UserProfileImage</span> <span class="o">{</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"large"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">large</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"medium"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">medium</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"thumbnail"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">thumbnail</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getLarge</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">large</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setLarge</span><span class="o">(</span><span class="n">String</span> <span class="n">large</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">large</span> <span class="o">=</span> <span class="n">large</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getMedium</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">medium</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setMedium</span><span class="o">(</span><span class="n">String</span> <span class="n">medium</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">medium</span> <span class="o">=</span> <span class="n">medium</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getThumbnail</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">thumbnail</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setThumbnail</span><span class="o">(</span><span class="n">String</span> <span class="n">thumbnail</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">thumbnail</span> <span class="o">=</span> <span class="n">thumbnail</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Item</span> <span class="o">{</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"name"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="n">Name</span> <span class="n">name</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"picture"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="n">UserProfileImage</span> <span class="n">userProfileImage</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"gender"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">gender</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"phone"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">phone</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getGender</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">gender</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setGender</span><span class="o">(</span><span class="n">String</span> <span class="n">gender</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">gender</span> <span class="o">=</span> <span class="n">gender</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getPhone</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">phone</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPhone</span><span class="o">(</span><span class="n">String</span> <span class="n">phone</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">phone</span> <span class="o">=</span> <span class="n">phone</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">Name</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="n">Name</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">UserProfileImage</span> <span class="nf">getUserProfileImage</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">userProfileImage</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUserProfileImage</span><span class="o">(</span><span class="n">UserProfileImage</span> <span class="n">userProfileImage</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">userProfileImage</span> <span class="o">=</span> <span class="n">userProfileImage</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PersonModel</span> <span class="o">{</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"results"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">items</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"page"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">page</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="nf">getItems</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">items</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setItems</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">items</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">items</span> <span class="o">=</span> <span class="n">items</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getPage</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">page</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPage</span><span class="o">(</span><span class="kt">int</span> <span class="n">page</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">page</span> <span class="o">=</span> <span class="n">page</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>또 결과를 보여줄 recyclerview도 만듭니다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">ItemClickListener</span> <span class="o">{</span>
+    <span class="kt">void</span> <span class="nf">onItemClick</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RecyclerAdapter</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span><span class="o">&lt;</span><span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">ItemClickListener</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">items</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">Context</span> <span class="n">context</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">RecyclerAdapter</span><span class="o">(</span><span class="n">Context</span> <span class="n">context</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">items</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">context</span> <span class="o">=</span> <span class="n">context</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">items</span> <span class="o">=</span> <span class="n">items</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getItemTitle</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">).</span><span class="na">getName</span><span class="o">().</span><span class="na">getFirst</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemClick</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">getItemTitle</span><span class="o">(</span><span class="n">position</span><span class="o">),</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">,</span> <span class="kt">int</span> <span class="n">viewType</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">holder</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+        <span class="n">View</span> <span class="n">v</span> <span class="o">=</span> <span class="n">LayoutInflater</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">parent</span><span class="o">.</span><span class="na">getContext</span><span class="o">()).</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">list_item</span><span class="o">,</span> <span class="n">parent</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+        <span class="n">holder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UsersViewHolder</span><span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+
+        <span class="k">return</span> <span class="n">holder</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onBindViewHolder</span><span class="o">(</span><span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">holder</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">holder</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="o">((</span><span class="n">UsersViewHolder</span><span class="o">)</span> <span class="n">holder</span><span class="o">).</span><span class="na">name</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">).</span><span class="na">getName</span><span class="o">().</span><span class="na">getFirst</span><span class="o">());</span>
+        <span class="n">Picasso</span><span class="o">.</span><span class="na">with</span><span class="o">(</span><span class="n">context</span><span class="o">).</span><span class="na">load</span><span class="o">(</span><span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">).</span><span class="na">getUserProfileImage</span><span class="o">().</span><span class="na">getThumbnail</span><span class="o">()).</span><span class="na">into</span><span class="o">(((</span><span class="n">UsersViewHolder</span><span class="o">)</span> <span class="n">holder</span><span class="o">).</span><span class="na">profileImg</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getItemCount</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">items</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">static</span> <span class="kd">class</span> <span class="nc">UsersViewHolder</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="o">{</span>
+        <span class="kd">private</span> <span class="n">TextView</span> <span class="n">name</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="n">ImageView</span> <span class="n">profileImg</span><span class="o">;</span>
+
+        <span class="kd">public</span> <span class="nf">UsersViewHolder</span><span class="o">(</span><span class="n">View</span> <span class="n">itemView</span><span class="o">,</span> <span class="kd">final</span> <span class="n">ItemClickListener</span> <span class="n">itemClickListener</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kd">super</span><span class="o">(</span><span class="n">itemView</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">text</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">profileImg</span> <span class="o">=</span> <span class="o">(</span><span class="n">ImageView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">userImg</span><span class="o">);</span>
+
+            <span class="n">itemView</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+                <span class="nd">@Override</span>
+                <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">itemClickListener</span><span class="o">.</span><span class="na">onItemClick</span><span class="o">(</span><span class="n">getAdapterPosition</span><span class="o">());</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>마지막으로 retrofit을 만듭니다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Retrofit</span> <span class="n">client</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Retrofit</span><span class="o">.</span><span class="na">Builder</span><span class="o">().</span><span class="na">baseUrl</span><span class="o">(</span><span class="s">"https://randomuser.me"</span><span class="o">).</span><span class="na">addConverterFactory</span><span class="o">(</span><span class="n">GsonConverterFactory</span><span class="o">.</span><span class="na">create</span><span class="o">()).</span><span class="na">build</span><span class="o">();</span>
+<span class="n">APIInterface</span> <span class="n">service</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">APIInterface</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="n">Call</span><span class="o">&lt;</span><span class="n">PersonModel</span><span class="o">&gt;</span> <span class="n">call</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="na">getUsers</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+<span class="n">call</span><span class="o">.</span><span class="na">enqueue</span><span class="o">(</span><span class="k">new</span> <span class="n">Callback</span><span class="o">&lt;</span><span class="n">PersonModel</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onResponse</span><span class="o">(</span><span class="n">Call</span><span class="o">&lt;</span><span class="n">PersonModel</span><span class="o">&gt;</span> <span class="n">call</span><span class="o">,</span> <span class="n">Response</span><span class="o">&lt;</span><span class="n">PersonModel</span><span class="o">&gt;</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">isSuccessful</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">Log</span><span class="o">.</span><span class="na">i</span><span class="o">(</span><span class="s">"Success"</span><span class="o">,</span> <span class="n">response</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+            <span class="n">PersonModel</span> <span class="n">person</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="na">body</span><span class="o">();</span>
+            <span class="n">recyclerView</span><span class="o">.</span><span class="na">setAdapter</span><span class="o">(</span><span class="k">new</span> <span class="n">RecyclerAdapter</span><span class="o">(</span><span class="n">getApplicationContext</span><span class="o">(),</span> <span class="n">response</span><span class="o">.</span><span class="na">body</span><span class="o">().</span><span class="na">getItems</span><span class="o">()));</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFailure</span><span class="o">(</span><span class="n">Call</span><span class="o">&lt;</span><span class="n">PersonModel</span><span class="o">&gt;</span> <span class="n">call</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Log</span><span class="o">.</span><span class="na">i</span><span class="o">(</span><span class="s">"Failed"</span><span class="o">,</span> <span class="s">"Failed Connection"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</code></pre></div></div>
+
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/android/2017/09/22/use-retrofit/#" rel="contents">
+              더 읽어보기 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+        
+        
+        
+        
+          <div class="post-eof"></div>
+        
+      
+    </footer>
+  </article>
+
+  
+    
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/09/14/builder-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+                
+                <a class="post-title-link" href="/effective%20java/2017/09/14/builder-pattern/" itemprop="url">
+                [Effective Java] Builder Pattern
+              </a>
+            
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2017-09-14T01:30:00+09:00">
+                2017-09-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2017/09/14/builder-pattern/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2017/09/14/builder-pattern/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="builder-pattern">Builder Pattern</h1>
+<p>정적 팩토리 메소드나 생성자는 같은 문제를 가지고 있다. 선택적 인자가 많은 상황에 잘 적응하지 못한다는 것이다. 이럴때에 점층적 생성자 패턴을 적용하기는 하지만 필요없는 인자를 넣어 줘야 할 때도 있고 클라이언트 코드를 작성하기도 어려워진다. 그리고 가독성도 많이 떨어진다. 다른 방법으로 자바빈 패턴이있다. 일단 객체를 생성한 뒤에 세터를 사용해 객체에 값을 넣어주는 방법이다. 하지만 객체를 만들면서 초기화 작업을 하지 못하므로 객체의 일관성이 일시적으로 깨질 수 있다는 것이다. 빌더 패턴을 사용하면 이 문제를 해결 할 수 있다.</p>
+
+<h2 id="code">Code</h2>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">NutritionFacts</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">servingSize</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">servings</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">calories</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">fat</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">sodium</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">carbohydrate</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Builder</span> <span class="o">{</span>
+        <span class="c1">// 필수인자</span>
+        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">servingSize</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">servings</span><span class="o">;</span>
+        <span class="c1">// 선택적 인자 - 기본값으로 초기화</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">calories</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">fat</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">sodium</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">carbohydrate</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+        <span class="kd">public</span> <span class="nf">Builder</span><span class="o">(</span><span class="kt">int</span> <span class="n">servingSize</span><span class="o">,</span> <span class="kt">int</span> <span class="n">servings</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">servingSize</span> <span class="o">=</span> <span class="n">servingSize</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">servings</span> <span class="o">=</span> <span class="n">servings</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="n">Builder</span> <span class="nf">calories</span><span class="o">(</span><span class="kt">int</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">calories</span> <span class="o">=</span> <span class="n">val</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="n">Builder</span> <span class="nf">fat</span><span class="o">(</span><span class="kt">int</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">fat</span> <span class="o">=</span> <span class="n">val</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="n">Builder</span> <span class="nf">sodium</span><span class="o">(</span><span class="kt">int</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sodium</span> <span class="o">=</span> <span class="n">val</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="n">Builder</span> <span class="nf">carbohydrate</span><span class="o">(</span><span class="kt">int</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">carbohydrate</span> <span class="o">=</span> <span class="n">val</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="n">NutritionFacts</span> <span class="nf">build</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nf">NutritionFacts</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="nf">NutritionFacts</span><span class="o">(</span><span class="n">Builder</span> <span class="n">builder</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">servingSize</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">servingSize</span><span class="o">;</span>
+        <span class="n">servings</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">servings</span><span class="o">;</span>
+        <span class="n">calories</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">calories</span><span class="o">;</span>
+        <span class="n">fat</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">fat</span><span class="o">;</span>
+        <span class="n">sodium</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">sodium</span><span class="o">;</span>
+        <span class="n">carbohydrate</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">carbohydrate</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BuilderPattern</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">NutritionFacts</span> <span class="n">n</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NutritionFacts</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">).</span><span class="na">calories</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+<p>NutritionFacts 객체는 변경이 불가능하고 모든 인자의 기본값이 한곳에 모여 있다. 그리고 빌더에 정의된 설정 매소드는 빌더 객체 자신을 반환하므로, 설정 매소드를 호출하는 코드는 쭉 이어서 쓸 수 있다. 또 작성하기도 쉽고 가독성도 뛰어나다.</p>
+
+<h2 id="빌더-패턴-단점">빌더 패턴 단점</h2>
+<p>객체를 만들려면 빌더 객체를 생성해야 한다는 것이다.  빌더 객체를 만드는 오버헤드가 문제가 안될 수 도있지만 성능이 중요한 상황에서는 고려해야한다.</p>
+
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/effective%20java/2017/09/14/builder-pattern/#" rel="contents">
+              더 읽어보기 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+        
+        
+        
+        
+          <div class="post-eof"></div>
+        
+      
+    </footer>
+  </article>
+
+  
+    
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/09/13/static-factory-method/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -607,7 +1904,7 @@ public으로 선언되지 않은 클래스의 객체를 반환하는 API를 만�
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-count">26</span>
                 <span class="site-state-item-name">포스트</span>
               </a>
             </div>

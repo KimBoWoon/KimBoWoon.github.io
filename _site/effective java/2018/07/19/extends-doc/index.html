@@ -111,17 +111,17 @@
 
 
 
-<meta name="description" content="접근자 메소드 어느 클래스는 필드만 가지고 있는 클래스가 있다. 이 클래스에는 접근자 메소드가 있어야 여러모로 좋다. 캡슐화의 이점을 누릴 수 없고 API를 변경하지 않고서는 내부 표현을 변경할 수도 없다. 또한 불변식도 강제할 수 없고, 필드를 사용하는 순간에 어떤 종작이 실행되록 만들 수도 없다. 그래서 다음과 같이 접근자 메소드를 가져야한다. public class Point { private double x; private double y; public Point(double x, double y) { this.x = x; this.y = y; } public getX() { return x; } public getY() { return y; } public setX(double x) { this.x = x; } public setY(double y) { this.y = y; } } 이렇게 만들어야 클래스 내부표현을 자유로이 수정할 수 있게 된다.">
+<meta name="description" content="상속을 위해서는 어떤 문서를 만들어야 할까? 오버라이딩이 되는 메소드에 대해서는 내부적으로 어떻게 사용하지 문서에 남겨야한다. 좀 더 세부적으로 어떤 메소드를 호출하고 어떤 결과를 반환하는지를 명시하면 좋다. Java Doc Example public boolean remove(Object o) Removes a single instance of the specified element from this collection, if it is present (optional operation). More formally, removes an element e such that (o==null ? e==null : o.equals(e)), if this collection contains one or more such elements. Returns true if this collection contained the specified element (or equivalently, if this collection changed as a result of the call). This implementation iterates over the collection looking for the specified element. If it finds the element, it removes the element from the collection using the iterator&apos;s remove method. Note that this implementation throws an UnsupportedOperationException if the iterator returned by this collection&apos;s iterator method does not implement the remove method and this collection contains the specified object. Specified by: remove in interface Collection&amp;lt;E&amp;gt; Parameters: o - element to be removed from this collection, if present Returns: true if an element was removed as a result of this call Throws: UnsupportedOperationException - if the remove operation is not supported by this collection ClassCastException - if the type of the specified element is incompatible with this collection (optional) NullPointerException - if the specified element is null and this collection does not permit null elements (optional) java8 버전에 있는 java.util.AbstractCollection에 remove 메소드이다. 메소드에 설명을 보면 어떤 예외가 발생할 수 있는지에 대한 명시가 제대로 적혀있다.">
 <meta name="keywords" content="Jekyll, NexT">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[Effective Java] public 클래스 안에는 public 필드를 두지 말고 접근자 메소드를 사용하라">
-<meta property="og:url" content="http://localhost:4000/effective%20java/2017/12/19/geter-seter/">
+<meta property="og:title" content="[Effective Java] 계승을 위한 설계와 문서를 갖추거나, 그럴 수 없다면 계승을 금지하라">
+<meta property="og:url" content="http://localhost:4000/effective%20java/2018/07/19/extends-doc/">
 <meta property="og:site_name" content="Notepad">
-<meta property="og:description" content="접근자 메소드 어느 클래스는 필드만 가지고 있는 클래스가 있다. 이 클래스에는 접근자 메소드가 있어야 여러모로 좋다. 캡슐화의 이점을 누릴 수 없고 API를 변경하지 않고서는 내부 표현을 변경할 수도 없다. 또한 불변식도 강제할 수 없고, 필드를 사용하는 순간에 어떤 종작이 실행되록 만들 수도 없다. 그래서 다음과 같이 접근자 메소드를 가져야한다. public class Point { private double x; private double y; public Point(double x, double y) { this.x = x; this.y = y; } public getX() { return x; } public getY() { return y; } public setX(double x) { this.x = x; } public setY(double y) { this.y = y; } } 이렇게 만들어야 클래스 내부표현을 자유로이 수정할 수 있게 된다.">
+<meta property="og:description" content="상속을 위해서는 어떤 문서를 만들어야 할까? 오버라이딩이 되는 메소드에 대해서는 내부적으로 어떻게 사용하지 문서에 남겨야한다. 좀 더 세부적으로 어떤 메소드를 호출하고 어떤 결과를 반환하는지를 명시하면 좋다. Java Doc Example public boolean remove(Object o) Removes a single instance of the specified element from this collection, if it is present (optional operation). More formally, removes an element e such that (o==null ? e==null : o.equals(e)), if this collection contains one or more such elements. Returns true if this collection contained the specified element (or equivalently, if this collection changed as a result of the call). This implementation iterates over the collection looking for the specified element. If it finds the element, it removes the element from the collection using the iterator&apos;s remove method. Note that this implementation throws an UnsupportedOperationException if the iterator returned by this collection&apos;s iterator method does not implement the remove method and this collection contains the specified object. Specified by: remove in interface Collection&amp;lt;E&amp;gt; Parameters: o - element to be removed from this collection, if present Returns: true if an element was removed as a result of this call Throws: UnsupportedOperationException - if the remove operation is not supported by this collection ClassCastException - if the type of the specified element is incompatible with this collection (optional) NullPointerException - if the specified element is null and this collection does not permit null elements (optional) java8 버전에 있는 java.util.AbstractCollection에 remove 메소드이다. 메소드에 설명을 보면 어떤 예외가 발생할 수 있는지에 대한 명시가 제대로 적혀있다.">
 <meta property="og:locale" content="ko">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="[Effective Java] public 클래스 안에는 public 필드를 두지 말고 접근자 메소드를 사용하라">
-<meta name="twitter:description" content="접근자 메소드 어느 클래스는 필드만 가지고 있는 클래스가 있다. 이 클래스에는 접근자 메소드가 있어야 여러모로 좋다. 캡슐화의 이점을 누릴 수 없고 API를 변경하지 않고서는 내부 표현을 변경할 수도 없다. 또한 불변식도 강제할 수 없고, 필드를 사용하는 순간에 어떤 종작이 실행되록 만들 수도 없다. 그래서 다음과 같이 접근자 메소드를 가져야한다. public class Point { private double x; private double y; public Point(double x, double y) { this.x = x; this.y = y; } public getX() { return x; } public getY() { return y; } public setX(double x) { this.x = x; } public setY(double y) { this.y = y; } } 이렇게 만들어야 클래스 내부표현을 자유로이 수정할 수 있게 된다.">
+<meta name="twitter:title" content="[Effective Java] 계승을 위한 설계와 문서를 갖추거나, 그럴 수 없다면 계승을 금지하라">
+<meta name="twitter:description" content="상속을 위해서는 어떤 문서를 만들어야 할까? 오버라이딩이 되는 메소드에 대해서는 내부적으로 어떻게 사용하지 문서에 남겨야한다. 좀 더 세부적으로 어떤 메소드를 호출하고 어떤 결과를 반환하는지를 명시하면 좋다. Java Doc Example public boolean remove(Object o) Removes a single instance of the specified element from this collection, if it is present (optional operation). More formally, removes an element e such that (o==null ? e==null : o.equals(e)), if this collection contains one or more such elements. Returns true if this collection contained the specified element (or equivalently, if this collection changed as a result of the call). This implementation iterates over the collection looking for the specified element. If it finds the element, it removes the element from the collection using the iterator&apos;s remove method. Note that this implementation throws an UnsupportedOperationException if the iterator returned by this collection&apos;s iterator method does not implement the remove method and this collection contains the specified object. Specified by: remove in interface Collection&amp;lt;E&amp;gt; Parameters: o - element to be removed from this collection, if present Returns: true if an element was removed as a result of this call Throws: UnsupportedOperationException - if the remove operation is not supported by this collection ClassCastException - if the type of the specified element is incompatible with this collection (optional) NullPointerException - if the specified element is null and this collection does not permit null elements (optional) java8 버전에 있는 java.util.AbstractCollection에 remove 메소드이다. 메소드에 설명을 보면 어떤 예외가 발생할 수 있는지에 대한 명시가 제대로 적혀있다.">
 
 
 <script type="text/javascript" id="hexo.configurations">
@@ -154,7 +154,7 @@
 
 
 
-  <title>[Effective Java] public 클래스 안에는 public 필드를 두지 말고 접근자 메소드를 사용하라</title>
+  <title>[Effective Java] 계승을 위한 설계와 문서를 갖추거나, 그럴 수 없다면 계승을 금지하라</title>
   
 
 
@@ -280,7 +280,7 @@
   
 
   <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/12/19/geter-seter/">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2018/07/19/extends-doc/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Kim BoWoon">
@@ -300,7 +300,7 @@
           <h1 class="post-title" itemprop="name headline">
           
           
-            [Effective Java] public 클래스 안에는 public 필드를 두지 말고 접근자 메소드를 사용하라
+            [Effective Java] 계승을 위한 설계와 문서를 갖추거나, 그럴 수 없다면 계승을 금지하라
           
         </h1>
         
@@ -314,8 +314,8 @@
               
                 <span class="post-meta-item-text">작성일</span>
               
-              <time title="" itemprop="dateCreated datePublished" datetime="2017-12-19T10:23:45+09:00">
-                2017-12-19
+              <time title="" itemprop="dateCreated datePublished" datetime="2018-07-19T10:23:45+09:00">
+                2018-07-19
               </time>
             
 
@@ -356,9 +356,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/effective%20java/2017/12/19/geter-seter/#comments" itemprop="discussionUrl">
+                <a href="/effective%20java/2018/07/19/extends-doc/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="/effective%20java/2017/12/19/geter-seter/" itemprop="commentCount"></span>
+                        data-disqus-identifier="/effective%20java/2018/07/19/extends-doc/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -389,36 +389,29 @@
       
 
       
-        <h1 id="접근자-메소드">접근자 메소드</h1>
-<p>어느 클래스는 필드만 가지고 있는 클래스가 있다. 이 클래스에는 접근자 메소드가 있어야 여러모로 좋다. 캡슐화의 이점을 누릴 수 없고 API를 변경하지 않고서는 내부 표현을 변경할 수도 없다. 또한 불변식도 강제할 수 없고, 필드를 사용하는 순간에 어떤 종작이 실행되록 만들 수도 없다. 그래서 다음과 같이 접근자 메소드를 가져야한다.</p>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Point</span> <span class="o">{</span>
-	<span class="kd">private</span> <span class="kt">double</span> <span class="n">x</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kt">double</span> <span class="n">y</span><span class="o">;</span>
-    
-    <span class="kd">public</span> <span class="nf">Point</span><span class="o">(</span><span class="kt">double</span> <span class="n">x</span><span class="o">,</span> <span class="kt">double</span> <span class="n">y</span><span class="o">)</span> <span class="o">{</span>
-    	<span class="k">this</span><span class="o">.</span><span class="na">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">;</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">;</span>
-    <span class="o">}</span>
-    
-    <span class="kd">public</span> <span class="nf">getX</span><span class="o">()</span> <span class="o">{</span>
-    	<span class="k">return</span> <span class="n">x</span><span class="o">;</span>
-    <span class="o">}</span>
-    
-    <span class="kd">public</span> <span class="nf">getY</span><span class="o">()</span> <span class="o">{</span>
-    	<span class="k">return</span> <span class="n">y</span><span class="o">;</span>
-    <span class="o">}</span>
-    
-    <span class="kd">public</span> <span class="nf">setX</span><span class="o">(</span><span class="kt">double</span> <span class="n">x</span><span class="o">)</span> <span class="o">{</span>
-    	<span class="k">this</span><span class="o">.</span><span class="na">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">;</span>
-    <span class="o">}</span>
-    
-    <span class="kd">public</span> <span class="nf">setY</span><span class="o">(</span><span class="kt">double</span> <span class="n">y</span><span class="o">)</span> <span class="o">{</span>
-    	<span class="k">this</span><span class="o">.</span><span class="na">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
+        <h1 id="상속을-위해서는-어떤-문서를-만들어야-할까">상속을 위해서는 어떤 문서를 만들어야 할까?</h1>
+<p>오버라이딩이 되는 메소드에 대해서는 내부적으로 어떻게 사용하지 문서에 남겨야한다. 좀 더 세부적으로 어떤 메소드를 호출하고 어떤 결과를 반환하는지를 명시하면 좋다.</p>
+
+<h1 id="java-doc-example">Java Doc Example</h1>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>public boolean remove(Object o)
+Removes a single instance of the specified element from this collection, if it is present (optional operation). More formally, removes an element e such that (o==null ? e==null : o.equals(e)), if this collection contains one or more such elements. Returns true if this collection contained the specified element (or equivalently, if this collection changed as a result of the call).
+This implementation iterates over the collection looking for the specified element. If it finds the element, it removes the element from the collection using the iterator's remove method.
+
+Note that this implementation throws an UnsupportedOperationException if the iterator returned by this collection's iterator method does not implement the remove method and this collection contains the specified object.
+
+Specified by:
+remove in interface Collection&lt;E&gt;
+Parameters:
+o - element to be removed from this collection, if present
+Returns:
+true if an element was removed as a result of this call
+Throws:
+UnsupportedOperationException - if the remove operation is not supported by this collection
+ClassCastException - if the type of the specified element is incompatible with this collection (optional)
+NullPointerException - if the specified element is null and this collection does not permit null elements (optional)
 </code></pre></div></div>
 
-<p>이렇게 만들어야 클래스 내부표현을 자유로이 수정할 수 있게 된다.</p>
+<p>java8 버전에 있는 java.util.AbstractCollection에 remove 메소드이다. 메소드에 설명을 보면 어떤 예외가 발생할 수 있는지에 대한 명시가 제대로 적혀있다.</p>
 
       
     </div>
@@ -458,18 +451,14 @@
         <div class="post-nav" id="post-nav-id">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/android/2018/03/31/android-jni/" rel="next" title="[Android] JNI 사용하기">
-                <i class="fa fa-chevron-left"></i> [Android] JNI 사용하기
-              </a>
-            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/effective%20java/2017/12/15/java-access/" rel="prev" title="[Effective Java] 클래스와 멤버의 접근 권한은 최소화하라">
-                [Effective Java] 클래스와 멤버의 접근 권한은 최소화하라 <i class="fa fa-chevron-right"></i>
+              <a href="/effective%20java/2018/07/18/extends-wrapper/" rel="prev" title="[Effective Java] 계승하는 대신 구성하라">
+                [Effective Java] 계승하는 대신 구성하라 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -619,7 +608,7 @@
             
               <div class="post-toc-content">
     <ol class=nav>
-      <li class="nav-item nav-level-1"> <a class="nav-link" href="#접근자-메소드"> <span class="nav-number">1</span> <span class="nav-text">접근자 메소드</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child">
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#상속을-위해서는-어떤-문서를-만들어야-할까"> <span class="nav-number">1</span> <span class="nav-text">상속을 위해서는 어떤 문서를 만들어야 할까?</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#java-doc-example"> <span class="nav-number">2</span> <span class="nav-text">Java Doc Example</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child">
     </ol>
   </div>
             
@@ -787,9 +776,9 @@
       
       <script type="text/javascript">
           var disqus_config = function () {
-              this.page.url = 'http://localhost:4000/effective%20java/2017/12/19/geter-seter/';
-              this.page.identifier = '/effective%20java/2017/12/19/geter-seter/';
-              this.page.title = '[Effective Java] public 클래스 안에는 public 필드를 두지 말고 접근자 메소드를 사용하라';
+              this.page.url = 'http://localhost:4000/effective%20java/2018/07/19/extends-doc/';
+              this.page.identifier = '/effective%20java/2018/07/19/extends-doc/';
+              this.page.title = '[Effective Java] 계승을 위한 설계와 문서를 갖추거나, 그럴 수 없다면 계승을 금지하라';
           };
           var d = document, s = d.createElement('script');
           s.src = 'https://kimbowoon.disqus.com/embed.js';
