@@ -1,0 +1,916 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next muse use-motion" lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Notepad" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="추상 클래스와 인터페이스 추상 클래스는 메소드의 구현부가 포함 될 수 있지만 인터페이스는 그렇지 않다. 좀 더 큰 차이는 추상 클래스는 구현하기 위해 상속을 필요로 하지만 인터페이스는 그렇지 않기 때문에 다중상속을 만들어 낼 수 있다. 믹스인(Mixin) 인터페이스는 믹스인을 정의하는 데 이상적이다. 믹스인이란 이미 사용중이던 클래스에 쉽게 붙여서 기능을 확장하는 것을 말한다. 예를 들어 가수를 표현하는 인터페이스와 작곡가를 표현하는 인터페이스가 있다고 하자. public interface Singer { AudioClip sing(Song s); } public interface Songwriter { Song compose(boolean hit); } 그런데 가수 가운데는 작곡가인 사람도 있다. 추상 클래스 대신 인터페이스를 사용해 자료형을 만들었으므로, 아무런 문법적 문제없이 Singer와 Songwriter를 동시에 구현하는 클래스를 만들 수 있다. public interface SingerSongwriter extends Singer, Songwriter { AudioClip strum(); void actSensitive(); } 추상 클래스와 인터페이스의 결합 추상 클래스와 인터페이스를 같이 사용하면 두개의 장점 모두 사용할 수 있다. 인터페이스는 자료혀을 정의하고 구현하는 일은 골격 구현 클래스에게 맡기면 된다. // 골격 구현 위에서 만들어진 완전한 List 구현 static List&amp;lt;Integer&amp;gt; intArrayAsList(final int[] a) { if (a == null) { throw new NullPointerException(); } return new AbstractList&amp;lt;Integer&amp;gt;() { public Integer get(int i) { return a[i]; } @Override public Integer set(int i, Integer val) { int oldVal = a[i]; a[i] = val; // auto unboxing return oldVal; // auto boxing } public int size() { return a.length; } } } 이미 존재하는 List 구현체가 프로그래머를 위해 어떤 일을 할 수 있ㅇㄹ지 알고 싶은 사람에게 아주 유용할 것이다. (위 코드는 성능면에서는 좋지 않다.) 골격 구현 클래스를 만드는 작업은 상대적으로 멍청해 보일지도 모르겠지만 단순한 작업이다. 우선 인터페이스를 살펴보고 다른 메서드를 구현할 때 쓸 기본 메서드들을 추려 낸다. 그리고 이 기본 메서드들을은 골격 구현 클래스에 추상 메서드로 선언하고, 나머지 메서드들은 실제로 구현해서 넣는다. // 골격 구현 public abstract class AbstractMapEntry&amp;lt;K, V&amp;gt; implements Map.Entry&amp;lt;K, V&amp;gt; { // 기본 메서드 public abstract K getKey(); public abstract V getValue(); // 변경 가능 맵에 들어갈 Entry는 이 메서드를 재정의해야 한다. public V setValue(V value) { throw new UnsupportedOperationException(); } // Map.Entry.equals의 일반 규약 구현 @Override public boolean equals(Object o) { if (o == this) { return true; } if (!(o instanceof Map.Entry)) { return false; } Map.Entry&amp;lt;?, ?&amp;gt; arg = (Map.Entry) o; return equals(getKey(), arg.getKey()) &amp;amp;&amp;amp; equals(getValue(), arg.getValue()); } private static boolean equals(Object o1, Object o2) { return (o1 == null) ? o2 == null : o1.equals(o2); } // Map.Entry.hashCode의 일반 규약 구현 @Override public int hashCode() { return hashCode(getKey()) ^ hashCode(getValue()); } private static int hashCode(Object obj) { return (obj == null) ? 0 : obj.hashCode(); } }">
+<meta name="keywords" content="Jekyll, NexT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Effective Java] 추상 클래스 대신 인터페이스를 사용하라">
+<meta property="og:url" content="http://localhost:4000/effective%20java/2018/12/11/use-interface/">
+<meta property="og:site_name" content="Notepad">
+<meta property="og:description" content="추상 클래스와 인터페이스 추상 클래스는 메소드의 구현부가 포함 될 수 있지만 인터페이스는 그렇지 않다. 좀 더 큰 차이는 추상 클래스는 구현하기 위해 상속을 필요로 하지만 인터페이스는 그렇지 않기 때문에 다중상속을 만들어 낼 수 있다. 믹스인(Mixin) 인터페이스는 믹스인을 정의하는 데 이상적이다. 믹스인이란 이미 사용중이던 클래스에 쉽게 붙여서 기능을 확장하는 것을 말한다. 예를 들어 가수를 표현하는 인터페이스와 작곡가를 표현하는 인터페이스가 있다고 하자. public interface Singer { AudioClip sing(Song s); } public interface Songwriter { Song compose(boolean hit); } 그런데 가수 가운데는 작곡가인 사람도 있다. 추상 클래스 대신 인터페이스를 사용해 자료형을 만들었으므로, 아무런 문법적 문제없이 Singer와 Songwriter를 동시에 구현하는 클래스를 만들 수 있다. public interface SingerSongwriter extends Singer, Songwriter { AudioClip strum(); void actSensitive(); } 추상 클래스와 인터페이스의 결합 추상 클래스와 인터페이스를 같이 사용하면 두개의 장점 모두 사용할 수 있다. 인터페이스는 자료혀을 정의하고 구현하는 일은 골격 구현 클래스에게 맡기면 된다. // 골격 구현 위에서 만들어진 완전한 List 구현 static List&amp;lt;Integer&amp;gt; intArrayAsList(final int[] a) { if (a == null) { throw new NullPointerException(); } return new AbstractList&amp;lt;Integer&amp;gt;() { public Integer get(int i) { return a[i]; } @Override public Integer set(int i, Integer val) { int oldVal = a[i]; a[i] = val; // auto unboxing return oldVal; // auto boxing } public int size() { return a.length; } } } 이미 존재하는 List 구현체가 프로그래머를 위해 어떤 일을 할 수 있ㅇㄹ지 알고 싶은 사람에게 아주 유용할 것이다. (위 코드는 성능면에서는 좋지 않다.) 골격 구현 클래스를 만드는 작업은 상대적으로 멍청해 보일지도 모르겠지만 단순한 작업이다. 우선 인터페이스를 살펴보고 다른 메서드를 구현할 때 쓸 기본 메서드들을 추려 낸다. 그리고 이 기본 메서드들을은 골격 구현 클래스에 추상 메서드로 선언하고, 나머지 메서드들은 실제로 구현해서 넣는다. // 골격 구현 public abstract class AbstractMapEntry&amp;lt;K, V&amp;gt; implements Map.Entry&amp;lt;K, V&amp;gt; { // 기본 메서드 public abstract K getKey(); public abstract V getValue(); // 변경 가능 맵에 들어갈 Entry는 이 메서드를 재정의해야 한다. public V setValue(V value) { throw new UnsupportedOperationException(); } // Map.Entry.equals의 일반 규약 구현 @Override public boolean equals(Object o) { if (o == this) { return true; } if (!(o instanceof Map.Entry)) { return false; } Map.Entry&amp;lt;?, ?&amp;gt; arg = (Map.Entry) o; return equals(getKey(), arg.getKey()) &amp;amp;&amp;amp; equals(getValue(), arg.getValue()); } private static boolean equals(Object o1, Object o2) { return (o1 == null) ? o2 == null : o1.equals(o2); } // Map.Entry.hashCode의 일반 규약 구현 @Override public int hashCode() { return hashCode(getKey()) ^ hashCode(getValue()); } private static int hashCode(Object obj) { return (obj == null) ? 0 : obj.hashCode(); } }">
+<meta property="og:locale" content="ko">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Effective Java] 추상 클래스 대신 인터페이스를 사용하라">
+<meta name="twitter:description" content="추상 클래스와 인터페이스 추상 클래스는 메소드의 구현부가 포함 될 수 있지만 인터페이스는 그렇지 않다. 좀 더 큰 차이는 추상 클래스는 구현하기 위해 상속을 필요로 하지만 인터페이스는 그렇지 않기 때문에 다중상속을 만들어 낼 수 있다. 믹스인(Mixin) 인터페이스는 믹스인을 정의하는 데 이상적이다. 믹스인이란 이미 사용중이던 클래스에 쉽게 붙여서 기능을 확장하는 것을 말한다. 예를 들어 가수를 표현하는 인터페이스와 작곡가를 표현하는 인터페이스가 있다고 하자. public interface Singer { AudioClip sing(Song s); } public interface Songwriter { Song compose(boolean hit); } 그런데 가수 가운데는 작곡가인 사람도 있다. 추상 클래스 대신 인터페이스를 사용해 자료형을 만들었으므로, 아무런 문법적 문제없이 Singer와 Songwriter를 동시에 구현하는 클래스를 만들 수 있다. public interface SingerSongwriter extends Singer, Songwriter { AudioClip strum(); void actSensitive(); } 추상 클래스와 인터페이스의 결합 추상 클래스와 인터페이스를 같이 사용하면 두개의 장점 모두 사용할 수 있다. 인터페이스는 자료혀을 정의하고 구현하는 일은 골격 구현 클래스에게 맡기면 된다. // 골격 구현 위에서 만들어진 완전한 List 구현 static List&amp;lt;Integer&amp;gt; intArrayAsList(final int[] a) { if (a == null) { throw new NullPointerException(); } return new AbstractList&amp;lt;Integer&amp;gt;() { public Integer get(int i) { return a[i]; } @Override public Integer set(int i, Integer val) { int oldVal = a[i]; a[i] = val; // auto unboxing return oldVal; // auto boxing } public int size() { return a.length; } } } 이미 존재하는 List 구현체가 프로그래머를 위해 어떤 일을 할 수 있ㅇㄹ지 알고 싶은 사람에게 아주 유용할 것이다. (위 코드는 성능면에서는 좋지 않다.) 골격 구현 클래스를 만드는 작업은 상대적으로 멍청해 보일지도 모르겠지만 단순한 작업이다. 우선 인터페이스를 살펴보고 다른 메서드를 구현할 때 쓸 기본 메서드들을 추려 낸다. 그리고 이 기본 메서드들을은 골격 구현 클래스에 추상 메서드로 선언하고, 나머지 메서드들은 실제로 구현해서 넣는다. // 골격 구현 public abstract class AbstractMapEntry&amp;lt;K, V&amp;gt; implements Map.Entry&amp;lt;K, V&amp;gt; { // 기본 메서드 public abstract K getKey(); public abstract V getValue(); // 변경 가능 맵에 들어갈 Entry는 이 메서드를 재정의해야 한다. public V setValue(V value) { throw new UnsupportedOperationException(); } // Map.Entry.equals의 일반 규약 구현 @Override public boolean equals(Object o) { if (o == this) { return true; } if (!(o instanceof Map.Entry)) { return false; } Map.Entry&amp;lt;?, ?&amp;gt; arg = (Map.Entry) o; return equals(getKey(), arg.getKey()) &amp;amp;&amp;amp; equals(getValue(), arg.getValue()); } private static boolean equals(Object o1, Object o2) { return (o1 == null) ? o2 == null : o1.equals(o2); } // Map.Entry.hashCode의 일반 규약 구현 @Override public int hashCode() { return hashCode(getKey()) ^ hashCode(getValue()); } private static int hashCode(Object obj) { return (obj == null) ? 0 : obj.hashCode(); } }">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '작성자'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>[Effective Java] 추상 클래스 대신 인터페이스를 사용하라</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="ko">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Notepad</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            홈
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            아카이브
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            태그
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2018/12/11/use-interface/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            [Effective Java] 추상 클래스 대신 인터페이스를 사용하라
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2018-12-11T23:54:36+09:00">
+                2018-12-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2018/12/11/use-interface/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2018/12/11/use-interface/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="추상-클래스와-인터페이스">추상 클래스와 인터페이스</h1>
+<p>추상 클래스는 메소드의 구현부가 포함 될 수 있지만 인터페이스는 그렇지 않다. 좀 더 큰 차이는 추상 클래스는 구현하기 위해 상속을 필요로 하지만 인터페이스는 그렇지 않기 때문에 다중상속을 만들어 낼 수 있다.</p>
+
+<h1 id="믹스인mixin">믹스인(Mixin)</h1>
+<p>인터페이스는 믹스인을 정의하는 데 이상적이다. 믹스인이란 이미 사용중이던 클래스에 쉽게 붙여서 기능을 확장하는 것을 말한다.
+예를 들어 가수를 표현하는 인터페이스와 작곡가를 표현하는 인터페이스가 있다고 하자.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Singer</span> <span class="o">{</span>
+    <span class="n">AudioClip</span> <span class="nf">sing</span><span class="o">(</span><span class="n">Song</span> <span class="n">s</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Songwriter</span> <span class="o">{</span>
+    <span class="n">Song</span> <span class="nf">compose</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">hit</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>그런데 가수 가운데는 작곡가인 사람도 있다. 추상 클래스 대신 인터페이스를 사용해 자료형을 만들었으므로, 아무런 문법적 문제없이 Singer와 Songwriter를 동시에 구현하는 클래스를 만들 수 있다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">SingerSongwriter</span> <span class="kd">extends</span> <span class="n">Singer</span><span class="o">,</span> <span class="n">Songwriter</span> <span class="o">{</span>
+    <span class="n">AudioClip</span> <span class="nf">strum</span><span class="o">();</span>
+    <span class="kt">void</span> <span class="nf">actSensitive</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h1 id="추상-클래스와-인터페이스의-결합">추상 클래스와 인터페이스의 결합</h1>
+<p>추상 클래스와 인터페이스를 같이 사용하면 두개의 장점 모두 사용할 수 있다. 인터페이스는 자료혀을 정의하고 구현하는 일은 골격 구현 클래스에게 맡기면 된다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 골격 구현 위에서 만들어진 완전한 List 구현</span>
+<span class="kd">static</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="nf">intArrayAsList</span><span class="o">(</span><span class="kd">final</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">a</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">NullPointerException</span><span class="o">();</span>
+    <span class="o">}</span>
+    
+    <span class="k">return</span> <span class="k">new</span> <span class="n">AbstractList</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;()</span> <span class="o">{</span>
+        <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">get</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">a</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+        <span class="o">}</span>
+        
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">set</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">,</span> <span class="n">Integer</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">oldVal</span> <span class="o">=</span> <span class="n">a</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+            <span class="n">a</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">;</span> <span class="c1">// auto unboxing</span>
+            <span class="k">return</span> <span class="n">oldVal</span><span class="o">;</span> <span class="c1">// auto boxing</span>
+        <span class="o">}</span>
+        
+        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">size</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>이미 존재하는 List 구현체가 프로그래머를 위해 어떤 일을 할 수 있ㅇㄹ지 알고 싶은 사람에게 아주 유용할 것이다. (위 코드는 성능면에서는 좋지 않다.)
+골격 구현 클래스를 만드는 작업은 상대적으로 멍청해 보일지도 모르겠지만 단순한 작업이다. 우선 인터페이스를 살펴보고 다른 메서드를 구현할 때 쓸 기본 메서드들을 추려 낸다. 그리고 이 기본 메서드들을은 골격 구현 클래스에 추상 메서드로 선언하고, 나머지 메서드들은 실제로 구현해서 넣는다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 골격 구현</span>
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractMapEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="c1">// 기본 메서드</span>
+    <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">K</span> <span class="nf">getKey</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">V</span> <span class="nf">getValue</span><span class="o">();</span>
+    
+    <span class="c1">// 변경 가능 맵에 들어갈 Entry는 이 메서드를 재정의해야 한다.</span>
+    <span class="kd">public</span> <span class="n">V</span> <span class="nf">setValue</span><span class="o">(</span><span class="n">V</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">UnsupportedOperationException</span><span class="o">();</span>
+    <span class="o">}</span>
+    
+    <span class="c1">// Map.Entry.equals의 일반 규약 구현</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="n">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="o">==</span> <span class="k">this</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+        
+        <span class="k">if</span> <span class="o">(!(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+        
+        <span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;?,</span> <span class="o">?&gt;</span> <span class="n">arg</span> <span class="o">=</span> <span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">)</span> <span class="n">o</span><span class="o">;</span>
+        
+        <span class="k">return</span> <span class="nf">equals</span><span class="o">(</span><span class="n">getKey</span><span class="o">(),</span> <span class="n">arg</span><span class="o">.</span><span class="na">getKey</span><span class="o">())</span> <span class="o">&amp;&amp;</span> <span class="n">equals</span><span class="o">(</span><span class="n">getValue</span><span class="o">(),</span> <span class="n">arg</span><span class="o">.</span><span class="na">getValue</span><span class="o">());</span>
+    <span class="o">}</span>
+    
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="n">Object</span> <span class="n">o1</span><span class="o">,</span> <span class="n">Object</span> <span class="n">o2</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">(</span><span class="n">o1</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">?</span> <span class="n">o2</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">:</span> <span class="n">o1</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">o2</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="c1">// Map.Entry.hashCode의 일반 규약 구현</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">hashCode</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">hashCode</span><span class="o">(</span><span class="n">getKey</span><span class="o">())</span> <span class="o">^</span> <span class="n">hashCode</span><span class="o">(</span><span class="n">getValue</span><span class="o">());</span>
+    <span class="o">}</span>
+    
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">hashCode</span><span class="o">(</span><span class="n">Object</span> <span class="n">obj</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">(</span><span class="n">obj</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="n">obj</span><span class="o">.</span><span class="na">hashCode</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/effective%20java/2018/07/19/extends-doc/" rel="prev" title="[Effective Java] 계승을 위한 설계와 문서를 갖추거나, 그럴 수 없다면 계승을 금지하라">
+                [Effective Java] 계승을 위한 설계와 문서를 갖추거나, 그럴 수 없다면 계승을 금지하라 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            목차
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            흝어보기
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/assets/images/avatar.gif"
+               alt="Kim BoWoon" />
+          <p class="site-author-name" itemprop="name">Kim BoWoon</p>
+           
+              <p class="site-description motion-element" itemprop="description">https://kimbowoon.github.io/</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">포스트</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">카테고리</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+        
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#추상-클래스와-인터페이스"> <span class="nav-number">1</span> <span class="nav-text">추상 클래스와 인터페이스</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#믹스인mixin"> <span class="nav-number">2</span> <span class="nav-text">믹스인(Mixin)</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#추상-클래스와-인터페이스의-결합"> <span class="nav-number">3</span> <span class="nav-text">추상 클래스와 인터페이스의 결합</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child">
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kim BoWoon</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://jekyllrb.com">Jekyll</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/simpleyyt/jekyll-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://kimbowoon.disqus.com/count.js" async></script>
+    
+
+    
+      
+      <script type="text/javascript">
+          var disqus_config = function () {
+              this.page.url = 'http://localhost:4000/effective%20java/2018/12/11/use-interface/';
+              this.page.identifier = '/effective%20java/2018/12/11/use-interface/';
+              this.page.title = '[Effective Java] 추상 클래스 대신 인터페이스를 사용하라';
+          };
+          var d = document, s = d.createElement('script');
+          s.src = 'https://kimbowoon.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', '' + +new Date());
+          (d.head || d.body).appendChild(s);
+      </script>
+      
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+
