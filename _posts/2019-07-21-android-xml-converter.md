@@ -6,11 +6,11 @@ categories:
 ---
 
 # xml parsing
-![그림](https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/retrofit-converter.png)
+![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/retrofit-converter.PNG)
 
 위 사진과 같이 retrofit에는 다양한 컨버터가 존재합니다. 다만 simple xml converter는 deprecated가 되었습니다.
 
-![그림](https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/simple-xml-converter-deprecated.png)
+![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/simple-xml-converter-deprecated.PNG)
 
 JAXB converter라는 다른 방법을 소개하기는 하지만 안드로이드에서는 작동을 안한다고 합니다.
 
