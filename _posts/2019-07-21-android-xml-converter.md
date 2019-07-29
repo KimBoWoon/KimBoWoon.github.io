@@ -6,11 +6,11 @@ categories:
 ---
 
 # xml parsing
-![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/retrofit-converter.PNG)
+![그림](https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/retrofit-converter.PNG)
 
 위 사진과 같이 retrofit에는 다양한 컨버터가 존재합니다. 다만 simple xml converter는 deprecated가 되었습니다.
 
-![그림](https://github.com/KimBoWoon/KimBoWoon.github.io/blob/master/_img/android/simple-xml-converter-deprecated.PNG)
+![그림](https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/simple-xml-converter-deprecated.PNG)
 
 JAXB converter라는 다른 방법을 소개하기는 하지만 안드로이드에서는 작동을 안한다고 합니다.
 
@@ -246,7 +246,7 @@ class MyDateConverter : TypeConverter<Date> {
 어댑터에서도 알수있듯이 fromXml에서 원하는 엘리먼트들을 파싱합니다. toXml에서는 xml을 만드는것 같은데 아직 사용해보지 않아서 모르겠습니다.
 
 # 주의점
-TikXml은 현재 0.8.15버전이 최신버전인데 이 버전에서 오류가 있어서 0.8.15를 사용할 수 없습니다. 그래서 0.8.13버전을 사용해야합니다. 오류 내용은 com.tickaroo.tikxml:retrofit-converter:0.8.15 이곳에 어노테이션 라이브러리가 첨부되지 않았다고 합니다. 해당 라이브러리에 이슈를 참조하면 자기들도 잘 모른다고 서술하고 있습니다.
+TikXml은 현재 0.8.15버전이 최신버전인데 이 버전에서 오류가 있어서 0.8.15를 사용할 수 없습니다. 그래서 0.8.13버전을 사용해야합니다. 오류 내용은 com.tickaroo.tikxml:retrofit-converter:0.8.15 이곳에 어노테이션 라이브러리가 첨부되지 않았다고 합니다. 해당 라이브러리에 이슈를 참조하면 자기들도 왜 포함이  잘 모른다고 서술하고 있습니다.
 
 # 참조
 * TikXml : https://github.com/Tickaroo/tikxml
