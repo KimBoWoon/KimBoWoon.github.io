@@ -5,6 +5,9 @@ categories:
 - Android
 ---
 
+# 수정(2019-10-28)
+- [TikXml Doc](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md)를 꼼꼼히 읽어보자. 꼼꼼하게 읽지 않아서 아래와 같이 멍청하게 코딩했다.
+
 # xml parsing
 ![그림](https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/retrofit-converter.PNG)
 
