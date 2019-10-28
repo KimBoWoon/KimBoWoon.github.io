@@ -1,0 +1,1073 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next muse use-motion" lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Notepad" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="수정(2019-10-28) TikXml Doc를 꼼꼼히 읽어보자. 꼼꼼하게 읽지 않아서 아래와 같이 멍청하게 코딩했다. xml parsing 위 사진과 같이 retrofit에는 다양한 컨버터가 존재합니다. 다만 simple xml converter는 deprecated가 되었습니다. JAXB converter라는 다른 방법을 소개하기는 하지만 안드로이드에서는 작동을 안한다고 합니다. 그래서 더 많은 정보를 찾아보았고 JakeWharton이 말하는 tikxml을 사용했습니다. TikXml 사용법은 간단(?)합니다. 기존에 사용하던 것처럼 retrofit에 컨버터를 추가하면 됩니다. 다만 필요하다면 사전에 TikXml 인스턴스를 만들어서 넘겨줘야합니다. 저는 rss를 파싱해서 제가 사용한 방법을 토대로 보여드리겠습니다. implementation &apos;com.tickaroo.tikxml:retrofit-converter:0.8.13&apos; 일단 gradle에 라이브러리를 추가합니다. val tikXml: TikXml = TikXml.Builder() .addTypeConverter(Date::class.java, MyDateConverter()) .addTypeAdapter(Rss::class.java, RssTypeAdapter()) .addTypeAdapter(Channel::class.java, ChannelTypeAdapter()) .addTypeAdapter(Image::class.java, ImageTypeAdapter()) .addTypeAdapter(Item::class.java, ItemTypeAdapter()) .build() val client: Retrofit = Retrofit.Builder() .baseUrl(BASE_URL) .addConverterFactory(TikXmlConverterFactory.create(tikXml)) .client(createOkHttpClient()) .build() 우선 TikXml 인스턴트를 만드는데 두 가지 옵션을 더 추가합니다. addTypeConverter는 파싱하기위해 변환이 필요한것들을 위한 컨버터를 추가하는 것이고 addTypeAdapter은 해당하는 xml에 대해 어떤 엘리먼트들을 파싱할건지 추가하는겁니다. @Xml data class Rss( @Attribute var version: String, @Element var channel: Channel ) { constructor() : this(&quot;&quot;, Channel()) } @Xml data class Channel( @PropertyElement var title: String, @PropertyElement var link: String, @PropertyElement var language: String, @PropertyElement var copyright: String, @PropertyElement var pubDate: String, @PropertyElement var lastBuildDate: String, @PropertyElement var description: String, @Element var image: Image, @PropertyElement var item: ArrayList&amp;lt;Item&amp;gt; ) { constructor() : this(&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, Image(), ArrayList&amp;lt;Item&amp;gt;()) } @Xml data class Image( @PropertyElement var title: String, @PropertyElement var url: String, @PropertyElement var link: String ) { constructor() : this(&quot;&quot;, &quot;&quot;, &quot;&quot;) } data class Item( @PropertyElement var title: String, @PropertyElement var link: String, @PropertyElement var description: String, @PropertyElement var author: String, @PropertyElement var pubDate: String, var ogTag: OGTag = OGTag() ) { constructor() : this(&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, OGTag()) } @Attribute는 엘리먼트들이 가진 속성을 추출하는것이고 @PropertyElement는 엘리먼트를 추출하는 어노테이션입니다. class RssTypeAdapter : TypeAdapter&amp;lt;Rss&amp;gt; { override fun fromXml(reader: XmlReader?, config: TikXmlConfig?): Rss { val rss = Rss() reader!!.nextAttributeName() rss.version = reader.nextAttributeValue() if (reader.hasElement()) { reader.beginElement() reader.nextElementName() val type = config!!.getTypeAdapter(Channel::class.java) rss.channel = type.fromXml(reader, config) reader.endElement() } return rss } override fun toXml(writer: XmlWriter?, config: TikXmlConfig?, value: Rss?, overridingXmlElementTagName: String?) { } } class ChannelTypeAdapter : TypeAdapter&amp;lt;Channel&amp;gt; { override fun fromXml(reader: XmlReader?, config: TikXmlConfig?): Channel { val channel: Channel = Channel() var type: TypeAdapter&amp;lt;*&amp;gt; while (reader!!.hasElement()) { reader.beginElement() when (reader.nextElementName()) { &quot;title&quot; -&amp;gt; channel.title = reader.nextTextContent() &quot;link&quot; -&amp;gt; channel.link = reader.nextTextContent() &quot;language&quot; -&amp;gt; channel.language = reader.nextTextContent() &quot;copyright&quot; -&amp;gt; channel.copyright = reader.nextTextContent() &quot;pubDate&quot; -&amp;gt; channel.pubDate = reader.nextTextContent() &quot;lastBuildDate&quot; -&amp;gt; channel.lastBuildDate = reader.nextTextContent() &quot;description&quot; -&amp;gt; channel.description = reader.nextTextContent() &quot;image&quot; -&amp;gt; { type = config!!.getTypeAdapter(Image::class.java) channel.image = type.fromXml(reader, config) } &quot;item&quot; -&amp;gt; { type = config!!.getTypeAdapter(Item::class.java) channel.item.add(type.fromXml(reader, config)) } else -&amp;gt; { Log.i(&quot;Channel&quot;, &quot;not found xml element&quot;) } } reader.endElement() } return channel } override fun toXml( writer: XmlWriter?, config: TikXmlConfig?, value: Channel?, overridingXmlElementTagName: String? ) { } } class ImageTypeAdapter : TypeAdapter&amp;lt;Image&amp;gt; { override fun fromXml(reader: XmlReader?, config: TikXmlConfig?): Image { val image: Image = Image() while (reader!!.hasElement()) { reader.beginElement() when (reader.nextElementName()) { &quot;title&quot; -&amp;gt; image.title = reader.nextTextContent() &quot;url&quot; -&amp;gt; image.url = reader.nextTextContent() &quot;link&quot; -&amp;gt; image.link = reader.nextTextContent() else -&amp;gt; { Log.i(&quot;Image&quot;, &quot;not found xml element&quot;) } } reader.endElement() } return image } override fun toXml(writer: XmlWriter?, config: TikXmlConfig?, value: Image?, overridingXmlElementTagName: String?) { } } class ItemTypeAdapter : TypeAdapter&amp;lt;Item&amp;gt; { override fun fromXml(reader: XmlReader?, config: TikXmlConfig?): Item { val item = Item() while (reader!!.hasElement()) { reader.beginElement() when (reader.nextElementName()) { &quot;title&quot; -&amp;gt; item.title = reader.nextTextContent() &quot;link&quot; -&amp;gt; item.link = reader.nextTextContent() &quot;description&quot; -&amp;gt; item.description = reader.nextTextContent() &quot;author&quot; -&amp;gt; item.author = reader.nextTextContent() &quot;pubDate&quot; -&amp;gt; item.pubDate = reader.nextTextContent() else -&amp;gt; { Log.i(&quot;Image&quot;, &quot;not found xml element&quot;) } } reader.endElement() } return item } override fun toXml( writer: XmlWriter?, config: TikXmlConfig?, value: Item?, overridingXmlElementTagName: String? ) { } } class MyDateConverter : TypeConverter&amp;lt;Date&amp;gt; { private val formatter = SimpleDateFormat(&quot;yyyy.MM.dd&quot;) @Throws(Exception::class) override fun read(value: String): Date { return formatter.parse(value) } @Throws(Exception::class) override fun write(value: Date): String { return formatter.format(value) } } 어댑터에서도 알수있듯이 fromXml에서 원하는 엘리먼트들을 파싱합니다. toXml에서는 xml을 만드는것 같은데 아직 사용해보지 않아서 모르겠습니다. 주의점 TikXml은 현재 0.8.15버전이 최신버전인데 이 버전에서 오류가 있어서 0.8.15를 사용할 수 없습니다. 그래서 0.8.13버전을 사용해야합니다. 오류 내용은 com.tickaroo.tikxml:retrofit-converter:0.8.15 이곳에 어노테이션 라이브러리가 첨부되지 않았다고 합니다. 해당 라이브러리에 이슈를 참조하면 자기들도 왜 포함이 잘 모른다고 서술하고 있습니다. 참조 TikXml : https://github.com/Tickaroo/tikxml TikXml 오류 이슈 : https://github.com/Tickaroo/tikxml/issues/115 simple xml converter deprecated : https://github.com/square/retrofit/issues/2733 TikXml Docment : https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md">
+<meta name="keywords" content="Jekyll, NexT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Android] Retrofit을 위한 xml converter">
+<meta property="og:url" content="http://localhost:4000/android/2019/07/22/android-xml-converter/">
+<meta property="og:site_name" content="Notepad">
+<meta property="og:description" content="수정(2019-10-28) TikXml Doc를 꼼꼼히 읽어보자. 꼼꼼하게 읽지 않아서 아래와 같이 멍청하게 코딩했다. xml parsing 위 사진과 같이 retrofit에는 다양한 컨버터가 존재합니다. 다만 simple xml converter는 deprecated가 되었습니다. JAXB converter라는 다른 방법을 소개하기는 하지만 안드로이드에서는 작동을 안한다고 합니다. 그래서 더 많은 정보를 찾아보았고 JakeWharton이 말하는 tikxml을 사용했습니다. TikXml 사용법은 간단(?)합니다. 기존에 사용하던 것처럼 retrofit에 컨버터를 추가하면 됩니다. 다만 필요하다면 사전에 TikXml 인스턴스를 만들어서 넘겨줘야합니다. 저는 rss를 파싱해서 제가 사용한 방법을 토대로 보여드리겠습니다. implementation &apos;com.tickaroo.tikxml:retrofit-converter:0.8.13&apos; 일단 gradle에 라이브러리를 추가합니다. val tikXml: TikXml = TikXml.Builder() .addTypeConverter(Date::class.java, MyDateConverter()) .addTypeAdapter(Rss::class.java, RssTypeAdapter()) .addTypeAdapter(Channel::class.java, ChannelTypeAdapter()) .addTypeAdapter(Image::class.java, ImageTypeAdapter()) .addTypeAdapter(Item::class.java, ItemTypeAdapter()) .build() val client: Retrofit = Retrofit.Builder() .baseUrl(BASE_URL) .addConverterFactory(TikXmlConverterFactory.create(tikXml)) .client(createOkHttpClient()) .build() 우선 TikXml 인스턴트를 만드는데 두 가지 옵션을 더 추가합니다. addTypeConverter는 파싱하기위해 변환이 필요한것들을 위한 컨버터를 추가하는 것이고 addTypeAdapter은 해당하는 xml에 대해 어떤 엘리먼트들을 파싱할건지 추가하는겁니다. @Xml data class Rss( @Attribute var version: String, @Element var channel: Channel ) { constructor() : this(&quot;&quot;, Channel()) } @Xml data class Channel( @PropertyElement var title: String, @PropertyElement var link: String, @PropertyElement var language: String, @PropertyElement var copyright: String, @PropertyElement var pubDate: String, @PropertyElement var lastBuildDate: String, @PropertyElement var description: String, @Element var image: Image, @PropertyElement var item: ArrayList&amp;lt;Item&amp;gt; ) { constructor() : this(&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, Image(), ArrayList&amp;lt;Item&amp;gt;()) } @Xml data class Image( @PropertyElement var title: String, @PropertyElement var url: String, @PropertyElement var link: String ) { constructor() : this(&quot;&quot;, &quot;&quot;, &quot;&quot;) } data class Item( @PropertyElement var title: String, @PropertyElement var link: String, @PropertyElement var description: String, @PropertyElement var author: String, @PropertyElement var pubDate: String, var ogTag: OGTag = OGTag() ) { constructor() : this(&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, OGTag()) } @Attribute는 엘리먼트들이 가진 속성을 추출하는것이고 @PropertyElement는 엘리먼트를 추출하는 어노테이션입니다. class RssTypeAdapter : TypeAdapter&amp;lt;Rss&amp;gt; { override fun fromXml(reader: XmlReader?, config: TikXmlConfig?): Rss { val rss = Rss() reader!!.nextAttributeName() rss.version = reader.nextAttributeValue() if (reader.hasElement()) { reader.beginElement() reader.nextElementName() val type = config!!.getTypeAdapter(Channel::class.java) rss.channel = type.fromXml(reader, config) reader.endElement() } return rss } override fun toXml(writer: XmlWriter?, config: TikXmlConfig?, value: Rss?, overridingXmlElementTagName: String?) { } } class ChannelTypeAdapter : TypeAdapter&amp;lt;Channel&amp;gt; { override fun fromXml(reader: XmlReader?, config: TikXmlConfig?): Channel { val channel: Channel = Channel() var type: TypeAdapter&amp;lt;*&amp;gt; while (reader!!.hasElement()) { reader.beginElement() when (reader.nextElementName()) { &quot;title&quot; -&amp;gt; channel.title = reader.nextTextContent() &quot;link&quot; -&amp;gt; channel.link = reader.nextTextContent() &quot;language&quot; -&amp;gt; channel.language = reader.nextTextContent() &quot;copyright&quot; -&amp;gt; channel.copyright = reader.nextTextContent() &quot;pubDate&quot; -&amp;gt; channel.pubDate = reader.nextTextContent() &quot;lastBuildDate&quot; -&amp;gt; channel.lastBuildDate = reader.nextTextContent() &quot;description&quot; -&amp;gt; channel.description = reader.nextTextContent() &quot;image&quot; -&amp;gt; { type = config!!.getTypeAdapter(Image::class.java) channel.image = type.fromXml(reader, config) } &quot;item&quot; -&amp;gt; { type = config!!.getTypeAdapter(Item::class.java) channel.item.add(type.fromXml(reader, config)) } else -&amp;gt; { Log.i(&quot;Channel&quot;, &quot;not found xml element&quot;) } } reader.endElement() } return channel } override fun toXml( writer: XmlWriter?, config: TikXmlConfig?, value: Channel?, overridingXmlElementTagName: String? ) { } } class ImageTypeAdapter : TypeAdapter&amp;lt;Image&amp;gt; { override fun fromXml(reader: XmlReader?, config: TikXmlConfig?): Image { val image: Image = Image() while (reader!!.hasElement()) { reader.beginElement() when (reader.nextElementName()) { &quot;title&quot; -&amp;gt; image.title = reader.nextTextContent() &quot;url&quot; -&amp;gt; image.url = reader.nextTextContent() &quot;link&quot; -&amp;gt; image.link = reader.nextTextContent() else -&amp;gt; { Log.i(&quot;Image&quot;, &quot;not found xml element&quot;) } } reader.endElement() } return image } override fun toXml(writer: XmlWriter?, config: TikXmlConfig?, value: Image?, overridingXmlElementTagName: String?) { } } class ItemTypeAdapter : TypeAdapter&amp;lt;Item&amp;gt; { override fun fromXml(reader: XmlReader?, config: TikXmlConfig?): Item { val item = Item() while (reader!!.hasElement()) { reader.beginElement() when (reader.nextElementName()) { &quot;title&quot; -&amp;gt; item.title = reader.nextTextContent() &quot;link&quot; -&amp;gt; item.link = reader.nextTextContent() &quot;description&quot; -&amp;gt; item.description = reader.nextTextContent() &quot;author&quot; -&amp;gt; item.author = reader.nextTextContent() &quot;pubDate&quot; -&amp;gt; item.pubDate = reader.nextTextContent() else -&amp;gt; { Log.i(&quot;Image&quot;, &quot;not found xml element&quot;) } } reader.endElement() } return item } override fun toXml( writer: XmlWriter?, config: TikXmlConfig?, value: Item?, overridingXmlElementTagName: String? ) { } } class MyDateConverter : TypeConverter&amp;lt;Date&amp;gt; { private val formatter = SimpleDateFormat(&quot;yyyy.MM.dd&quot;) @Throws(Exception::class) override fun read(value: String): Date { return formatter.parse(value) } @Throws(Exception::class) override fun write(value: Date): String { return formatter.format(value) } } 어댑터에서도 알수있듯이 fromXml에서 원하는 엘리먼트들을 파싱합니다. toXml에서는 xml을 만드는것 같은데 아직 사용해보지 않아서 모르겠습니다. 주의점 TikXml은 현재 0.8.15버전이 최신버전인데 이 버전에서 오류가 있어서 0.8.15를 사용할 수 없습니다. 그래서 0.8.13버전을 사용해야합니다. 오류 내용은 com.tickaroo.tikxml:retrofit-converter:0.8.15 이곳에 어노테이션 라이브러리가 첨부되지 않았다고 합니다. 해당 라이브러리에 이슈를 참조하면 자기들도 왜 포함이 잘 모른다고 서술하고 있습니다. 참조 TikXml : https://github.com/Tickaroo/tikxml TikXml 오류 이슈 : https://github.com/Tickaroo/tikxml/issues/115 simple xml converter deprecated : https://github.com/square/retrofit/issues/2733 TikXml Docment : https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md">
+<meta property="og:locale" content="ko">
+<meta property="og:image" content="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/retrofit-converter.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/simple-xml-converter-deprecated.PNG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Android] Retrofit을 위한 xml converter">
+<meta name="twitter:description" content="수정(2019-10-28) TikXml Doc를 꼼꼼히 읽어보자. 꼼꼼하게 읽지 않아서 아래와 같이 멍청하게 코딩했다. xml parsing 위 사진과 같이 retrofit에는 다양한 컨버터가 존재합니다. 다만 simple xml converter는 deprecated가 되었습니다. JAXB converter라는 다른 방법을 소개하기는 하지만 안드로이드에서는 작동을 안한다고 합니다. 그래서 더 많은 정보를 찾아보았고 JakeWharton이 말하는 tikxml을 사용했습니다. TikXml 사용법은 간단(?)합니다. 기존에 사용하던 것처럼 retrofit에 컨버터를 추가하면 됩니다. 다만 필요하다면 사전에 TikXml 인스턴스를 만들어서 넘겨줘야합니다. 저는 rss를 파싱해서 제가 사용한 방법을 토대로 보여드리겠습니다. implementation &apos;com.tickaroo.tikxml:retrofit-converter:0.8.13&apos; 일단 gradle에 라이브러리를 추가합니다. val tikXml: TikXml = TikXml.Builder() .addTypeConverter(Date::class.java, MyDateConverter()) .addTypeAdapter(Rss::class.java, RssTypeAdapter()) .addTypeAdapter(Channel::class.java, ChannelTypeAdapter()) .addTypeAdapter(Image::class.java, ImageTypeAdapter()) .addTypeAdapter(Item::class.java, ItemTypeAdapter()) .build() val client: Retrofit = Retrofit.Builder() .baseUrl(BASE_URL) .addConverterFactory(TikXmlConverterFactory.create(tikXml)) .client(createOkHttpClient()) .build() 우선 TikXml 인스턴트를 만드는데 두 가지 옵션을 더 추가합니다. addTypeConverter는 파싱하기위해 변환이 필요한것들을 위한 컨버터를 추가하는 것이고 addTypeAdapter은 해당하는 xml에 대해 어떤 엘리먼트들을 파싱할건지 추가하는겁니다. @Xml data class Rss( @Attribute var version: String, @Element var channel: Channel ) { constructor() : this(&quot;&quot;, Channel()) } @Xml data class Channel( @PropertyElement var title: String, @PropertyElement var link: String, @PropertyElement var language: String, @PropertyElement var copyright: String, @PropertyElement var pubDate: String, @PropertyElement var lastBuildDate: String, @PropertyElement var description: String, @Element var image: Image, @PropertyElement var item: ArrayList&amp;lt;Item&amp;gt; ) { constructor() : this(&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, Image(), ArrayList&amp;lt;Item&amp;gt;()) } @Xml data class Image( @PropertyElement var title: String, @PropertyElement var url: String, @PropertyElement var link: String ) { constructor() : this(&quot;&quot;, &quot;&quot;, &quot;&quot;) } data class Item( @PropertyElement var title: String, @PropertyElement var link: String, @PropertyElement var description: String, @PropertyElement var author: String, @PropertyElement var pubDate: String, var ogTag: OGTag = OGTag() ) { constructor() : this(&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, OGTag()) } @Attribute는 엘리먼트들이 가진 속성을 추출하는것이고 @PropertyElement는 엘리먼트를 추출하는 어노테이션입니다. class RssTypeAdapter : TypeAdapter&amp;lt;Rss&amp;gt; { override fun fromXml(reader: XmlReader?, config: TikXmlConfig?): Rss { val rss = Rss() reader!!.nextAttributeName() rss.version = reader.nextAttributeValue() if (reader.hasElement()) { reader.beginElement() reader.nextElementName() val type = config!!.getTypeAdapter(Channel::class.java) rss.channel = type.fromXml(reader, config) reader.endElement() } return rss } override fun toXml(writer: XmlWriter?, config: TikXmlConfig?, value: Rss?, overridingXmlElementTagName: String?) { } } class ChannelTypeAdapter : TypeAdapter&amp;lt;Channel&amp;gt; { override fun fromXml(reader: XmlReader?, config: TikXmlConfig?): Channel { val channel: Channel = Channel() var type: TypeAdapter&amp;lt;*&amp;gt; while (reader!!.hasElement()) { reader.beginElement() when (reader.nextElementName()) { &quot;title&quot; -&amp;gt; channel.title = reader.nextTextContent() &quot;link&quot; -&amp;gt; channel.link = reader.nextTextContent() &quot;language&quot; -&amp;gt; channel.language = reader.nextTextContent() &quot;copyright&quot; -&amp;gt; channel.copyright = reader.nextTextContent() &quot;pubDate&quot; -&amp;gt; channel.pubDate = reader.nextTextContent() &quot;lastBuildDate&quot; -&amp;gt; channel.lastBuildDate = reader.nextTextContent() &quot;description&quot; -&amp;gt; channel.description = reader.nextTextContent() &quot;image&quot; -&amp;gt; { type = config!!.getTypeAdapter(Image::class.java) channel.image = type.fromXml(reader, config) } &quot;item&quot; -&amp;gt; { type = config!!.getTypeAdapter(Item::class.java) channel.item.add(type.fromXml(reader, config)) } else -&amp;gt; { Log.i(&quot;Channel&quot;, &quot;not found xml element&quot;) } } reader.endElement() } return channel } override fun toXml( writer: XmlWriter?, config: TikXmlConfig?, value: Channel?, overridingXmlElementTagName: String? ) { } } class ImageTypeAdapter : TypeAdapter&amp;lt;Image&amp;gt; { override fun fromXml(reader: XmlReader?, config: TikXmlConfig?): Image { val image: Image = Image() while (reader!!.hasElement()) { reader.beginElement() when (reader.nextElementName()) { &quot;title&quot; -&amp;gt; image.title = reader.nextTextContent() &quot;url&quot; -&amp;gt; image.url = reader.nextTextContent() &quot;link&quot; -&amp;gt; image.link = reader.nextTextContent() else -&amp;gt; { Log.i(&quot;Image&quot;, &quot;not found xml element&quot;) } } reader.endElement() } return image } override fun toXml(writer: XmlWriter?, config: TikXmlConfig?, value: Image?, overridingXmlElementTagName: String?) { } } class ItemTypeAdapter : TypeAdapter&amp;lt;Item&amp;gt; { override fun fromXml(reader: XmlReader?, config: TikXmlConfig?): Item { val item = Item() while (reader!!.hasElement()) { reader.beginElement() when (reader.nextElementName()) { &quot;title&quot; -&amp;gt; item.title = reader.nextTextContent() &quot;link&quot; -&amp;gt; item.link = reader.nextTextContent() &quot;description&quot; -&amp;gt; item.description = reader.nextTextContent() &quot;author&quot; -&amp;gt; item.author = reader.nextTextContent() &quot;pubDate&quot; -&amp;gt; item.pubDate = reader.nextTextContent() else -&amp;gt; { Log.i(&quot;Image&quot;, &quot;not found xml element&quot;) } } reader.endElement() } return item } override fun toXml( writer: XmlWriter?, config: TikXmlConfig?, value: Item?, overridingXmlElementTagName: String? ) { } } class MyDateConverter : TypeConverter&amp;lt;Date&amp;gt; { private val formatter = SimpleDateFormat(&quot;yyyy.MM.dd&quot;) @Throws(Exception::class) override fun read(value: String): Date { return formatter.parse(value) } @Throws(Exception::class) override fun write(value: Date): String { return formatter.format(value) } } 어댑터에서도 알수있듯이 fromXml에서 원하는 엘리먼트들을 파싱합니다. toXml에서는 xml을 만드는것 같은데 아직 사용해보지 않아서 모르겠습니다. 주의점 TikXml은 현재 0.8.15버전이 최신버전인데 이 버전에서 오류가 있어서 0.8.15를 사용할 수 없습니다. 그래서 0.8.13버전을 사용해야합니다. 오류 내용은 com.tickaroo.tikxml:retrofit-converter:0.8.15 이곳에 어노테이션 라이브러리가 첨부되지 않았다고 합니다. 해당 라이브러리에 이슈를 참조하면 자기들도 왜 포함이 잘 모른다고 서술하고 있습니다. 참조 TikXml : https://github.com/Tickaroo/tikxml TikXml 오류 이슈 : https://github.com/Tickaroo/tikxml/issues/115 simple xml converter deprecated : https://github.com/square/retrofit/issues/2733 TikXml Docment : https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/retrofit-converter.PNG">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '작성자'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>[Android] Retrofit을 위한 xml converter</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="ko">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Notepad</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            홈
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            아카이브
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            태그
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/android/2019/07/22/android-xml-converter/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            [Android] Retrofit을 위한 xml converter
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2019-07-22T00:48:41+09:00">
+                2019-07-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Android" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/android/2019/07/22/android-xml-converter/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/android/2019/07/22/android-xml-converter/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="수정2019-10-28">수정(2019-10-28)</h1>
+<ul>
+  <li><a href="https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md">TikXml Doc</a>를 꼼꼼히 읽어보자. 꼼꼼하게 읽지 않아서 아래와 같이 멍청하게 코딩했다.</li>
+</ul>
+
+<h1 id="xml-parsing">xml parsing</h1>
+<p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/retrofit-converter.PNG" alt="그림" /></p>
+
+<p>위 사진과 같이 retrofit에는 다양한 컨버터가 존재합니다. 다만 simple xml converter는 deprecated가 되었습니다.</p>
+
+<p><img src="https://raw.githubusercontent.com/KimBoWoon/KimBoWoon.github.io/master/_img/android/simple-xml-converter-deprecated.PNG" alt="그림" /></p>
+
+<p>JAXB converter라는 다른 방법을 소개하기는 하지만 안드로이드에서는 작동을 안한다고 합니다.</p>
+
+<p>그래서 더 많은 정보를 찾아보았고 JakeWharton이 말하는 tikxml을 사용했습니다.</p>
+
+<h1 id="tikxml">TikXml</h1>
+<p>사용법은 간단(?)합니다. 기존에 사용하던 것처럼 retrofit에 컨버터를 추가하면 됩니다. 다만 필요하다면 사전에 TikXml 인스턴스를 만들어서 넘겨줘야합니다.
+저는 rss를 파싱해서 제가 사용한 방법을 토대로 보여드리겠습니다.</p>
+
+<div class="language-gradle highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">implementation</span> <span class="s1">'com.tickaroo.tikxml:retrofit-converter:0.8.13'</span>
+</code></pre></div></div>
+
+<p>일단 gradle에 라이브러리를 추가합니다.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">tikXml</span><span class="p">:</span> <span class="nc">TikXml</span> <span class="p">=</span> <span class="nc">TikXml</span><span class="p">.</span><span class="nc">Builder</span><span class="p">()</span>
+    <span class="p">.</span><span class="nf">addTypeConverter</span><span class="p">(</span><span class="nc">Date</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">java</span><span class="p">,</span> <span class="nc">MyDateConverter</span><span class="p">())</span>
+    <span class="p">.</span><span class="nf">addTypeAdapter</span><span class="p">(</span><span class="nc">Rss</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">java</span><span class="p">,</span> <span class="nc">RssTypeAdapter</span><span class="p">())</span>
+    <span class="p">.</span><span class="nf">addTypeAdapter</span><span class="p">(</span><span class="nc">Channel</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">java</span><span class="p">,</span> <span class="nc">ChannelTypeAdapter</span><span class="p">())</span>
+    <span class="p">.</span><span class="nf">addTypeAdapter</span><span class="p">(</span><span class="nc">Image</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">java</span><span class="p">,</span> <span class="nc">ImageTypeAdapter</span><span class="p">())</span>
+    <span class="p">.</span><span class="nf">addTypeAdapter</span><span class="p">(</span><span class="nc">Item</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">java</span><span class="p">,</span> <span class="nc">ItemTypeAdapter</span><span class="p">())</span>
+    <span class="p">.</span><span class="nf">build</span><span class="p">()</span>
+
+<span class="kd">val</span> <span class="py">client</span><span class="p">:</span> <span class="nc">Retrofit</span> <span class="p">=</span> <span class="nc">Retrofit</span><span class="p">.</span><span class="nc">Builder</span><span class="p">()</span>
+    <span class="p">.</span><span class="nf">baseUrl</span><span class="p">(</span><span class="nc">BASE_URL</span><span class="p">)</span>
+    <span class="p">.</span><span class="nf">addConverterFactory</span><span class="p">(</span><span class="nc">TikXmlConverterFactory</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="n">tikXml</span><span class="p">))</span>
+    <span class="p">.</span><span class="nf">client</span><span class="p">(</span><span class="nf">createOkHttpClient</span><span class="p">())</span>
+    <span class="p">.</span><span class="nf">build</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>우선 TikXml 인스턴트를 만드는데 두 가지 옵션을 더 추가합니다. addTypeConverter는 파싱하기위해 변환이 필요한것들을 위한 컨버터를 추가하는 것이고 addTypeAdapter은 해당하는 xml에 대해 어떤 엘리먼트들을 파싱할건지 추가하는겁니다.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Xml</span>
+<span class="kd">data class</span> <span class="nc">Rss</span><span class="p">(</span>
+    <span class="nd">@Attribute</span>
+    <span class="kd">var</span> <span class="py">version</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@Element</span>
+    <span class="kd">var</span> <span class="py">channel</span><span class="p">:</span> <span class="nc">Channel</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="k">constructor</span><span class="p">()</span> <span class="p">:</span> <span class="k">this</span><span class="p">(</span><span class="s">""</span><span class="p">,</span> <span class="nc">Channel</span><span class="p">())</span>
+<span class="p">}</span>
+
+<span class="nd">@Xml</span>
+<span class="kd">data class</span> <span class="nc">Channel</span><span class="p">(</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">title</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">link</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">language</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">copyright</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">pubDate</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">lastBuildDate</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">description</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@Element</span>
+    <span class="kd">var</span> <span class="py">image</span><span class="p">:</span> <span class="nc">Image</span><span class="p">,</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">item</span><span class="p">:</span> <span class="nc">ArrayList</span><span class="p">&lt;</span><span class="nc">Item</span><span class="p">&gt;</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="k">constructor</span><span class="p">()</span> <span class="p">:</span> <span class="k">this</span><span class="p">(</span><span class="s">""</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="nc">Image</span><span class="p">(),</span> <span class="nc">ArrayList</span><span class="p">&lt;</span><span class="nc">Item</span><span class="p">&gt;())</span>
+<span class="p">}</span>
+
+<span class="nd">@Xml</span>
+<span class="kd">data class</span> <span class="nc">Image</span><span class="p">(</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">title</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">url</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">link</span><span class="p">:</span> <span class="nc">String</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="k">constructor</span><span class="p">()</span> <span class="p">:</span> <span class="k">this</span><span class="p">(</span><span class="s">""</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">""</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">data class</span> <span class="nc">Item</span><span class="p">(</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">title</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">link</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">description</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">author</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="nd">@PropertyElement</span>
+    <span class="kd">var</span> <span class="py">pubDate</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+    <span class="kd">var</span> <span class="py">ogTag</span><span class="p">:</span> <span class="nc">OGTag</span> <span class="p">=</span> <span class="nc">OGTag</span><span class="p">()</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="k">constructor</span><span class="p">()</span> <span class="p">:</span> <span class="k">this</span><span class="p">(</span><span class="s">""</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="nc">OGTag</span><span class="p">())</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>@Attribute는 엘리먼트들이 가진 속성을 추출하는것이고 @PropertyElement는 엘리먼트를 추출하는 어노테이션입니다.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">RssTypeAdapter</span> <span class="p">:</span> <span class="nc">TypeAdapter</span><span class="p">&lt;</span><span class="nc">Rss</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">fromXml</span><span class="p">(</span><span class="n">reader</span><span class="p">:</span> <span class="nc">XmlReader</span><span class="p">?,</span> <span class="n">config</span><span class="p">:</span> <span class="nc">TikXmlConfig</span><span class="p">?):</span> <span class="nc">Rss</span> <span class="p">{</span>
+        <span class="kd">val</span> <span class="py">rss</span> <span class="p">=</span> <span class="nc">Rss</span><span class="p">()</span>
+        <span class="n">reader</span><span class="o">!!</span><span class="p">.</span><span class="nf">nextAttributeName</span><span class="p">()</span>
+        <span class="n">rss</span><span class="p">.</span><span class="n">version</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextAttributeValue</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">reader</span><span class="p">.</span><span class="nf">hasElement</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">reader</span><span class="p">.</span><span class="nf">beginElement</span><span class="p">()</span>
+            <span class="n">reader</span><span class="p">.</span><span class="nf">nextElementName</span><span class="p">()</span>
+            <span class="kd">val</span> <span class="py">type</span> <span class="p">=</span> <span class="n">config</span><span class="o">!!</span><span class="p">.</span><span class="nf">getTypeAdapter</span><span class="p">(</span><span class="nc">Channel</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">java</span><span class="p">)</span>
+            <span class="n">rss</span><span class="p">.</span><span class="n">channel</span> <span class="p">=</span> <span class="n">type</span><span class="p">.</span><span class="nf">fromXml</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+            <span class="n">reader</span><span class="p">.</span><span class="nf">endElement</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">rss</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">toXml</span><span class="p">(</span><span class="n">writer</span><span class="p">:</span> <span class="nc">XmlWriter</span><span class="p">?,</span> <span class="n">config</span><span class="p">:</span> <span class="nc">TikXmlConfig</span><span class="p">?,</span> <span class="n">value</span><span class="p">:</span> <span class="nc">Rss</span><span class="p">?,</span> <span class="n">overridingXmlElementTagName</span><span class="p">:</span> <span class="nc">String</span><span class="p">?)</span> <span class="p">{</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">ChannelTypeAdapter</span> <span class="p">:</span> <span class="nc">TypeAdapter</span><span class="p">&lt;</span><span class="nc">Channel</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">fromXml</span><span class="p">(</span><span class="n">reader</span><span class="p">:</span> <span class="nc">XmlReader</span><span class="p">?,</span> <span class="n">config</span><span class="p">:</span> <span class="nc">TikXmlConfig</span><span class="p">?):</span> <span class="nc">Channel</span> <span class="p">{</span>
+        <span class="kd">val</span> <span class="py">channel</span><span class="p">:</span> <span class="nc">Channel</span> <span class="p">=</span> <span class="nc">Channel</span><span class="p">()</span>
+        <span class="kd">var</span> <span class="py">type</span><span class="p">:</span> <span class="nc">TypeAdapter</span><span class="p">&lt;</span><span class="err">*</span><span class="p">&gt;</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="n">reader</span><span class="o">!!</span><span class="p">.</span><span class="nf">hasElement</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">reader</span><span class="p">.</span><span class="nf">beginElement</span><span class="p">()</span>
+
+            <span class="k">when</span> <span class="p">(</span><span class="n">reader</span><span class="p">.</span><span class="nf">nextElementName</span><span class="p">())</span> <span class="p">{</span>
+                <span class="s">"title"</span> <span class="p">-&gt;</span> <span class="n">channel</span><span class="p">.</span><span class="n">title</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="s">"link"</span> <span class="p">-&gt;</span> <span class="n">channel</span><span class="p">.</span><span class="n">link</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="s">"language"</span> <span class="p">-&gt;</span> <span class="n">channel</span><span class="p">.</span><span class="n">language</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="s">"copyright"</span> <span class="p">-&gt;</span> <span class="n">channel</span><span class="p">.</span><span class="n">copyright</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="s">"pubDate"</span> <span class="p">-&gt;</span> <span class="n">channel</span><span class="p">.</span><span class="n">pubDate</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="s">"lastBuildDate"</span> <span class="p">-&gt;</span> <span class="n">channel</span><span class="p">.</span><span class="n">lastBuildDate</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="s">"description"</span> <span class="p">-&gt;</span> <span class="n">channel</span><span class="p">.</span><span class="n">description</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="s">"image"</span> <span class="p">-&gt;</span> <span class="p">{</span>
+                    <span class="n">type</span> <span class="p">=</span> <span class="n">config</span><span class="o">!!</span><span class="p">.</span><span class="nf">getTypeAdapter</span><span class="p">(</span><span class="nc">Image</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">java</span><span class="p">)</span>
+                    <span class="n">channel</span><span class="p">.</span><span class="n">image</span> <span class="p">=</span> <span class="n">type</span><span class="p">.</span><span class="nf">fromXml</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+                <span class="p">}</span>
+                <span class="s">"item"</span> <span class="p">-&gt;</span> <span class="p">{</span>
+                    <span class="n">type</span> <span class="p">=</span> <span class="n">config</span><span class="o">!!</span><span class="p">.</span><span class="nf">getTypeAdapter</span><span class="p">(</span><span class="nc">Item</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">java</span><span class="p">)</span>
+                    <span class="n">channel</span><span class="p">.</span><span class="n">item</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">type</span><span class="p">.</span><span class="nf">fromXml</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">config</span><span class="p">))</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">-&gt;</span> <span class="p">{</span>
+                    <span class="nc">Log</span><span class="p">.</span><span class="nf">i</span><span class="p">(</span><span class="s">"Channel"</span><span class="p">,</span> <span class="s">"not found xml element"</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="n">reader</span><span class="p">.</span><span class="nf">endElement</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">channel</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">toXml</span><span class="p">(</span>
+        <span class="n">writer</span><span class="p">:</span> <span class="nc">XmlWriter</span><span class="p">?,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="nc">TikXmlConfig</span><span class="p">?,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nc">Channel</span><span class="p">?,</span>
+        <span class="n">overridingXmlElementTagName</span><span class="p">:</span> <span class="nc">String</span><span class="p">?</span>
+    <span class="p">)</span> <span class="p">{</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">ImageTypeAdapter</span> <span class="p">:</span> <span class="nc">TypeAdapter</span><span class="p">&lt;</span><span class="nc">Image</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">fromXml</span><span class="p">(</span><span class="n">reader</span><span class="p">:</span> <span class="nc">XmlReader</span><span class="p">?,</span> <span class="n">config</span><span class="p">:</span> <span class="nc">TikXmlConfig</span><span class="p">?):</span> <span class="nc">Image</span> <span class="p">{</span>
+        <span class="kd">val</span> <span class="py">image</span><span class="p">:</span> <span class="nc">Image</span> <span class="p">=</span> <span class="nc">Image</span><span class="p">()</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">reader</span><span class="o">!!</span><span class="p">.</span><span class="nf">hasElement</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">reader</span><span class="p">.</span><span class="nf">beginElement</span><span class="p">()</span>
+            <span class="k">when</span> <span class="p">(</span><span class="n">reader</span><span class="p">.</span><span class="nf">nextElementName</span><span class="p">())</span> <span class="p">{</span>
+                <span class="s">"title"</span> <span class="p">-&gt;</span> <span class="n">image</span><span class="p">.</span><span class="n">title</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="s">"url"</span> <span class="p">-&gt;</span> <span class="n">image</span><span class="p">.</span><span class="n">url</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="s">"link"</span> <span class="p">-&gt;</span> <span class="n">image</span><span class="p">.</span><span class="n">link</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="k">else</span> <span class="p">-&gt;</span> <span class="p">{</span>
+                    <span class="nc">Log</span><span class="p">.</span><span class="nf">i</span><span class="p">(</span><span class="s">"Image"</span><span class="p">,</span> <span class="s">"not found xml element"</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="n">reader</span><span class="p">.</span><span class="nf">endElement</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">image</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">toXml</span><span class="p">(</span><span class="n">writer</span><span class="p">:</span> <span class="nc">XmlWriter</span><span class="p">?,</span> <span class="n">config</span><span class="p">:</span> <span class="nc">TikXmlConfig</span><span class="p">?,</span> <span class="n">value</span><span class="p">:</span> <span class="nc">Image</span><span class="p">?,</span> <span class="n">overridingXmlElementTagName</span><span class="p">:</span> <span class="nc">String</span><span class="p">?)</span> <span class="p">{</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">ItemTypeAdapter</span> <span class="p">:</span> <span class="nc">TypeAdapter</span><span class="p">&lt;</span><span class="nc">Item</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">fromXml</span><span class="p">(</span><span class="n">reader</span><span class="p">:</span> <span class="nc">XmlReader</span><span class="p">?,</span> <span class="n">config</span><span class="p">:</span> <span class="nc">TikXmlConfig</span><span class="p">?):</span> <span class="nc">Item</span> <span class="p">{</span>
+        <span class="kd">val</span> <span class="py">item</span> <span class="p">=</span> <span class="nc">Item</span><span class="p">()</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">reader</span><span class="o">!!</span><span class="p">.</span><span class="nf">hasElement</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">reader</span><span class="p">.</span><span class="nf">beginElement</span><span class="p">()</span>
+            <span class="k">when</span> <span class="p">(</span><span class="n">reader</span><span class="p">.</span><span class="nf">nextElementName</span><span class="p">())</span> <span class="p">{</span>
+                <span class="s">"title"</span> <span class="p">-&gt;</span> <span class="n">item</span><span class="p">.</span><span class="n">title</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="s">"link"</span> <span class="p">-&gt;</span> <span class="n">item</span><span class="p">.</span><span class="n">link</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="s">"description"</span> <span class="p">-&gt;</span> <span class="n">item</span><span class="p">.</span><span class="n">description</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="s">"author"</span> <span class="p">-&gt;</span> <span class="n">item</span><span class="p">.</span><span class="n">author</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="s">"pubDate"</span> <span class="p">-&gt;</span> <span class="n">item</span><span class="p">.</span><span class="n">pubDate</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">nextTextContent</span><span class="p">()</span>
+                <span class="k">else</span> <span class="p">-&gt;</span> <span class="p">{</span>
+                    <span class="nc">Log</span><span class="p">.</span><span class="nf">i</span><span class="p">(</span><span class="s">"Image"</span><span class="p">,</span> <span class="s">"not found xml element"</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="n">reader</span><span class="p">.</span><span class="nf">endElement</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">item</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">toXml</span><span class="p">(</span>
+        <span class="n">writer</span><span class="p">:</span> <span class="nc">XmlWriter</span><span class="p">?,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="nc">TikXmlConfig</span><span class="p">?,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nc">Item</span><span class="p">?,</span>
+        <span class="n">overridingXmlElementTagName</span><span class="p">:</span> <span class="nc">String</span><span class="p">?</span>
+    <span class="p">)</span> <span class="p">{</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">MyDateConverter</span> <span class="p">:</span> <span class="nc">TypeConverter</span><span class="p">&lt;</span><span class="nc">Date</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">formatter</span> <span class="p">=</span> <span class="nc">SimpleDateFormat</span><span class="p">(</span><span class="s">"yyyy.MM.dd"</span><span class="p">)</span>
+
+    <span class="nd">@Throws</span><span class="p">(</span><span class="nc">Exception</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">read</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="nc">Date</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">formatter</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Throws</span><span class="p">(</span><span class="nc">Exception</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">write</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nc">Date</span><span class="p">):</span> <span class="nc">String</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">formatter</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>어댑터에서도 알수있듯이 fromXml에서 원하는 엘리먼트들을 파싱합니다. toXml에서는 xml을 만드는것 같은데 아직 사용해보지 않아서 모르겠습니다.</p>
+
+<h1 id="주의점">주의점</h1>
+<p>TikXml은 현재 0.8.15버전이 최신버전인데 이 버전에서 오류가 있어서 0.8.15를 사용할 수 없습니다. 그래서 0.8.13버전을 사용해야합니다. 오류 내용은 com.tickaroo.tikxml:retrofit-converter:0.8.15 이곳에 어노테이션 라이브러리가 첨부되지 않았다고 합니다. 해당 라이브러리에 이슈를 참조하면 자기들도 왜 포함이  잘 모른다고 서술하고 있습니다.</p>
+
+<h1 id="참조">참조</h1>
+<ul>
+  <li>TikXml : https://github.com/Tickaroo/tikxml</li>
+  <li>TikXml 오류 이슈 : https://github.com/Tickaroo/tikxml/issues/115</li>
+  <li>simple xml converter deprecated : https://github.com/square/retrofit/issues/2733</li>
+  <li>TikXml Docment : https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/effective%20java/2019/06/06/member-class-static/" rel="prev" title="[Effective Java] 멤버 클래스는 가능하면 static으로 선언하라">
+                [Effective Java] 멤버 클래스는 가능하면 static으로 선언하라 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            목차
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            흝어보기
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/assets/images/avatar.gif"
+               alt="Kim BoWoon" />
+          <p class="site-author-name" itemprop="name">Kim BoWoon</p>
+           
+              <p class="site-description motion-element" itemprop="description">https://kimbowoon.github.io/</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">포스트</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">카테고리</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+        
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#수정2019-10-28"> <span class="nav-number">1</span> <span class="nav-text">수정(2019-10-28)</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#xml-parsing"> <span class="nav-number">2</span> <span class="nav-text">xml parsing</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#tikxml"> <span class="nav-number">3</span> <span class="nav-text">TikXml</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#주의점"> <span class="nav-number">4</span> <span class="nav-text">주의점</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#참조"> <span class="nav-number">5</span> <span class="nav-text">참조</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child">
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kim BoWoon</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://jekyllrb.com">Jekyll</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/simpleyyt/jekyll-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://kimbowoon.disqus.com/count.js" async></script>
+    
+
+    
+      
+      <script type="text/javascript">
+          var disqus_config = function () {
+              this.page.url = 'http://localhost:4000/android/2019/07/22/android-xml-converter/';
+              this.page.identifier = '/android/2019/07/22/android-xml-converter/';
+              this.page.title = '[Android] Retrofit을 위한 xml converter';
+          };
+          var d = document, s = d.createElement('script');
+          s.src = 'https://kimbowoon.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', '' + +new Date());
+          (d.head || d.body).appendChild(s);
+      </script>
+      
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+

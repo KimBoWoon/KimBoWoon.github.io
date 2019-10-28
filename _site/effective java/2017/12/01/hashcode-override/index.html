@@ -394,11 +394,11 @@
 
 <h1 id="문제점">문제점</h1>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HashCodeOverride</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">Map</span><span class="o">&lt;</span><span class="n">PhoneNumber</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">m</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">PhoneNumber</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;();</span>
-        <span class="n">m</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="k">new</span> <span class="n">PhoneNumber</span><span class="o">(</span><span class="mi">707</span><span class="o">,</span> <span class="mi">867</span><span class="o">,</span> <span class="mi">5309</span><span class="o">),</span> <span class="s">"Jenny"</span><span class="o">);</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">PhoneNumber</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">m</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;</span><span class="nc">PhoneNumber</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;();</span>
+        <span class="n">m</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="k">new</span> <span class="nc">PhoneNumber</span><span class="o">(</span><span class="mi">707</span><span class="o">,</span> <span class="mi">867</span><span class="o">,</span> <span class="mi">5309</span><span class="o">),</span> <span class="s">"Jenny"</span><span class="o">);</span>
 
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="k">new</span> <span class="n">PhoneNumber</span><span class="o">(</span><span class="mi">707</span><span class="o">,</span> <span class="mi">867</span><span class="o">,</span> <span class="mi">5309</span><span class="o">)));</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="k">new</span> <span class="nc">PhoneNumber</span><span class="o">(</span><span class="mi">707</span><span class="o">,</span> <span class="mi">867</span><span class="o">,</span> <span class="mi">5309</span><span class="o">)));</span>
     <span class="o">}</span>
 <span class="o">}</span>
 
@@ -417,21 +417,21 @@
         <span class="k">this</span><span class="o">.</span><span class="na">lineNumber</span> <span class="o">=</span> <span class="o">(</span><span class="kt">short</span><span class="o">)</span> <span class="n">lineNumber</span><span class="o">;</span>
     <span class="o">}</span>
 
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">rangeCheck</span><span class="o">(</span><span class="kt">int</span> <span class="n">arg</span><span class="o">,</span> <span class="kt">int</span> <span class="n">max</span><span class="o">,</span> <span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">rangeCheck</span><span class="o">(</span><span class="kt">int</span> <span class="n">arg</span><span class="o">,</span> <span class="kt">int</span> <span class="n">max</span><span class="o">,</span> <span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="n">arg</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">arg</span> <span class="o">&gt;</span> <span class="n">max</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">": "</span> <span class="o">+</span> <span class="n">arg</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">}</span>
 
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="n">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="nc">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="o">==</span> <span class="k">this</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
         <span class="o">}</span>
-        <span class="k">if</span> <span class="o">(!(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="n">PhoneNumber</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">PhoneNumber</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
         <span class="o">}</span>
-        <span class="n">PhoneNumber</span> <span class="n">pn</span> <span class="o">=</span> <span class="o">(</span><span class="n">PhoneNumber</span><span class="o">)</span> <span class="n">o</span><span class="o">;</span>
+        <span class="nc">PhoneNumber</span> <span class="n">pn</span> <span class="o">=</span> <span class="o">(</span><span class="nc">PhoneNumber</span><span class="o">)</span> <span class="n">o</span><span class="o">;</span>
         <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="na">lineNumber</span> <span class="o">==</span> <span class="n">lineNumber</span> <span class="o">&amp;&amp;</span> <span class="n">pn</span><span class="o">.</span><span class="na">prefix</span> <span class="o">==</span> <span class="n">prefix</span> <span class="o">&amp;&amp;</span> <span class="n">pn</span><span class="o">.</span><span class="na">areaCode</span> <span class="o">==</span> <span class="n">areaCode</span><span class="o">;</span>
     <span class="o">}</span>
 
@@ -586,7 +586,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">포스트</span>
               </a>
             </div>
@@ -674,7 +674,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

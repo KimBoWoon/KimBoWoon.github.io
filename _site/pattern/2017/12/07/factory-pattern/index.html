@@ -394,35 +394,35 @@
 
 <h1 id="코드">코드</h1>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FactoryPatternPractice</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">Book</span> <span class="n">mathBook</span> <span class="o">=</span> <span class="n">FactoryPattern</span><span class="o">.</span><span class="na">createClass</span><span class="o">(</span><span class="s">"math"</span><span class="o">);</span>
-        <span class="n">Book</span> <span class="n">historyBook</span> <span class="o">=</span> <span class="n">FactoryPattern</span><span class="o">.</span><span class="na">createClass</span><span class="o">(</span><span class="s">"history"</span><span class="o">);</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Book</span> <span class="n">mathBook</span> <span class="o">=</span> <span class="nc">FactoryPattern</span><span class="o">.</span><span class="na">createClass</span><span class="o">(</span><span class="s">"math"</span><span class="o">);</span>
+        <span class="nc">Book</span> <span class="n">historyBook</span> <span class="o">=</span> <span class="nc">FactoryPattern</span><span class="o">.</span><span class="na">createClass</span><span class="o">(</span><span class="s">"history"</span><span class="o">);</span>
 
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mathBook</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">historyBook</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mathBook</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">historyBook</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
     <span class="o">}</span>
 <span class="o">}</span>
 
 <span class="kd">interface</span> <span class="nc">Book</span> <span class="o">{</span>
-    <span class="n">String</span> <span class="nf">getName</span><span class="o">();</span>
+    <span class="nc">String</span> <span class="nf">getName</span><span class="o">();</span>
 <span class="o">}</span>
 
-<span class="kd">class</span> <span class="nc">MathBook</span> <span class="kd">implements</span> <span class="n">Book</span> <span class="o">{</span>
+<span class="kd">class</span> <span class="nc">MathBook</span> <span class="kd">implements</span> <span class="nc">Book</span> <span class="o">{</span>
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">return</span> <span class="s">"MathBook"</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">}</span>
 
-<span class="kd">class</span> <span class="nc">HistoryBook</span> <span class="kd">implements</span> <span class="n">Book</span> <span class="o">{</span>
+<span class="kd">class</span> <span class="nc">HistoryBook</span> <span class="kd">implements</span> <span class="nc">Book</span> <span class="o">{</span>
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">return</span> <span class="s">"HistoryBook"</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">}</span>
 
 <span class="kd">class</span> <span class="nc">FactoryPattern</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Book</span> <span class="nf">createClass</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Book</span> <span class="nf">createClass</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">switch</span> <span class="o">(</span><span class="n">name</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">case</span> <span class="s">"math"</span><span class="o">:</span>
                 <span class="k">return</span> <span class="k">new</span> <span class="nf">MathBook</span><span class="o">();</span>
@@ -578,7 +578,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">포스트</span>
               </a>
             </div>
@@ -666,7 +666,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

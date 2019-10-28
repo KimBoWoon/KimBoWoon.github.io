@@ -394,88 +394,88 @@
 
 <h1 id="코드">코드</h1>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Observer</span> <span class="o">{</span>
-    <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="n">String</span> <span class="n">title</span><span class="o">,</span> <span class="n">String</span> <span class="n">news</span><span class="o">);</span>
+    <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="nc">String</span> <span class="n">title</span><span class="o">,</span> <span class="nc">String</span> <span class="n">news</span><span class="o">);</span>
 <span class="o">}</span>
 
 <span class="kd">interface</span> <span class="nc">Publisher</span> <span class="o">{</span>
-    <span class="kt">void</span> <span class="nf">add</span><span class="o">(</span><span class="n">Observer</span> <span class="n">observer</span><span class="o">);</span>
-    <span class="kt">void</span> <span class="nf">delete</span><span class="o">(</span><span class="n">Observer</span> <span class="n">observer</span><span class="o">);</span>
+    <span class="kt">void</span> <span class="nf">add</span><span class="o">(</span><span class="nc">Observer</span> <span class="n">observer</span><span class="o">);</span>
+    <span class="kt">void</span> <span class="nf">delete</span><span class="o">(</span><span class="nc">Observer</span> <span class="n">observer</span><span class="o">);</span>
     <span class="kt">void</span> <span class="nf">notifyObserver</span><span class="o">();</span>
 <span class="o">}</span>
 
-<span class="kd">class</span> <span class="nc">NewsMachine</span> <span class="kd">implements</span> <span class="n">Publisher</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Observer</span><span class="o">&gt;</span> <span class="n">observers</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="n">String</span> <span class="n">title</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="n">String</span> <span class="n">news</span><span class="o">;</span>
+<span class="kd">class</span> <span class="nc">NewsMachine</span> <span class="kd">implements</span> <span class="nc">Publisher</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">Observer</span><span class="o">&gt;</span> <span class="n">observers</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">title</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">news</span><span class="o">;</span>
 
     <span class="kd">public</span> <span class="nf">NewsMachine</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">observers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Observer</span><span class="o">&gt;();</span>
+        <span class="n">observers</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">Observer</span><span class="o">&gt;();</span>
     <span class="o">}</span>
 
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">add</span><span class="o">(</span><span class="n">Observer</span> <span class="n">observer</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">add</span><span class="o">(</span><span class="nc">Observer</span> <span class="n">observer</span><span class="o">)</span> <span class="o">{</span>
         <span class="n">observers</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">observer</span><span class="o">);</span>
     <span class="o">}</span>
 
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">delete</span><span class="o">(</span><span class="n">Observer</span> <span class="n">observer</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">delete</span><span class="o">(</span><span class="nc">Observer</span> <span class="n">observer</span><span class="o">)</span> <span class="o">{</span>
         <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">observers</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">observer</span><span class="o">);</span>
         <span class="n">observers</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">index</span><span class="o">);</span>
     <span class="o">}</span>
 
     <span class="nd">@Override</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">notifyObserver</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">for</span> <span class="o">(</span><span class="n">Observer</span> <span class="n">observer</span> <span class="o">:</span> <span class="n">observers</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">Observer</span> <span class="n">observer</span> <span class="o">:</span> <span class="n">observers</span><span class="o">)</span> <span class="o">{</span>
             <span class="n">observer</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="n">title</span><span class="o">,</span> <span class="n">news</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setNewsInfo</span><span class="o">(</span><span class="n">String</span> <span class="n">title</span><span class="o">,</span> <span class="n">String</span> <span class="n">news</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setNewsInfo</span><span class="o">(</span><span class="nc">String</span> <span class="n">title</span><span class="o">,</span> <span class="nc">String</span> <span class="n">news</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="na">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">;</span>
         <span class="k">this</span><span class="o">.</span><span class="na">news</span> <span class="o">=</span> <span class="n">news</span><span class="o">;</span>
         <span class="n">notifyObserver</span><span class="o">();</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getTitle</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getTitle</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">return</span> <span class="n">title</span><span class="o">;</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getNews</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getNews</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">return</span> <span class="n">news</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">}</span>
 
-<span class="kd">class</span> <span class="nc">AnnualSubscriber</span> <span class="kd">implements</span> <span class="n">Observer</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="n">String</span> <span class="n">newsString</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="n">Publisher</span> <span class="n">publisher</span><span class="o">;</span>
+<span class="kd">class</span> <span class="nc">AnnualSubscriber</span> <span class="kd">implements</span> <span class="nc">Observer</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">newsString</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Publisher</span> <span class="n">publisher</span><span class="o">;</span>
 
-    <span class="kd">public</span> <span class="nf">AnnualSubscriber</span><span class="o">(</span><span class="n">Publisher</span> <span class="n">publisher</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">AnnualSubscriber</span><span class="o">(</span><span class="nc">Publisher</span> <span class="n">publisher</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="na">publisher</span> <span class="o">=</span> <span class="n">publisher</span><span class="o">;</span>
         <span class="n">publisher</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
     <span class="o">}</span>
 
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="n">String</span> <span class="n">title</span><span class="o">,</span> <span class="n">String</span> <span class="n">news</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="nc">String</span> <span class="n">title</span><span class="o">,</span> <span class="nc">String</span> <span class="n">news</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="na">newsString</span> <span class="o">=</span> <span class="n">title</span> <span class="o">+</span> <span class="s">"\n"</span> <span class="o">+</span> <span class="n">news</span> <span class="o">+</span> <span class="s">"\n"</span><span class="o">;</span>
         <span class="n">display</span><span class="o">();</span>
     <span class="o">}</span>
 
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">display</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"annual user : today news "</span> <span class="o">+</span> <span class="n">newsString</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"annual user : today news "</span> <span class="o">+</span> <span class="n">newsString</span><span class="o">);</span>
     <span class="o">}</span>
 <span class="o">}</span>
 
-<span class="kd">class</span> <span class="nc">EventSubscriber</span> <span class="kd">implements</span> <span class="n">Observer</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="n">String</span> <span class="n">newsString</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="n">Publisher</span> <span class="n">publisher</span><span class="o">;</span>
+<span class="kd">class</span> <span class="nc">EventSubscriber</span> <span class="kd">implements</span> <span class="nc">Observer</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">newsString</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Publisher</span> <span class="n">publisher</span><span class="o">;</span>
 
-    <span class="kd">public</span> <span class="nf">EventSubscriber</span><span class="o">(</span><span class="n">Publisher</span> <span class="n">publisher</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">EventSubscriber</span><span class="o">(</span><span class="nc">Publisher</span> <span class="n">publisher</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="na">publisher</span> <span class="o">=</span> <span class="n">publisher</span><span class="o">;</span>
         <span class="n">publisher</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
     <span class="o">}</span>
 
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="n">String</span> <span class="n">title</span><span class="o">,</span> <span class="n">String</span> <span class="n">news</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="nc">String</span> <span class="n">title</span><span class="o">,</span> <span class="nc">String</span> <span class="n">news</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="na">newsString</span> <span class="o">=</span> <span class="n">title</span> <span class="o">+</span> <span class="s">"\n"</span> <span class="o">+</span> <span class="n">news</span> <span class="o">+</span> <span class="s">"\n"</span><span class="o">;</span>
         <span class="n">display</span><span class="o">();</span>
     <span class="o">}</span>
@@ -485,15 +485,15 @@
     <span class="o">}</span>
 
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">display</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"event user : today news "</span> <span class="o">+</span> <span class="n">newsString</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"event user : today news "</span> <span class="o">+</span> <span class="n">newsString</span><span class="o">);</span>
     <span class="o">}</span>
 <span class="o">}</span>
 
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">ObserverPattern</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">NewsMachine</span> <span class="n">newsMachine</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NewsMachine</span><span class="o">();</span>
-        <span class="n">AnnualSubscriber</span> <span class="n">as</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AnnualSubscriber</span><span class="o">(</span><span class="n">newsMachine</span><span class="o">);</span>
-        <span class="n">EventSubscriber</span> <span class="n">es</span> <span class="o">=</span> <span class="k">new</span> <span class="n">EventSubscriber</span><span class="o">(</span><span class="n">newsMachine</span><span class="o">);</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">NewsMachine</span> <span class="n">newsMachine</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">NewsMachine</span><span class="o">();</span>
+        <span class="nc">AnnualSubscriber</span> <span class="n">as</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">AnnualSubscriber</span><span class="o">(</span><span class="n">newsMachine</span><span class="o">);</span>
+        <span class="nc">EventSubscriber</span> <span class="n">es</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">EventSubscriber</span><span class="o">(</span><span class="n">newsMachine</span><span class="o">);</span>
 
         <span class="n">newsMachine</span><span class="o">.</span><span class="na">setNewsInfo</span><span class="o">(</span><span class="s">"오늘 뉴스"</span><span class="o">,</span> <span class="s">"화창한 날씨"</span><span class="o">);</span>
         <span class="n">newsMachine</span><span class="o">.</span><span class="na">setNewsInfo</span><span class="o">(</span><span class="s">"오늘 온도"</span><span class="o">,</span> <span class="s">"소풍가기 좋은 날"</span><span class="o">);</span>
@@ -641,7 +641,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">포스트</span>
               </a>
             </div>
@@ -729,7 +729,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

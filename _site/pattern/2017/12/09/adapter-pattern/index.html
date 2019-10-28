@@ -393,8 +393,8 @@
 <p>약간의 차이가 있는 클래스들을 인터페이스를 통해 똑같은 기능으로 사용하는 방법</p>
 
 <h1 id="코드">코드</h1>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">MyEngine</span> <span class="n">engine</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyEngine</span><span class="o">();</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">MyEngine</span> <span class="n">engine</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">MyEngine</span><span class="o">();</span>
 
     <span class="n">engine</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
     <span class="n">engine</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
@@ -406,8 +406,8 @@
     <span class="n">engine</span><span class="o">.</span><span class="na">printAll</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">AEngine</span> <span class="n">aEngine</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AEngine</span><span class="o">();</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">AEngine</span> <span class="n">aEngine</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">AEngine</span><span class="o">();</span>
 
     <span class="n">engine</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
     <span class="n">engine</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
@@ -415,17 +415,17 @@
     <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">engine</span><span class="o">.</span><span class="na">getSize</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
         <span class="n">engine</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
     <span class="o">}</span>
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
     <span class="n">engine</span><span class="o">.</span><span class="na">delete</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
     <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">engine</span><span class="o">.</span><span class="na">getSize</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
         <span class="n">engine</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
     <span class="o">}</span>
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
     <span class="n">engine</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
     <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">engine</span><span class="o">.</span><span class="na">getSize</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
         <span class="n">engine</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
     <span class="o">}</span>
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre></div></div>
 <ul>
@@ -444,10 +444,10 @@
     <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getSize</span><span class="o">();</span>
 <span class="o">}</span>
 
-<span class="kd">class</span> <span class="nc">AdapterEngine</span> <span class="kd">implements</span> <span class="n">EngineInterface</span> <span class="o">{</span>
-    <span class="n">AEngine</span> <span class="n">engine</span><span class="o">;</span>
+<span class="kd">class</span> <span class="nc">AdapterEngine</span> <span class="kd">implements</span> <span class="nc">EngineInterface</span> <span class="o">{</span>
+    <span class="nc">AEngine</span> <span class="n">engine</span><span class="o">;</span>
 
-    <span class="kd">public</span> <span class="nf">AdapterEngine</span><span class="o">(</span><span class="n">AEngine</span> <span class="n">engine</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">AdapterEngine</span><span class="o">(</span><span class="nc">AEngine</span> <span class="n">engine</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="na">engine</span> <span class="o">=</span> <span class="n">engine</span><span class="o">;</span>
     <span class="o">}</span>
 
@@ -461,7 +461,7 @@
         <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">engine</span><span class="o">.</span><span class="na">getSize</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
             <span class="n">engine</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
         <span class="o">}</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
     <span class="o">}</span>
 
     <span class="nd">@Override</span>
@@ -489,9 +489,9 @@
   </li>
 </ul>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">AEngine</span> <span class="n">aEngine</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AEngine</span><span class="o">();</span>
-    <span class="n">EngineInterface</span> <span class="n">engine</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AdapterEngine</span><span class="o">(</span><span class="n">aEngine</span><span class="o">);</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span> <span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">AEngine</span> <span class="n">aEngine</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">AEngine</span><span class="o">();</span>
+    <span class="nc">EngineInterface</span> <span class="n">engine</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">AdapterEngine</span><span class="o">(</span><span class="n">aEngine</span><span class="o">);</span>
 
     <span class="n">engine</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
     <span class="n">engine</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
@@ -639,7 +639,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">포스트</span>
               </a>
             </div>
@@ -727,7 +727,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

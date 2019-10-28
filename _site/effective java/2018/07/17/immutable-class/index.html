@@ -404,9 +404,9 @@
 <h1 id="변경-불가능-클래스-예시">변경 불가능 클래스 예시</h1>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Complex</span> <span class="o">{</span>
     <span class="c1">// 많이 사용하는 것들은 미리 만들어서 사용하는 것이 좋다</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Complex</span> <span class="n">ZERO</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Complex</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Complex</span> <span class="n">ONE</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Complex</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Complex</span> <span class="n">I</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Complex</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Complex</span> <span class="no">ZERO</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Complex</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Complex</span> <span class="no">ONE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Complex</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Complex</span> <span class="no">I</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Complex</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
 
     <span class="kd">private</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">re</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">im</span><span class="o">;</span>
@@ -425,35 +425,35 @@
         <span class="k">return</span> <span class="n">im</span><span class="o">;</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="n">Complex</span> <span class="nf">add</span><span class="o">(</span><span class="n">Complex</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">Complex</span> <span class="nf">add</span><span class="o">(</span><span class="nc">Complex</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nf">Complex</span><span class="o">(</span><span class="n">re</span> <span class="o">+</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span><span class="o">,</span> <span class="n">im</span> <span class="o">+</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">);</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="n">Complex</span> <span class="nf">subtract</span><span class="o">(</span><span class="n">Complex</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">Complex</span> <span class="nf">subtract</span><span class="o">(</span><span class="nc">Complex</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nf">Complex</span><span class="o">(</span><span class="n">re</span> <span class="o">-</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span><span class="o">,</span> <span class="n">im</span> <span class="o">-</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">);</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="n">Complex</span> <span class="nf">multiply</span><span class="o">(</span><span class="n">Complex</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">Complex</span> <span class="nf">multiply</span><span class="o">(</span><span class="nc">Complex</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nf">Complex</span><span class="o">(</span><span class="n">re</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span> <span class="o">-</span> <span class="n">im</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">,</span> <span class="n">re</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span> <span class="o">+</span> <span class="n">im</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span><span class="o">);</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="n">Complex</span> <span class="nf">divide</span><span class="o">(</span><span class="n">Complex</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">Complex</span> <span class="nf">divide</span><span class="o">(</span><span class="nc">Complex</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
         <span class="kt">double</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span> <span class="o">+</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">;</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nf">Complex</span><span class="o">((</span><span class="n">re</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span> <span class="o">+</span> <span class="n">im</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">)</span> <span class="o">/</span> <span class="n">tmp</span><span class="o">,</span> <span class="o">(</span><span class="n">im</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span> <span class="o">-</span> <span class="n">re</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">)</span> <span class="o">/</span> <span class="n">tmp</span><span class="o">);</span>
     <span class="o">}</span>
 
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="n">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="nc">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="o">==</span> <span class="k">this</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
         <span class="o">}</span>
-        <span class="k">if</span> <span class="o">(!(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="n">Complex</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">Complex</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="n">Complex</span> <span class="n">c</span> <span class="o">=</span> <span class="o">(</span><span class="n">Complex</span><span class="o">)</span> <span class="n">o</span><span class="o">;</span>
+        <span class="nc">Complex</span> <span class="n">c</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Complex</span><span class="o">)</span> <span class="n">o</span><span class="o">;</span>
 
-        <span class="k">return</span> <span class="n">Double</span><span class="o">.</span><span class="na">compare</span><span class="o">(</span><span class="n">re</span><span class="o">,</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span><span class="o">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">Double</span><span class="o">.</span><span class="na">compare</span><span class="o">(</span><span class="n">im</span><span class="o">,</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">)</span> <span class="o">==</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nc">Double</span><span class="o">.</span><span class="na">compare</span><span class="o">(</span><span class="n">re</span><span class="o">,</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span><span class="o">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nc">Double</span><span class="o">.</span><span class="na">compare</span><span class="o">(</span><span class="n">im</span><span class="o">,</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">)</span> <span class="o">==</span> <span class="mi">0</span><span class="o">;</span>
     <span class="o">}</span>
 
     <span class="nd">@Override</span>
@@ -464,12 +464,12 @@
     <span class="o">}</span>
 
     <span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">hashDouble</span><span class="o">(</span><span class="kt">double</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
-        <span class="kt">long</span> <span class="n">longBits</span> <span class="o">=</span> <span class="n">Double</span><span class="o">.</span><span class="na">doubleToLongBits</span><span class="o">(</span><span class="n">val</span><span class="o">);</span>
+        <span class="kt">long</span> <span class="n">longBits</span> <span class="o">=</span> <span class="nc">Double</span><span class="o">.</span><span class="na">doubleToLongBits</span><span class="o">(</span><span class="n">val</span><span class="o">);</span>
         <span class="k">return</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="o">(</span><span class="n">longBits</span> <span class="o">^</span> <span class="o">(</span><span class="n">longBits</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">32</span><span class="o">));</span>
     <span class="o">}</span>
 
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">return</span> <span class="s">"("</span> <span class="o">+</span> <span class="n">re</span> <span class="o">+</span> <span class="s">" + "</span> <span class="o">+</span> <span class="n">im</span> <span class="o">+</span> <span class="s">"i)"</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">}</span>
@@ -616,7 +616,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">포스트</span>
               </a>
             </div>
@@ -704,7 +704,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

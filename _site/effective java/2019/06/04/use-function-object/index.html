@@ -111,17 +111,17 @@
 
 
 
-<meta name="description" content="toString() 메소드 java.lang.Object 클래스가 toString를 메소드를 제공한다. 이 메소드의 반환값은 클래스이름 다음에 @을 붙이고 다음에 16진수로 표시된 해시 코드가 반환된다. 이 값은 사용자에게 유용한 정보를 제공하지 않는다. toString를 재정의 해서 사용자들이 알아볼 수 있도록 해야한다.">
+<meta name="description" content="함수 객체 다른 언어에서는 함수 포인터, 람다, 델리게이트 처럼 특정 함수를 호출할 수 있는 능력을 저장하고 전달할 수 있도록 하는 것들이 있다. 이러한 것들은 C언어의 qsort의 마지막 인자인 comparator에 들어갈 수 있다. 자바에서는 함수 포인터를 지원하지 않는다. 하지만 비슷하게 만들어서 효과를 볼 수 있다. 이러한 것을 자바에서는 함수 객체라고 부른다. class StringLengthComparator { public int compare(String s1, String s2) { return s1.length() - s2.length(); } } 위의 메소드는 문자열을 알파벳순이 아닌 길이 순으로 정렬하는 메소드이다. 위의 메소드를 사용하려면 객체 생성이 필요하지만 다음과 같이 객체 생성을 하지 않고 사용할 수 있다. class StringLengthComparator { private StringLengthComparator() {} public static final StringLengthComparator INSTANCE = new StringLengthComparator(); public int compare(String s1, String s2) { return s1.length() - s2.length(); } } compare 메소드는 오직 문자열만 매개변수로 받고있다. 하지만 제네릭을 사용하면 다양한 인자를 받을 수 있게 된다. public interface Comparator&amp;lt;T&amp;gt; { public in compare(T t1, T t2); } class StringLengthComparator implements Comparator&amp;lt;String&amp;gt; { // 위와 동일한 메소드 } // 익명 클래스로도 정의 가능 Arrays.sort(stringArray, new Comparator&amp;lt;String&amp;gt;) { public int compare(String s1, String s2) { return s1.length() - s2.length(); } }">
 <meta name="keywords" content="Jekyll, NexT">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[Effective Java] toString는 항상 재정의하라">
-<meta property="og:url" content="http://localhost:4000/effective%20java/2017/12/04/tostring-override/">
+<meta property="og:title" content="[Effective Java] 전략을 표현하고 싶을 때는 함수 객체를 사용하라">
+<meta property="og:url" content="http://localhost:4000/effective%20java/2019/06/04/use-function-object/">
 <meta property="og:site_name" content="Notepad">
-<meta property="og:description" content="toString() 메소드 java.lang.Object 클래스가 toString를 메소드를 제공한다. 이 메소드의 반환값은 클래스이름 다음에 @을 붙이고 다음에 16진수로 표시된 해시 코드가 반환된다. 이 값은 사용자에게 유용한 정보를 제공하지 않는다. toString를 재정의 해서 사용자들이 알아볼 수 있도록 해야한다.">
+<meta property="og:description" content="함수 객체 다른 언어에서는 함수 포인터, 람다, 델리게이트 처럼 특정 함수를 호출할 수 있는 능력을 저장하고 전달할 수 있도록 하는 것들이 있다. 이러한 것들은 C언어의 qsort의 마지막 인자인 comparator에 들어갈 수 있다. 자바에서는 함수 포인터를 지원하지 않는다. 하지만 비슷하게 만들어서 효과를 볼 수 있다. 이러한 것을 자바에서는 함수 객체라고 부른다. class StringLengthComparator { public int compare(String s1, String s2) { return s1.length() - s2.length(); } } 위의 메소드는 문자열을 알파벳순이 아닌 길이 순으로 정렬하는 메소드이다. 위의 메소드를 사용하려면 객체 생성이 필요하지만 다음과 같이 객체 생성을 하지 않고 사용할 수 있다. class StringLengthComparator { private StringLengthComparator() {} public static final StringLengthComparator INSTANCE = new StringLengthComparator(); public int compare(String s1, String s2) { return s1.length() - s2.length(); } } compare 메소드는 오직 문자열만 매개변수로 받고있다. 하지만 제네릭을 사용하면 다양한 인자를 받을 수 있게 된다. public interface Comparator&amp;lt;T&amp;gt; { public in compare(T t1, T t2); } class StringLengthComparator implements Comparator&amp;lt;String&amp;gt; { // 위와 동일한 메소드 } // 익명 클래스로도 정의 가능 Arrays.sort(stringArray, new Comparator&amp;lt;String&amp;gt;) { public int compare(String s1, String s2) { return s1.length() - s2.length(); } }">
 <meta property="og:locale" content="ko">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="[Effective Java] toString는 항상 재정의하라">
-<meta name="twitter:description" content="toString() 메소드 java.lang.Object 클래스가 toString를 메소드를 제공한다. 이 메소드의 반환값은 클래스이름 다음에 @을 붙이고 다음에 16진수로 표시된 해시 코드가 반환된다. 이 값은 사용자에게 유용한 정보를 제공하지 않는다. toString를 재정의 해서 사용자들이 알아볼 수 있도록 해야한다.">
+<meta name="twitter:title" content="[Effective Java] 전략을 표현하고 싶을 때는 함수 객체를 사용하라">
+<meta name="twitter:description" content="함수 객체 다른 언어에서는 함수 포인터, 람다, 델리게이트 처럼 특정 함수를 호출할 수 있는 능력을 저장하고 전달할 수 있도록 하는 것들이 있다. 이러한 것들은 C언어의 qsort의 마지막 인자인 comparator에 들어갈 수 있다. 자바에서는 함수 포인터를 지원하지 않는다. 하지만 비슷하게 만들어서 효과를 볼 수 있다. 이러한 것을 자바에서는 함수 객체라고 부른다. class StringLengthComparator { public int compare(String s1, String s2) { return s1.length() - s2.length(); } } 위의 메소드는 문자열을 알파벳순이 아닌 길이 순으로 정렬하는 메소드이다. 위의 메소드를 사용하려면 객체 생성이 필요하지만 다음과 같이 객체 생성을 하지 않고 사용할 수 있다. class StringLengthComparator { private StringLengthComparator() {} public static final StringLengthComparator INSTANCE = new StringLengthComparator(); public int compare(String s1, String s2) { return s1.length() - s2.length(); } } compare 메소드는 오직 문자열만 매개변수로 받고있다. 하지만 제네릭을 사용하면 다양한 인자를 받을 수 있게 된다. public interface Comparator&amp;lt;T&amp;gt; { public in compare(T t1, T t2); } class StringLengthComparator implements Comparator&amp;lt;String&amp;gt; { // 위와 동일한 메소드 } // 익명 클래스로도 정의 가능 Arrays.sort(stringArray, new Comparator&amp;lt;String&amp;gt;) { public int compare(String s1, String s2) { return s1.length() - s2.length(); } }">
 
 
 <script type="text/javascript" id="hexo.configurations">
@@ -154,7 +154,7 @@
 
 
 
-  <title>[Effective Java] toString는 항상 재정의하라</title>
+  <title>[Effective Java] 전략을 표현하고 싶을 때는 함수 객체를 사용하라</title>
   
 
 
@@ -280,7 +280,7 @@
   
 
   <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/12/04/tostring-override/">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2019/06/04/use-function-object/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Kim BoWoon">
@@ -300,7 +300,7 @@
           <h1 class="post-title" itemprop="name headline">
           
           
-            [Effective Java] toString는 항상 재정의하라
+            [Effective Java] 전략을 표현하고 싶을 때는 함수 객체를 사용하라
           
         </h1>
         
@@ -314,8 +314,8 @@
               
                 <span class="post-meta-item-text">작성일</span>
               
-              <time title="" itemprop="dateCreated datePublished" datetime="2017-12-04T10:23:45+09:00">
-                2017-12-04
+              <time title="" itemprop="dateCreated datePublished" datetime="2019-06-04T09:57:00+09:00">
+                2019-06-04
               </time>
             
 
@@ -356,9 +356,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/effective%20java/2017/12/04/tostring-override/#comments" itemprop="discussionUrl">
+                <a href="/effective%20java/2019/06/04/use-function-object/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="/effective%20java/2017/12/04/tostring-override/" itemprop="commentCount"></span>
+                        data-disqus-identifier="/effective%20java/2019/06/04/use-function-object/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -389,14 +389,44 @@
       
 
       
-        <h1 id="tostring-메소드">toString() 메소드</h1>
-<p>java.lang.Object 클래스가 toString를 메소드를 제공한다. 이 메소드의 반환값은 클래스이름 다음에 @을 붙이고 다음에 16진수로 표시된 해시 코드가 반환된다. 이 값은 사용자에게 유용한 정보를 제공하지 않는다. toString를 재정의 해서 사용자들이 알아볼 수 있도록 해야한다.</p>
+        <h1 id="함수-객체">함수 객체</h1>
+<p>다른 언어에서는 함수 포인터, 람다, 델리게이트 처럼 특정 함수를 호출할 수 있는 능력을 저장하고 전달할 수 있도록 하는 것들이 있다.
+이러한 것들은 C언어의 qsort의 마지막 인자인 comparator에 들어갈 수 있다.
+자바에서는 함수 포인터를 지원하지 않는다. 하지만 비슷하게 만들어서 효과를 볼 수 있다. 이러한 것을 자바에서는 함수 객체라고 부른다.</p>
 
-<h1 id="왜-어디에-사용되길래">왜? 어디에 사용되길래</h1>
-<p>toString 메소드는 println, printf, 문자열 연결 연산자, assert, 디버거 등에 객체가 전달되면 자동으로 호출된다. 그리고 여러 프로그래머들은 해당하는 클래스에 대한 정보를 toString를 사용해 정보를 얻으려고 할것이다. 그래서 우리는 toString 메소드를 적절하게 구현해야한다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">StringLengthComparator</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">compare</span><span class="o">(</span><span class="nc">String</span> <span class="n">s1</span><span class="o">,</span> <span class="nc">String</span> <span class="n">s2</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">s1</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="n">s2</span><span class="o">.</span><span class="na">length</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>위의 메소드는 문자열을 알파벳순이 아닌 길이 순으로 정렬하는 메소드이다. 위의 메소드를 사용하려면 객체 생성이 필요하지만 다음과 같이 객체 생성을 하지 않고 사용할 수 있다.</p>
 
-<h1 id="어떻게">어떻게?</h1>
-<p>객체내에 중요한 정보를 모두 담아 반환해야한다. 만약 전화번호를 담당하는 클래스면 해당 국가 번호, 전화번호, 지역번호등 중요한 정보는 모두 담겨야한다. 그리고 해당클래스에 주석으로 어떠한 값이 반환되는지 적어두면 다른 사용자가 알아보기가 더 쉽다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">StringLengthComparator</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nf">StringLengthComparator</span><span class="o">()</span> <span class="o">{}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">StringLengthComparator</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringLengthComparator</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">compare</span><span class="o">(</span><span class="nc">String</span> <span class="n">s1</span><span class="o">,</span> <span class="nc">String</span> <span class="n">s2</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">s1</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="n">s2</span><span class="o">.</span><span class="na">length</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>compare 메소드는 오직 문자열만 매개변수로 받고있다. 하지만 제네릭을 사용하면 다양한 인자를 받을 수 있게 된다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Comparator</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">in</span> <span class="nf">compare</span><span class="o">(</span><span class="no">T</span> <span class="n">t1</span><span class="o">,</span> <span class="no">T</span> <span class="n">t2</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">StringLengthComparator</span> <span class="kd">implements</span> <span class="nc">Comparator</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="c1">// 위와 동일한 메소드</span>
+<span class="o">}</span>
+
+<span class="c1">// 익명 클래스로도 정의 가능</span>
+<span class="nc">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">stringArray</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Comparator</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">compare</span><span class="o">(</span><span class="nc">String</span> <span class="n">s1</span><span class="o">,</span> <span class="nc">String</span> <span class="n">s2</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">s1</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="n">s2</span><span class="o">.</span><span class="na">length</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
 
       
     </div>
@@ -436,8 +466,8 @@
         <div class="post-nav" id="post-nav-id">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/pattern/2017/12/06/singleton-pattern/" rel="next" title="[pattern] Singleton Pattern 잘쓰기">
-                <i class="fa fa-chevron-left"></i> [pattern] Singleton Pattern 잘쓰기
+              <a href="/effective%20java/2019/06/06/member-class-static/" rel="next" title="[Effective Java] 멤버 클래스는 가능하면 static으로 선언하라">
+                <i class="fa fa-chevron-left"></i> [Effective Java] 멤버 클래스는 가능하면 static으로 선언하라
               </a>
             
           </div>
@@ -446,8 +476,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/effective%20java/2017/12/01/hashcode-override/" rel="prev" title="[Effective Java] equals를 재정의할 때는 반드시 hashCode도 재정의하라">
-                [Effective Java] equals를 재정의할 때는 반드시 hashCode도 재정의하라 <i class="fa fa-chevron-right"></i>
+              <a href="/effective%20java/2019/02/11/not-use-tag-class/" rel="prev" title="[Effective Java] 태그 달린 클래스 대신 클래스 계층을 활용하라">
+                [Effective Java] 태그 달린 클래스 대신 클래스 계층을 활용하라 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -597,7 +627,7 @@
             
               <div class="post-toc-content">
     <ol class=nav>
-      <li class="nav-item nav-level-1"> <a class="nav-link" href="#tostring-메소드"> <span class="nav-number">1</span> <span class="nav-text">toString() 메소드</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#왜-어디에-사용되길래"> <span class="nav-number">2</span> <span class="nav-text">왜? 어디에 사용되길래</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#어떻게"> <span class="nav-number">3</span> <span class="nav-text">어떻게?</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child">
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#함수-객체"> <span class="nav-number">1</span> <span class="nav-text">함수 객체</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child">
     </ol>
   </div>
             
@@ -765,9 +795,9 @@
       
       <script type="text/javascript">
           var disqus_config = function () {
-              this.page.url = 'http://localhost:4000/effective%20java/2017/12/04/tostring-override/';
-              this.page.identifier = '/effective%20java/2017/12/04/tostring-override/';
-              this.page.title = '[Effective Java] toString는 항상 재정의하라';
+              this.page.url = 'http://localhost:4000/effective%20java/2019/06/04/use-function-object/';
+              this.page.identifier = '/effective%20java/2019/06/04/use-function-object/';
+              this.page.title = '[Effective Java] 전략을 표현하고 싶을 때는 함수 객체를 사용하라';
           };
           var d = document, s = d.createElement('script');
           s.src = 'https://kimbowoon.disqus.com/embed.js';

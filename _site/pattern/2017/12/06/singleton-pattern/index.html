@@ -392,21 +392,21 @@
         <h1 id="eager-initialization">Eager Initialization</h1>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">EagerInitialization</span> <span class="o">{</span>
     <span class="c1">// private static 로 선언.</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="n">EagerInitialization</span> <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">EagerInitialization</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="nc">EagerInitialization</span> <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">EagerInitialization</span><span class="o">();</span>
 
     <span class="c1">// 생성자</span>
     <span class="kd">private</span> <span class="nf">EagerInitialization</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"call EagerInitialization constructor."</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"call EagerInitialization constructor."</span><span class="o">);</span>
     <span class="o">}</span>
 
     <span class="c1">// 조회 method</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="n">EagerInitialization</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">EagerInitialization</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">return</span> <span class="n">instance</span><span class="o">;</span>
     <span class="o">}</span>
 
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">print</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"It's print() method in EagerInitialization instance."</span><span class="o">);</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"instance hashCode &gt; "</span> <span class="o">+</span> <span class="n">instance</span><span class="o">.</span><span class="na">hashCode</span><span class="o">());</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"It's print() method in EagerInitialization instance."</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"instance hashCode &gt; "</span> <span class="o">+</span> <span class="n">instance</span><span class="o">.</span><span class="na">hashCode</span><span class="o">());</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -418,27 +418,27 @@
 
 <h1 id="static-block-initialization">Static Block Initialization</h1>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">StaticBlockInitialization</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="n">StaticBlockInitialization</span> <span class="n">instance</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="nc">StaticBlockInitialization</span> <span class="n">instance</span><span class="o">;</span>
 
     <span class="kd">private</span> <span class="nf">StaticBlockInitialization</span><span class="o">()</span> <span class="o">{</span>
     <span class="o">}</span>
 
     <span class="kd">static</span> <span class="o">{</span>
         <span class="k">try</span> <span class="o">{</span>
-            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"instance create.."</span><span class="o">);</span>
-            <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StaticBlockInitialization</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"instance create.."</span><span class="o">);</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StaticBlockInitialization</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="s">"Exception creating StaticBlockInitialization instance."</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="kd">static</span> <span class="n">StaticBlockInitialization</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">StaticBlockInitialization</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">return</span> <span class="n">instance</span><span class="o">;</span>
     <span class="o">}</span>
 
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">print</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"It's print() method in StaticBlockInitialization instance."</span><span class="o">);</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"instance hashCode &gt; "</span> <span class="o">+</span> <span class="n">instance</span><span class="o">.</span><span class="na">hashCode</span><span class="o">());</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"It's print() method in StaticBlockInitialization instance."</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"instance hashCode &gt; "</span> <span class="o">+</span> <span class="n">instance</span><span class="o">.</span><span class="na">hashCode</span><span class="o">());</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -451,20 +451,20 @@
 <h1 id="lazy-initialization">lazy initialization</h1>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">LazyInitialization</span> <span class="o">{</span>
 
-    <span class="kd">private</span> <span class="kd">static</span> <span class="n">LazyInitialization</span> <span class="n">instance</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="nc">LazyInitialization</span> <span class="n">instance</span><span class="o">;</span>
 
     <span class="kd">private</span> <span class="nf">LazyInitialization</span><span class="o">()</span> <span class="o">{</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="kd">static</span> <span class="n">LazyInitialization</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">LazyInitialization</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="n">instance</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
-            <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LazyInitialization</span><span class="o">();</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LazyInitialization</span><span class="o">();</span>
         <span class="k">return</span> <span class="n">instance</span><span class="o">;</span>
     <span class="o">}</span>
 
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">print</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"It's print() method in LazyInitialization instance."</span><span class="o">);</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"instance hashCode &gt; "</span> <span class="o">+</span> <span class="n">instance</span><span class="o">.</span><span class="na">hashCode</span><span class="o">());</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"It's print() method in LazyInitialization instance."</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"instance hashCode &gt; "</span> <span class="o">+</span> <span class="n">instance</span><span class="o">.</span><span class="na">hashCode</span><span class="o">());</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -477,20 +477,20 @@
 <h1 id="thread-safe-initalization">Thread Safe Initalization</h1>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">ThreadSafeInitalization</span> <span class="o">{</span>
 
-    <span class="kd">private</span> <span class="kd">static</span> <span class="n">ThreadSafeInitalization</span> <span class="n">instance</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="nc">ThreadSafeInitalization</span> <span class="n">instance</span><span class="o">;</span>
 
     <span class="kd">private</span> <span class="nf">ThreadSafeInitalization</span><span class="o">()</span> <span class="o">{</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">synchronized</span> <span class="n">ThreadSafeInitalization</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">synchronized</span> <span class="nc">ThreadSafeInitalization</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="n">instance</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
-            <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ThreadSafeInitalization</span><span class="o">();</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ThreadSafeInitalization</span><span class="o">();</span>
         <span class="k">return</span> <span class="n">instance</span><span class="o">;</span>
     <span class="o">}</span>
 
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">print</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"It's print() method in ThreadSafeInitalization instance."</span><span class="o">);</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"instance hashCode &gt; "</span> <span class="o">+</span> <span class="n">instance</span><span class="o">.</span><span class="na">hashCode</span><span class="o">());</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"It's print() method in ThreadSafeInitalization instance."</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"instance hashCode &gt; "</span> <span class="o">+</span> <span class="n">instance</span><span class="o">.</span><span class="na">hashCode</span><span class="o">());</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -506,16 +506,16 @@
     <span class="o">}</span>
 
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Singleton</span> <span class="o">{</span>
-        <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">InitializationOnDemandHolderIdiom</span> <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InitializationOnDemandHolderIdiom</span><span class="o">();</span>
+        <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">InitializationOnDemandHolderIdiom</span> <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">InitializationOnDemandHolderIdiom</span><span class="o">();</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="kd">static</span> <span class="n">InitializationOnDemandHolderIdiom</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"create instance"</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">Singleton</span><span class="o">.</span><span class="na">instance</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">InitializationOnDemandHolderIdiom</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"create instance"</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nc">Singleton</span><span class="o">.</span><span class="na">instance</span><span class="o">;</span>
     <span class="o">}</span>
 
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">print</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"InitializationOnDemandHolderIdiom"</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"InitializationOnDemandHolderIdiom"</span><span class="o">);</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -526,13 +526,13 @@
 </ul>
 
 <h1 id="enum-initialization">Enum Initialization</h1>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">enum</span> <span class="n">EnumInitialization</span> <span class="o">{</span>
-    <span class="n">INSTANCE</span><span class="o">;</span>
-    <span class="kd">static</span> <span class="n">String</span> <span class="n">test</span> <span class="o">=</span> <span class="s">""</span><span class="o">;</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">enum</span> <span class="nc">EnumInitialization</span> <span class="o">{</span>
+    <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="kd">static</span> <span class="nc">String</span> <span class="n">test</span> <span class="o">=</span> <span class="s">""</span><span class="o">;</span>
 
-    <span class="kd">public</span> <span class="kd">static</span> <span class="n">EnumInitialization</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">EnumInitialization</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
         <span class="n">test</span> <span class="o">=</span> <span class="s">"test"</span><span class="o">;</span>
-        <span class="k">return</span> <span class="n">INSTANCE</span><span class="o">;</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -546,22 +546,22 @@
 <h1 id="using-reflection-to-destroy-singleton">Using Reflection To Destroy Singleton</h1>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">UsingReflectionToDestroySingleton</span> <span class="o">{</span>
 
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">EagerInitialization</span> <span class="n">instance</span> <span class="o">=</span> <span class="n">EagerInitialization</span><span class="o">.</span><span class="na">getInstance</span><span class="o">();</span>
-        <span class="n">EagerInitialization</span> <span class="n">instance2</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">EagerInitialization</span> <span class="n">instance</span> <span class="o">=</span> <span class="nc">EagerInitialization</span><span class="o">.</span><span class="na">getInstance</span><span class="o">();</span>
+        <span class="nc">EagerInitialization</span> <span class="n">instance2</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
         <span class="k">try</span> <span class="o">{</span>
-            <span class="n">Constructor</span><span class="o">[]</span> <span class="n">constructors</span> <span class="o">=</span> <span class="n">EagerInitialization</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getDeclaredConstructors</span><span class="o">();</span>
-            <span class="k">for</span> <span class="o">(</span><span class="n">Constructor</span> <span class="n">constructor</span> <span class="o">:</span> <span class="n">constructors</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">Constructor</span><span class="o">[]</span> <span class="n">constructors</span> <span class="o">=</span> <span class="nc">EagerInitialization</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getDeclaredConstructors</span><span class="o">();</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nc">Constructor</span> <span class="n">constructor</span> <span class="o">:</span> <span class="n">constructors</span><span class="o">)</span> <span class="o">{</span>
                 <span class="n">constructor</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
-                <span class="n">instance2</span> <span class="o">=</span> <span class="o">(</span><span class="n">EagerInitialization</span><span class="o">)</span> <span class="n">constructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+                <span class="n">instance2</span> <span class="o">=</span> <span class="o">(</span><span class="nc">EagerInitialization</span><span class="o">)</span> <span class="n">constructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
             <span class="o">}</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="o">}</span>
 
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">instance</span><span class="o">.</span><span class="na">hashCode</span><span class="o">());</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">instance2</span><span class="o">.</span><span class="na">hashCode</span><span class="o">());</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">instance</span><span class="o">.</span><span class="na">hashCode</span><span class="o">());</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">instance2</span><span class="o">.</span><span class="na">hashCode</span><span class="o">());</span>
 
     <span class="o">}</span>
 <span class="o">}</span>
@@ -712,7 +712,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">포스트</span>
               </a>
             </div>
@@ -800,7 +800,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
