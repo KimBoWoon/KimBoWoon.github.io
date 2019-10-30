@@ -6,11 +6,11 @@ categories:
 ---
 
 # 과거 Java의 컬렉션
+```java
 // 무인자 컬렉션 자료형. 이렇게 만들면 안된다.
 /**
 * 내 우표 컬렉션. Stamp 객체만 보관한다.
 */
-```java
 private final Collection stamps = ...;
 ```
 
