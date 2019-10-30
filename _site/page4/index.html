@@ -283,6 +283,476 @@
   
 
   <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/android/2017/09/22/use-retrofit/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+                
+                <a class="post-title-link" href="/android/2017/09/22/use-retrofit/" itemprop="url">
+                [Android] Retrofit 사용법
+              </a>
+            
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2017-09-22T10:23:45+09:00">
+                2017-09-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Android" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/android/2017/09/22/use-retrofit/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/android/2017/09/22/use-retrofit/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="android-retrofit-사용법">Android Retrofit 사용법</h1>
+<p>Retrofit은 Square Open Source에서 만든 REST API 통신을 위한 안드로이드 라이브러리이다. 안드로이드 서비스를 개발하려면 서버와의 통신은 꼭 필요합니다. 다른 라이브러리를 사용하면 불필요하고 귀찮은 작업이 많습니다. Retrofit은 불필요한 작업을 최소화 하고 쓰기 쉽게 만들어진 라이브러리입니다.</p>
+
+<p>먼저 gradle을 추가합니다.</p>
+<div class="language-gradle highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">compile</span> <span class="s1">'io.reactivex.rxjava2:rxandroid:2.0.1'</span>
+<span class="n">compile</span> <span class="s1">'io.reactivex.rxjava2:rxjava:2.1.3'</span>
+<span class="n">compile</span> <span class="s1">'com.squareup.retrofit2:retrofit:2.3.0'</span>
+<span class="n">compile</span> <span class="s1">'com.google.code.gson:gson:2.7'</span>
+<span class="n">compile</span> <span class="s1">'com.android.support:recyclerview-v7:25.1.0'</span>
+<span class="n">compile</span> <span class="s1">'com.squareup.retrofit2:converter-gson:2.1.0'</span>
+<span class="n">compile</span> <span class="s1">'com.squareup.picasso:picasso:2.5.2'</span>
+</code></pre></div></div>
+
+<p>간단하게 파싱할 https://randomuser.me/api의 데이터입니다.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="err">results:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="err">gender:</span><span class="w"> </span><span class="s2">"male"</span><span class="p">,</span><span class="w">
+            </span><span class="err">name:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="err">title:</span><span class="w"> </span><span class="s2">"mr"</span><span class="p">,</span><span class="w">
+                </span><span class="err">first:</span><span class="w"> </span><span class="s2">"jimi"</span><span class="p">,</span><span class="w">
+                </span><span class="err">last:</span><span class="w"> </span><span class="s2">"polon"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="err">location:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="err">street:</span><span class="w"> </span><span class="s2">"9350 itsenäisyydenkatu"</span><span class="p">,</span><span class="w">
+                </span><span class="err">city:</span><span class="w"> </span><span class="s2">"kristinestad"</span><span class="p">,</span><span class="w">
+                </span><span class="err">state:</span><span class="w"> </span><span class="s2">"south karelia"</span><span class="p">,</span><span class="w">
+                </span><span class="err">postcode:</span><span class="w"> </span><span class="mi">14156</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="err">email:</span><span class="w"> </span><span class="s2">"jimi.polon@example.com"</span><span class="p">,</span><span class="w">
+            </span><span class="err">login:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="err">username:</span><span class="w"> </span><span class="s2">"blackdog726"</span><span class="p">,</span><span class="w">
+                </span><span class="err">password:</span><span class="w"> </span><span class="s2">"ranger"</span><span class="p">,</span><span class="w">
+                </span><span class="err">salt:</span><span class="w"> </span><span class="s2">"cFE2HMuR"</span><span class="p">,</span><span class="w">
+                </span><span class="err">md</span><span class="mi">5</span><span class="err">:</span><span class="w"> </span><span class="s2">"c7caf7af79bc56b4ddeee96bb9f90d85"</span><span class="p">,</span><span class="w">
+                </span><span class="err">sha</span><span class="mi">1</span><span class="err">:</span><span class="w"> </span><span class="s2">"c2a0382305915dc106e2b75a48b2f454aef4f334"</span><span class="p">,</span><span class="w">
+                </span><span class="err">sha</span><span class="mi">256</span><span class="err">:</span><span class="w"> </span><span class="s2">"ff6fbdd32246bd365b3a095c91408503a1f73620526e4f24da4759f439427096"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="err">dob:</span><span class="w"> </span><span class="s2">"1967-10-03 16:02:57"</span><span class="p">,</span><span class="w">
+            </span><span class="err">registered:</span><span class="w"> </span><span class="s2">"2009-07-19 00:26:27"</span><span class="p">,</span><span class="w">
+            </span><span class="err">phone:</span><span class="w"> </span><span class="s2">"02-657-116"</span><span class="p">,</span><span class="w">
+            </span><span class="err">cell:</span><span class="w"> </span><span class="s2">"042-656-81-18"</span><span class="p">,</span><span class="w">
+            </span><span class="err">id:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="err">name:</span><span class="w"> </span><span class="s2">"HETU"</span><span class="p">,</span><span class="w">
+                </span><span class="err">value:</span><span class="w"> </span><span class="s2">"1167-163D"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="err">picture:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="err">large:</span><span class="w"> </span><span class="s2">"https://randomuser.me/api/portraits/men/76.jpg"</span><span class="p">,</span><span class="w">
+                </span><span class="err">medium:</span><span class="w"> </span><span class="s2">"https://randomuser.me/api/portraits/med/men/76.jpg"</span><span class="p">,</span><span class="w">
+                </span><span class="err">thumbnail:</span><span class="w"> </span><span class="s2">"https://randomuser.me/api/portraits/thumb/men/76.jpg"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="err">nat:</span><span class="w"> </span><span class="s2">"FI"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="err">...</span><span class="w">
+    </span><span class="err">info:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="err">seed:</span><span class="w"> </span><span class="s2">"468e4162245cdf64"</span><span class="p">,</span><span class="w">
+    </span><span class="err">results:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="err">page:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="err">version:</span><span class="w"> </span><span class="s2">"1.1"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>일단 데이터를 얻어오기 위해 interface를 정의합니다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">APIInterface</span> <span class="o">{</span>
+    <span class="nd">@GET</span><span class="o">(</span><span class="s">"/api/"</span><span class="o">)</span>
+    <span class="nc">Call</span><span class="o">&lt;</span><span class="nc">PersonModel</span><span class="o">&gt;</span> <span class="nf">getUsers</span><span class="o">(</span><span class="nd">@Query</span><span class="o">(</span><span class="s">"results"</span><span class="o">)</span> <span class="kt">int</span> <span class="n">results</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>실제로 요청하는 url은 https://randomuser.me/api/?results=1 입니다. 여기 result에 따라 몇 개의 데이터를 얻어올지 결정합니다.
+그리고 인터페이스에 있는 메소드의 인자들은 url에 있는 ? 뒤에 query를 설명합니다.</p>
+
+<p>model도 적절하게 생성합니다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Name</span> <span class="o">{</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"title"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">title</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"first"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">first</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"last"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">last</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getTitle</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">title</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setTitle</span><span class="o">(</span><span class="nc">String</span> <span class="n">title</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getFirst</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">first</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setFirst</span><span class="o">(</span><span class="nc">String</span> <span class="n">first</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">first</span> <span class="o">=</span> <span class="n">first</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getLast</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">last</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setLast</span><span class="o">(</span><span class="nc">String</span> <span class="n">last</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">last</span> <span class="o">=</span> <span class="n">last</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">UserProfileImage</span> <span class="o">{</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"large"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">large</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"medium"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">medium</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"thumbnail"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">thumbnail</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getLarge</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">large</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setLarge</span><span class="o">(</span><span class="nc">String</span> <span class="n">large</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">large</span> <span class="o">=</span> <span class="n">large</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getMedium</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">medium</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setMedium</span><span class="o">(</span><span class="nc">String</span> <span class="n">medium</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">medium</span> <span class="o">=</span> <span class="n">medium</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getThumbnail</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">thumbnail</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setThumbnail</span><span class="o">(</span><span class="nc">String</span> <span class="n">thumbnail</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">thumbnail</span> <span class="o">=</span> <span class="n">thumbnail</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Item</span> <span class="o">{</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"name"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="nc">Name</span> <span class="n">name</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"picture"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="nc">UserProfileImage</span> <span class="n">userProfileImage</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"gender"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">gender</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"phone"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">phone</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getGender</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">gender</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setGender</span><span class="o">(</span><span class="nc">String</span> <span class="n">gender</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">gender</span> <span class="o">=</span> <span class="n">gender</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getPhone</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">phone</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPhone</span><span class="o">(</span><span class="nc">String</span> <span class="n">phone</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">phone</span> <span class="o">=</span> <span class="n">phone</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Name</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="nc">Name</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">UserProfileImage</span> <span class="nf">getUserProfileImage</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">userProfileImage</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUserProfileImage</span><span class="o">(</span><span class="nc">UserProfileImage</span> <span class="n">userProfileImage</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">userProfileImage</span> <span class="o">=</span> <span class="n">userProfileImage</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PersonModel</span> <span class="o">{</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"results"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Item</span><span class="o">&gt;</span> <span class="n">items</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="nd">@SerializedName</span><span class="o">(</span><span class="s">"page"</span><span class="o">)</span>
+    <span class="nd">@Expose</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">page</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Item</span><span class="o">&gt;</span> <span class="nf">getItems</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">items</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setItems</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Item</span><span class="o">&gt;</span> <span class="n">items</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">items</span> <span class="o">=</span> <span class="n">items</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getPage</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">page</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPage</span><span class="o">(</span><span class="kt">int</span> <span class="n">page</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">page</span> <span class="o">=</span> <span class="n">page</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>또 결과를 보여줄 recyclerview도 만듭니다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">ItemClickListener</span> <span class="o">{</span>
+    <span class="kt">void</span> <span class="nf">onItemClick</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RecyclerAdapter</span> <span class="kd">extends</span> <span class="nc">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span><span class="o">&lt;</span><span class="nc">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="nc">ItemClickListener</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Item</span><span class="o">&gt;</span> <span class="n">items</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Context</span> <span class="n">context</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">RecyclerAdapter</span><span class="o">(</span><span class="nc">Context</span> <span class="n">context</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Item</span><span class="o">&gt;</span> <span class="n">items</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">context</span> <span class="o">=</span> <span class="n">context</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">items</span> <span class="o">=</span> <span class="n">items</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getItemTitle</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">).</span><span class="na">getName</span><span class="o">().</span><span class="na">getFirst</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemClick</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">getItemTitle</span><span class="o">(</span><span class="n">position</span><span class="o">),</span> <span class="nc">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="nc">ViewGroup</span> <span class="n">parent</span><span class="o">,</span> <span class="kt">int</span> <span class="n">viewType</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">holder</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+        <span class="nc">View</span> <span class="n">v</span> <span class="o">=</span> <span class="nc">LayoutInflater</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">parent</span><span class="o">.</span><span class="na">getContext</span><span class="o">()).</span><span class="na">inflate</span><span class="o">(</span><span class="no">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">list_item</span><span class="o">,</span> <span class="n">parent</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+        <span class="n">holder</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">UsersViewHolder</span><span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+
+        <span class="k">return</span> <span class="n">holder</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onBindViewHolder</span><span class="o">(</span><span class="nc">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="n">holder</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">holder</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="o">((</span><span class="nc">UsersViewHolder</span><span class="o">)</span> <span class="n">holder</span><span class="o">).</span><span class="na">name</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">).</span><span class="na">getName</span><span class="o">().</span><span class="na">getFirst</span><span class="o">());</span>
+        <span class="nc">Picasso</span><span class="o">.</span><span class="na">with</span><span class="o">(</span><span class="n">context</span><span class="o">).</span><span class="na">load</span><span class="o">(</span><span class="n">items</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">).</span><span class="na">getUserProfileImage</span><span class="o">().</span><span class="na">getThumbnail</span><span class="o">()).</span><span class="na">into</span><span class="o">(((</span><span class="nc">UsersViewHolder</span><span class="o">)</span> <span class="n">holder</span><span class="o">).</span><span class="na">profileImg</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getItemCount</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">items</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">static</span> <span class="kd">class</span> <span class="nc">UsersViewHolder</span> <span class="kd">extends</span> <span class="nc">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="o">{</span>
+        <span class="kd">private</span> <span class="nc">TextView</span> <span class="n">name</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="nc">ImageView</span> <span class="n">profileImg</span><span class="o">;</span>
+
+        <span class="kd">public</span> <span class="nf">UsersViewHolder</span><span class="o">(</span><span class="nc">View</span> <span class="n">itemView</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">ItemClickListener</span> <span class="n">itemClickListener</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kd">super</span><span class="o">(</span><span class="n">itemView</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="o">(</span><span class="nc">TextView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="no">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">text</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">profileImg</span> <span class="o">=</span> <span class="o">(</span><span class="nc">ImageView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="no">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">userImg</span><span class="o">);</span>
+
+            <span class="n">itemView</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="nc">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+                <span class="nd">@Override</span>
+                <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="nc">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">itemClickListener</span><span class="o">.</span><span class="na">onItemClick</span><span class="o">(</span><span class="n">getAdapterPosition</span><span class="o">());</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>마지막으로 retrofit을 만듭니다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Retrofit</span> <span class="n">client</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Retrofit</span><span class="o">.</span><span class="na">Builder</span><span class="o">().</span><span class="na">baseUrl</span><span class="o">(</span><span class="s">"https://randomuser.me"</span><span class="o">).</span><span class="na">addConverterFactory</span><span class="o">(</span><span class="nc">GsonConverterFactory</span><span class="o">.</span><span class="na">create</span><span class="o">()).</span><span class="na">build</span><span class="o">();</span>
+<span class="nc">APIInterface</span> <span class="n">service</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="nc">APIInterface</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="nc">Call</span><span class="o">&lt;</span><span class="nc">PersonModel</span><span class="o">&gt;</span> <span class="n">call</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="na">getUsers</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+<span class="n">call</span><span class="o">.</span><span class="na">enqueue</span><span class="o">(</span><span class="k">new</span> <span class="nc">Callback</span><span class="o">&lt;</span><span class="nc">PersonModel</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onResponse</span><span class="o">(</span><span class="nc">Call</span><span class="o">&lt;</span><span class="nc">PersonModel</span><span class="o">&gt;</span> <span class="n">call</span><span class="o">,</span> <span class="nc">Response</span><span class="o">&lt;</span><span class="nc">PersonModel</span><span class="o">&gt;</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">isSuccessful</span><span class="o">())</span> <span class="o">{</span>
+            <span class="nc">Log</span><span class="o">.</span><span class="na">i</span><span class="o">(</span><span class="s">"Success"</span><span class="o">,</span> <span class="n">response</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+            <span class="nc">PersonModel</span> <span class="n">person</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="na">body</span><span class="o">();</span>
+            <span class="n">recyclerView</span><span class="o">.</span><span class="na">setAdapter</span><span class="o">(</span><span class="k">new</span> <span class="nc">RecyclerAdapter</span><span class="o">(</span><span class="n">getApplicationContext</span><span class="o">(),</span> <span class="n">response</span><span class="o">.</span><span class="na">body</span><span class="o">().</span><span class="na">getItems</span><span class="o">()));</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFailure</span><span class="o">(</span><span class="nc">Call</span><span class="o">&lt;</span><span class="nc">PersonModel</span><span class="o">&gt;</span> <span class="n">call</span><span class="o">,</span> <span class="nc">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Log</span><span class="o">.</span><span class="na">i</span><span class="o">(</span><span class="s">"Failed"</span><span class="o">,</span> <span class="s">"Failed Connection"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</code></pre></div></div>
+
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/android/2017/09/22/use-retrofit/#" rel="contents">
+              더 읽어보기 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+        
+        
+        
+        
+          <div class="post-eof"></div>
+        
+      
+    </footer>
+  </article>
+
+  
+    
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/09/14/builder-pattern/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -842,7 +1312,7 @@ public으로 선언되지 않은 클래스의 객체를 반환하는 API를 만�
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-count">33</span>
                 <span class="site-state-item-name">포스트</span>
               </a>
             </div>
