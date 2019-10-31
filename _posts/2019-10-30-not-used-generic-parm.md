@@ -92,7 +92,7 @@ static int numElementsInCommon(Set<?> s1, Set<?> s2) {
 
 # 예외
 1. 클래스 리터럴에는 반드시 무인자 자료형을 사용해야 한다.
-    * Java 표준에 따르면, 클래스 리터럴에는 형인자 자료형을 쓸 수 없다. List.class, String[].class, int.class는 가능하나 List<String>.class, List<?>.class는 불가능하다는 말이다.
+    * Java 표준에 따르면, 클래스 리터럴에는 형인자 자료형을 쓸 수 없다. List.class, String[].class, int.class는 가능하나 `List<String>.class`, List<?>.class는 불가능하다는 말이다.
 2. instanceof 연산자 사용 규칙
     * 제네릭 자료형 정보는 프로그램이 실행될 때는 지워지기 때문에, instanceof 연산자는 비한정적 와일드카드 자료형 이외의 형인자 자료형에 적용할 수 없다.
     * 제네릭 자료형에 instanceof 연산자를 적용할 때는 다음과 같이 하는 것이 좋다.
