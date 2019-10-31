@@ -52,12 +52,12 @@ public static void main(String[] args) {
     unsafeAdd(strings, new Integer(42));
     String s = strings.get(0); // 컴파일러가 자동으로 형변환
 }
-private static void unsateAdd(List list, Object o) {
+private static void unsafeAdd(List list, Object o) {
     list.add(o);
 }
 ```
 
-이 프로그램은 컴파일은 성공하겠지만 무인자 자료형의 사용으로 경고가 뜬다. 그리고 실제로 실행하면 ```strings.get(0)```의 실행 결과를 String으로 변환하려 하기 때문에 ClassCastException 예외가 발생한다. 위의 unsateAdd의 List를 ```List<Object>```로 수정하면 오류가 발생하면서 컴파일이 실패할 것이다.
+이 프로그램은 컴파일은 성공하겠지만 무인자 자료형의 사용으로 경고가 뜬다. 그리고 실제로 실행하면 ```strings.get(0)```의 실행 결과를 String으로 변환하려 하기 때문에 ClassCastException 예외가 발생한다. 위의 unsafeAdd의 List를 ```List<Object>```로 수정하면 오류가 발생하면서 컴파일이 실패할 것이다.
 
 컬렉션에 들어갈 원소들이 자료형을 모르고 상관할 필요도 없다면 무인자 자료형을 써보고 싶을 것이다. 제네릭에 익숙하지 않다면 아래와 같은 코드를 만들것이다.
 
