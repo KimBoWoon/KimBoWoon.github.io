@@ -1,5 +1,5 @@
 ---
-title: "새 코드에는 무인자 제네릭 자료형을 사용하지 마라"
+title: "[Effective Java] 새 코드에는 무인자 제네릭 자료형을 사용하지 마라"
 date: 2019-10-29 23:19:42
 categories:
 - Effective Java
