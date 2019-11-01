@@ -1,0 +1,891 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next muse use-motion" lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Notepad" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="제네릭의 경고를 무시하지 마라! 제네릭을 사용하다 보면 무수히 많은 경고를 보게 된다. 무점검 형변환 경고, 무점검 메서드 호출 경고, 무점검 제네릭 배열 생겅 경고, 무점검 변환 경고 등이 있다. 아무리 고수라도 제네릭을 사용하여 만들어낸 코드가 깔끔하게 컴파일이 되기는 어렵다. 그래서 우리는 신경을 쓰면서 제네릭을 만들어야 하고 나중에 경고를 가능하다면 모두 지워주는게 좋다. 몇 가지는 컴파일러가 친절히 알려준다. 아래에 코드를 보자. Set&amp;lt;Lark&amp;gt; exaltation = new HashSete(); 컴파일러는 에러 메시지를 보여준다. Practice.java warning: [unchecked] unchecked conversion found : HashSet, required: Set&amp;lt;Lark&amp;gt; Set&amp;lt;Lark&amp;gt; exaltation = new HashSet(); ＾ 컴파일러가 가르쳐준대로 수정하면 경고는 사라진다. Set&amp;lt;Lark&amp;gt; exaltation = new HashSete&amp;lt;Lark&amp;gt;(); 이렇게 가능하다면 모든 경고 메시지는 제거해주는 것이 좋다. 코드의 형 안전성이 보장되기 때문이다. @SupressWarnings(“unchecked”) 이 어노테이션의 사용은 최대한 자제해야한다. 형 안전성 증명도 없이 경고를 억제하면, 프로그램 안전성에 대해 그릇된 생각을 갖게 될 뿐이다. 컴파일은 되겠지만 프로그램 실행 도중에 ClassCastException을 만나게 된다면 어디서 어떻게 수정해야하는지 감이 안잡히게 될것이다. 만약 @SupressWarnings(“unchecked”) 어노테이션을 사용하게 된다면 가능한 한 작은 범위에 적용해야한다. 보통은 변수 선언이나, 아주 짧은 메서드 또는 생성자에 붙인다. 절대로 클래스 전체에 @SupressWarnings(“unchecked”)를 적용하지 말아라. 중요한 경고 메시지를 놓치는 원인이다. 길이가 한 줄 이상인 메서드나 생성자에 사용된 @SupressWarnings(“unchecked”) 어노테이션을 지역 변수 선언문 앞으로 이동시킬 수 있을 때가 있다. 그러려면 새로운 지역 변수 선언문을 작성해야 할 수도 있으나, 그럴만한 가치는 있다. 다음은 ArrayList 클래스에 toArray 메서드이다. public &amp;lt;T&amp;gt; T[] toArray(T[] a) { if (a.length &amp;lt; size) { return (T[]) Arrays.copyOf(elements, size, a.getClass()); } System.arraycopy(elements, 0, a, 0, size); if (a.length &amp;gt; size) { a[size] = null; } return a; } ArrayList 클래스를 컴파일해 보면 아래와 같은 경고 메시지가 출력된다. Practice.java warning: [unchecked] unchecked cast found : Object[], required: T[] return (T[]) Arrays.copyOf(elements, size, a.getClass()); ＾ @SupressWarnings(“unchecked”) 어노테이션은 return문에 붙일 수 없다. 선언문이 아니기 때문이다. 메서드 전체에 붙이고 싶겠지만 절대로 그러면 안된다. 대신, 반환값을 담을 지역 변수를 선언한 다음에 해당 선언문 앞에 어노테이션을 붙여라. public &amp;lt;T&amp;gt; T[] toArray(T[] a) { if (a.length &amp;lt; size) { // 아래의 형변환은 배열의 자료형이 인자로 전달된 자료형인 T[]와 // 같으므로 정확하다. @SupressWarnings(&quot;unchecked&quot;) T[] result = (T[]) Arrays.copyOf(elements, size, a.getClass()); return result; } System.arraycopy(elements, 0, a, 0, size); if (a.length &amp;gt; size) { a[size] = null; } return a; } 이 메서드는 깔끔하게 컴파일 될 뿐 아니라 무점검 코드에 대한 경고 메시지의 억제 범위를 최소한으로 줄이고 있다. 그리고 @SupressWarnings(“unchecked”) 어노테이션을 사용할 때마다 왜 형 안전성을 위반하지 않는지 밝히는 주석을 반드시 붙여라. 다른 사람이 이해하기 좋고 형 안전성을 깨뜨릴 가능성이 줄어들게 된다.">
+<meta name="keywords" content="Jekyll, NexT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Effective Java] 무점검 경고를 제거하라">
+<meta property="og:url" content="http://localhost:4000/effective%20java/2019/11/01/delete-unchecked-warning/">
+<meta property="og:site_name" content="Notepad">
+<meta property="og:description" content="제네릭의 경고를 무시하지 마라! 제네릭을 사용하다 보면 무수히 많은 경고를 보게 된다. 무점검 형변환 경고, 무점검 메서드 호출 경고, 무점검 제네릭 배열 생겅 경고, 무점검 변환 경고 등이 있다. 아무리 고수라도 제네릭을 사용하여 만들어낸 코드가 깔끔하게 컴파일이 되기는 어렵다. 그래서 우리는 신경을 쓰면서 제네릭을 만들어야 하고 나중에 경고를 가능하다면 모두 지워주는게 좋다. 몇 가지는 컴파일러가 친절히 알려준다. 아래에 코드를 보자. Set&amp;lt;Lark&amp;gt; exaltation = new HashSete(); 컴파일러는 에러 메시지를 보여준다. Practice.java warning: [unchecked] unchecked conversion found : HashSet, required: Set&amp;lt;Lark&amp;gt; Set&amp;lt;Lark&amp;gt; exaltation = new HashSet(); ＾ 컴파일러가 가르쳐준대로 수정하면 경고는 사라진다. Set&amp;lt;Lark&amp;gt; exaltation = new HashSete&amp;lt;Lark&amp;gt;(); 이렇게 가능하다면 모든 경고 메시지는 제거해주는 것이 좋다. 코드의 형 안전성이 보장되기 때문이다. @SupressWarnings(“unchecked”) 이 어노테이션의 사용은 최대한 자제해야한다. 형 안전성 증명도 없이 경고를 억제하면, 프로그램 안전성에 대해 그릇된 생각을 갖게 될 뿐이다. 컴파일은 되겠지만 프로그램 실행 도중에 ClassCastException을 만나게 된다면 어디서 어떻게 수정해야하는지 감이 안잡히게 될것이다. 만약 @SupressWarnings(“unchecked”) 어노테이션을 사용하게 된다면 가능한 한 작은 범위에 적용해야한다. 보통은 변수 선언이나, 아주 짧은 메서드 또는 생성자에 붙인다. 절대로 클래스 전체에 @SupressWarnings(“unchecked”)를 적용하지 말아라. 중요한 경고 메시지를 놓치는 원인이다. 길이가 한 줄 이상인 메서드나 생성자에 사용된 @SupressWarnings(“unchecked”) 어노테이션을 지역 변수 선언문 앞으로 이동시킬 수 있을 때가 있다. 그러려면 새로운 지역 변수 선언문을 작성해야 할 수도 있으나, 그럴만한 가치는 있다. 다음은 ArrayList 클래스에 toArray 메서드이다. public &amp;lt;T&amp;gt; T[] toArray(T[] a) { if (a.length &amp;lt; size) { return (T[]) Arrays.copyOf(elements, size, a.getClass()); } System.arraycopy(elements, 0, a, 0, size); if (a.length &amp;gt; size) { a[size] = null; } return a; } ArrayList 클래스를 컴파일해 보면 아래와 같은 경고 메시지가 출력된다. Practice.java warning: [unchecked] unchecked cast found : Object[], required: T[] return (T[]) Arrays.copyOf(elements, size, a.getClass()); ＾ @SupressWarnings(“unchecked”) 어노테이션은 return문에 붙일 수 없다. 선언문이 아니기 때문이다. 메서드 전체에 붙이고 싶겠지만 절대로 그러면 안된다. 대신, 반환값을 담을 지역 변수를 선언한 다음에 해당 선언문 앞에 어노테이션을 붙여라. public &amp;lt;T&amp;gt; T[] toArray(T[] a) { if (a.length &amp;lt; size) { // 아래의 형변환은 배열의 자료형이 인자로 전달된 자료형인 T[]와 // 같으므로 정확하다. @SupressWarnings(&quot;unchecked&quot;) T[] result = (T[]) Arrays.copyOf(elements, size, a.getClass()); return result; } System.arraycopy(elements, 0, a, 0, size); if (a.length &amp;gt; size) { a[size] = null; } return a; } 이 메서드는 깔끔하게 컴파일 될 뿐 아니라 무점검 코드에 대한 경고 메시지의 억제 범위를 최소한으로 줄이고 있다. 그리고 @SupressWarnings(“unchecked”) 어노테이션을 사용할 때마다 왜 형 안전성을 위반하지 않는지 밝히는 주석을 반드시 붙여라. 다른 사람이 이해하기 좋고 형 안전성을 깨뜨릴 가능성이 줄어들게 된다.">
+<meta property="og:locale" content="ko">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Effective Java] 무점검 경고를 제거하라">
+<meta name="twitter:description" content="제네릭의 경고를 무시하지 마라! 제네릭을 사용하다 보면 무수히 많은 경고를 보게 된다. 무점검 형변환 경고, 무점검 메서드 호출 경고, 무점검 제네릭 배열 생겅 경고, 무점검 변환 경고 등이 있다. 아무리 고수라도 제네릭을 사용하여 만들어낸 코드가 깔끔하게 컴파일이 되기는 어렵다. 그래서 우리는 신경을 쓰면서 제네릭을 만들어야 하고 나중에 경고를 가능하다면 모두 지워주는게 좋다. 몇 가지는 컴파일러가 친절히 알려준다. 아래에 코드를 보자. Set&amp;lt;Lark&amp;gt; exaltation = new HashSete(); 컴파일러는 에러 메시지를 보여준다. Practice.java warning: [unchecked] unchecked conversion found : HashSet, required: Set&amp;lt;Lark&amp;gt; Set&amp;lt;Lark&amp;gt; exaltation = new HashSet(); ＾ 컴파일러가 가르쳐준대로 수정하면 경고는 사라진다. Set&amp;lt;Lark&amp;gt; exaltation = new HashSete&amp;lt;Lark&amp;gt;(); 이렇게 가능하다면 모든 경고 메시지는 제거해주는 것이 좋다. 코드의 형 안전성이 보장되기 때문이다. @SupressWarnings(“unchecked”) 이 어노테이션의 사용은 최대한 자제해야한다. 형 안전성 증명도 없이 경고를 억제하면, 프로그램 안전성에 대해 그릇된 생각을 갖게 될 뿐이다. 컴파일은 되겠지만 프로그램 실행 도중에 ClassCastException을 만나게 된다면 어디서 어떻게 수정해야하는지 감이 안잡히게 될것이다. 만약 @SupressWarnings(“unchecked”) 어노테이션을 사용하게 된다면 가능한 한 작은 범위에 적용해야한다. 보통은 변수 선언이나, 아주 짧은 메서드 또는 생성자에 붙인다. 절대로 클래스 전체에 @SupressWarnings(“unchecked”)를 적용하지 말아라. 중요한 경고 메시지를 놓치는 원인이다. 길이가 한 줄 이상인 메서드나 생성자에 사용된 @SupressWarnings(“unchecked”) 어노테이션을 지역 변수 선언문 앞으로 이동시킬 수 있을 때가 있다. 그러려면 새로운 지역 변수 선언문을 작성해야 할 수도 있으나, 그럴만한 가치는 있다. 다음은 ArrayList 클래스에 toArray 메서드이다. public &amp;lt;T&amp;gt; T[] toArray(T[] a) { if (a.length &amp;lt; size) { return (T[]) Arrays.copyOf(elements, size, a.getClass()); } System.arraycopy(elements, 0, a, 0, size); if (a.length &amp;gt; size) { a[size] = null; } return a; } ArrayList 클래스를 컴파일해 보면 아래와 같은 경고 메시지가 출력된다. Practice.java warning: [unchecked] unchecked cast found : Object[], required: T[] return (T[]) Arrays.copyOf(elements, size, a.getClass()); ＾ @SupressWarnings(“unchecked”) 어노테이션은 return문에 붙일 수 없다. 선언문이 아니기 때문이다. 메서드 전체에 붙이고 싶겠지만 절대로 그러면 안된다. 대신, 반환값을 담을 지역 변수를 선언한 다음에 해당 선언문 앞에 어노테이션을 붙여라. public &amp;lt;T&amp;gt; T[] toArray(T[] a) { if (a.length &amp;lt; size) { // 아래의 형변환은 배열의 자료형이 인자로 전달된 자료형인 T[]와 // 같으므로 정확하다. @SupressWarnings(&quot;unchecked&quot;) T[] result = (T[]) Arrays.copyOf(elements, size, a.getClass()); return result; } System.arraycopy(elements, 0, a, 0, size); if (a.length &amp;gt; size) { a[size] = null; } return a; } 이 메서드는 깔끔하게 컴파일 될 뿐 아니라 무점검 코드에 대한 경고 메시지의 억제 범위를 최소한으로 줄이고 있다. 그리고 @SupressWarnings(“unchecked”) 어노테이션을 사용할 때마다 왜 형 안전성을 위반하지 않는지 밝히는 주석을 반드시 붙여라. 다른 사람이 이해하기 좋고 형 안전성을 깨뜨릴 가능성이 줄어들게 된다.">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '작성자'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>[Effective Java] 무점검 경고를 제거하라</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="ko">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Notepad</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            홈
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            아카이브
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            태그
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2019/11/01/delete-unchecked-warning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            [Effective Java] 무점검 경고를 제거하라
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2019-11-01T08:19:42+09:00">
+                2019-11-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2019/11/01/delete-unchecked-warning/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2019/11/01/delete-unchecked-warning/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="제네릭의-경고를-무시하지-마라">제네릭의 경고를 무시하지 마라!</h1>
+<p>제네릭을 사용하다 보면 무수히 많은 경고를 보게 된다. 무점검 형변환 경고, 무점검 메서드 호출 경고, 무점검 제네릭 배열 생겅 경고, 무점검 변환 경고 등이 있다.
+아무리 고수라도 제네릭을 사용하여 만들어낸 코드가 깔끔하게 컴파일이 되기는 어렵다. 그래서 우리는 신경을 쓰면서 제네릭을 만들어야 하고 나중에 경고를 가능하다면 모두 지워주는게 좋다.
+몇 가지는 컴파일러가 친절히 알려준다. 아래에 코드를 보자.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Lark</span><span class="o">&gt;</span> <span class="n">exaltation</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSete</span><span class="o">();</span>
+</code></pre></div></div>
+
+<p>컴파일러는 에러 메시지를 보여준다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Practice</span><span class="o">.</span><span class="na">java</span> <span class="nl">warning:</span> <span class="o">[</span><span class="n">unchecked</span><span class="o">]</span> <span class="n">unchecked</span> <span class="n">conversion</span>
+<span class="n">found</span> <span class="o">:</span> <span class="nc">HashSet</span><span class="o">,</span> <span class="nl">required:</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Lark</span><span class="o">&gt;</span>
+<span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Lark</span><span class="o">&gt;</span> <span class="n">exaltation</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">();</span>
+                    <span class="err">＾</span>
+</code></pre></div></div>
+
+<p>컴파일러가 가르쳐준대로 수정하면 경고는 사라진다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Lark</span><span class="o">&gt;</span> <span class="n">exaltation</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSete</span><span class="o">&lt;</span><span class="nc">Lark</span><span class="o">&gt;();</span>
+</code></pre></div></div>
+
+<p>이렇게 가능하다면 모든 경고 메시지는 제거해주는 것이 좋다. 코드의 형 안전성이 보장되기 때문이다.</p>
+
+<h1 id="supresswarningsunchecked">@SupressWarnings(“unchecked”)</h1>
+<p>이 어노테이션의 사용은 최대한 자제해야한다. 형 안전성 증명도 없이 경고를 억제하면, 프로그램 안전성에 대해 그릇된 생각을 갖게 될 뿐이다. 컴파일은 되겠지만 프로그램 실행 도중에 ClassCastException을 만나게 된다면 어디서 어떻게 수정해야하는지 감이 안잡히게 될것이다.</p>
+
+<p>만약 @SupressWarnings(“unchecked”) 어노테이션을 사용하게 된다면 가능한 한 작은 범위에 적용해야한다. 보통은 변수 선언이나, 아주 짧은 메서드 또는 생성자에 붙인다. 절대로 클래스 전체에 @SupressWarnings(“unchecked”)를 적용하지 말아라. 중요한 경고 메시지를 놓치는 원인이다.</p>
+
+<p>길이가 한 줄 이상인 메서드나 생성자에 사용된 @SupressWarnings(“unchecked”) 어노테이션을 지역 변수 선언문 앞으로 이동시킬 수 있을 때가 있다. 그러려면 새로운 지역 변수 선언문을 작성해야 할 수도 있으나, 그럴만한 가치는 있다. 다음은 ArrayList 클래스에 toArray 메서드이다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="no">T</span><span class="o">[]</span> <span class="nf">toArray</span><span class="o">(</span><span class="no">T</span><span class="o">[]</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">a</span><span class="o">.</span><span class="na">length</span> <span class="o">&lt;</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">(</span><span class="no">T</span><span class="o">[])</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">copyOf</span><span class="o">(</span><span class="n">elements</span><span class="o">,</span> <span class="n">size</span><span class="o">,</span> <span class="n">a</span><span class="o">.</span><span class="na">getClass</span><span class="o">());</span>
+    <span class="o">}</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">arraycopy</span><span class="o">(</span><span class="n">elements</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">size</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">a</span><span class="o">.</span><span class="na">length</span> <span class="o">&gt;</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">a</span><span class="o">[</span><span class="n">size</span><span class="o">]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>ArrayList 클래스를 컴파일해 보면 아래와 같은 경고 메시지가 출력된다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Practice</span><span class="o">.</span><span class="na">java</span> <span class="nl">warning:</span> <span class="o">[</span><span class="n">unchecked</span><span class="o">]</span> <span class="n">unchecked</span> <span class="n">cast</span>
+<span class="n">found</span> <span class="o">:</span> <span class="nc">Object</span><span class="o">[],</span> <span class="nl">required:</span> <span class="no">T</span><span class="o">[]</span>
+<span class="nf">return</span> <span class="o">(</span><span class="no">T</span><span class="o">[])</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">copyOf</span><span class="o">(</span><span class="n">elements</span><span class="o">,</span> <span class="n">size</span><span class="o">,</span> <span class="n">a</span><span class="o">.</span><span class="na">getClass</span><span class="o">());</span>
+                          <span class="err">＾</span>
+</code></pre></div></div>
+
+<p>@SupressWarnings(“unchecked”) 어노테이션은 return문에 붙일 수 없다. 선언문이 아니기 때문이다. 메서드 전체에 붙이고 싶겠지만 절대로 그러면 안된다. 대신, 반환값을 담을 지역 변수를 선언한 다음에 해당 선언문 앞에 어노테이션을 붙여라.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="no">T</span><span class="o">[]</span> <span class="nf">toArray</span><span class="o">(</span><span class="no">T</span><span class="o">[]</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">a</span><span class="o">.</span><span class="na">length</span> <span class="o">&lt;</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 아래의 형변환은 배열의 자료형이 인자로 전달된 자료형인 T[]와</span>
+        <span class="c1">// 같으므로 정확하다.</span>
+        <span class="nd">@SupressWarnings</span><span class="o">(</span><span class="s">"unchecked"</span><span class="o">)</span> <span class="no">T</span><span class="o">[]</span> <span class="n">result</span> <span class="o">=</span> 
+            <span class="o">(</span><span class="no">T</span><span class="o">[])</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">copyOf</span><span class="o">(</span><span class="n">elements</span><span class="o">,</span> <span class="n">size</span><span class="o">,</span> <span class="n">a</span><span class="o">.</span><span class="na">getClass</span><span class="o">());</span>
+
+        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">arraycopy</span><span class="o">(</span><span class="n">elements</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">size</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">a</span><span class="o">.</span><span class="na">length</span> <span class="o">&gt;</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">a</span><span class="o">[</span><span class="n">size</span><span class="o">]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>이 메서드는 깔끔하게 컴파일 될 뿐 아니라 무점검 코드에 대한 경고 메시지의 억제 범위를 최소한으로 줄이고 있다.</p>
+
+<p>그리고 @SupressWarnings(“unchecked”) 어노테이션을 사용할 때마다 왜 형 안전성을 위반하지 않는지 밝히는 주석을 반드시 붙여라. 다른 사람이 이해하기 좋고 형 안전성을 깨뜨릴 가능성이 줄어들게 된다.</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/effective%20java/2019/10/30/not-used-generic-parm/" rel="prev" title="[Effective Java] 새 코드에는 무인자 제네릭 자료형을 사용하지 마라">
+                [Effective Java] 새 코드에는 무인자 제네릭 자료형을 사용하지 마라 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            목차
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            흝어보기
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/assets/images/avatar.gif"
+               alt="Kim BoWoon" />
+          <p class="site-author-name" itemprop="name">Kim BoWoon</p>
+           
+              <p class="site-description motion-element" itemprop="description">https://kimbowoon.github.io/</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-name">포스트</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">카테고리</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+        
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#제네릭의-경고를-무시하지-마라"> <span class="nav-number">1</span> <span class="nav-text">제네릭의 경고를 무시하지 마라!</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#supresswarningsunchecked"> <span class="nav-number">2</span> <span class="nav-text">@SupressWarnings(“unchecked”)</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child">
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kim BoWoon</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://jekyllrb.com">Jekyll</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/simpleyyt/jekyll-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://kimbowoon.disqus.com/count.js" async></script>
+    
+
+    
+      
+      <script type="text/javascript">
+          var disqus_config = function () {
+              this.page.url = 'http://localhost:4000/effective%20java/2019/11/01/delete-unchecked-warning/';
+              this.page.identifier = '/effective%20java/2019/11/01/delete-unchecked-warning/';
+              this.page.title = '[Effective Java] 무점검 경고를 제거하라';
+          };
+          var d = document, s = d.createElement('script');
+          s.src = 'https://kimbowoon.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', '' + +new Date());
+          (d.head || d.body).appendChild(s);
+      </script>
+      
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+

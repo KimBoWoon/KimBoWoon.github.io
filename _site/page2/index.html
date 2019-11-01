@@ -283,6 +283,259 @@
   
 
   <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2018/07/17/immutable-class/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+                
+                <a class="post-title-link" href="/effective%20java/2018/07/17/immutable-class/" itemprop="url">
+                [Effective Java] 변경 가능성을 최소화하라
+              </a>
+            
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2018-07-17T10:23:45+09:00">
+                2018-07-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2018/07/17/immutable-class/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2018/07/17/immutable-class/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="변경-불가능-클래스">변경 불가능 클래스</h1>
+<p>변경 불가능 클래스는 말 그대로 내부의 정보를 수정할 수 없는 클래스이다. 객체 내부의 정보는 객체가 생성될 때 주어진 것이며 객체가 만들어 지고 없어질 때까지 변경되지 않는다. 이러한 클래스를 만드는 이유는 다양하다. 변경 가능 클래스보다 설계 및 구현 하기가 쉽고, 오류가 적으며, 사용하기도 쉽다.</p>
+
+<h1 id="변경-불가능-클래스를-만들기-위한-규칙">변경 불가능 클래스를 만들기 위한 규칙</h1>
+<ol>
+  <li>객체 상태를 변경하는 메소드를 제공하지 않는다.</li>
+  <li>상속하지 못하게 final로 클래스를 만든다. 상속을 받아서 클래스를 정의하게 되면 객체 상태가 변경된 것처럼 동작할 수 있기 때문이다.</li>
+  <li>모든 필드를 final로 선언한다. 시스템이 강제하는 형태대로 프로그래머의 의도가 분명히 드러나고 새로 생성된 객체에 대한 참조가 동기화 없이 다른 스레드로 전달 되어도 안전하기 때문이다.</li>
+  <li>모든 필드를 private로 선언한다. 이 객체를 사용하는 다른 사용자가 필드를 변경할 수 없기 때문이다.</li>
+  <li>변경 가능 컴포넌트에 대한 독점적 접근권을 보장한다. 클래스에 포함된 변경 가능 객체에 대한 참조를 클라이언트는 획득할 수 없어야 한다.</li>
+</ol>
+
+<h1 id="변경-불가능-클래스-예시">변경 불가능 클래스 예시</h1>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Complex</span> <span class="o">{</span>
+    <span class="c1">// 많이 사용하는 것들은 미리 만들어서 사용하는 것이 좋다</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Complex</span> <span class="no">ZERO</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Complex</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Complex</span> <span class="no">ONE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Complex</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Complex</span> <span class="no">I</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Complex</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">re</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">double</span> <span class="n">im</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Complex</span><span class="o">(</span><span class="kt">double</span> <span class="n">re</span><span class="o">,</span> <span class="kt">double</span> <span class="n">im</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">re</span> <span class="o">=</span> <span class="n">re</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">im</span> <span class="o">=</span> <span class="n">im</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 대응되는 수정자가 없는 접근자들</span>
+    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">realPart</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">re</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">imginaryPart</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">im</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Complex</span> <span class="nf">add</span><span class="o">(</span><span class="nc">Complex</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Complex</span><span class="o">(</span><span class="n">re</span> <span class="o">+</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span><span class="o">,</span> <span class="n">im</span> <span class="o">+</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Complex</span> <span class="nf">subtract</span><span class="o">(</span><span class="nc">Complex</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Complex</span><span class="o">(</span><span class="n">re</span> <span class="o">-</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span><span class="o">,</span> <span class="n">im</span> <span class="o">-</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Complex</span> <span class="nf">multiply</span><span class="o">(</span><span class="nc">Complex</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Complex</span><span class="o">(</span><span class="n">re</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span> <span class="o">-</span> <span class="n">im</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">,</span> <span class="n">re</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span> <span class="o">+</span> <span class="n">im</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Complex</span> <span class="nf">divide</span><span class="o">(</span><span class="nc">Complex</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">double</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span> <span class="o">+</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Complex</span><span class="o">((</span><span class="n">re</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span> <span class="o">+</span> <span class="n">im</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">)</span> <span class="o">/</span> <span class="n">tmp</span><span class="o">,</span> <span class="o">(</span><span class="n">im</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span> <span class="o">-</span> <span class="n">re</span> <span class="o">*</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">)</span> <span class="o">/</span> <span class="n">tmp</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="nc">Object</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">o</span> <span class="o">==</span> <span class="k">this</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(!(</span><span class="n">o</span> <span class="k">instanceof</span> <span class="nc">Complex</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="nc">Complex</span> <span class="n">c</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Complex</span><span class="o">)</span> <span class="n">o</span><span class="o">;</span>
+
+        <span class="k">return</span> <span class="nc">Double</span><span class="o">.</span><span class="na">compare</span><span class="o">(</span><span class="n">re</span><span class="o">,</span> <span class="n">c</span><span class="o">.</span><span class="na">re</span><span class="o">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nc">Double</span><span class="o">.</span><span class="na">compare</span><span class="o">(</span><span class="n">im</span><span class="o">,</span> <span class="n">c</span><span class="o">.</span><span class="na">im</span><span class="o">)</span> <span class="o">==</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">hashCode</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">17</span> <span class="o">+</span> <span class="n">hashDouble</span><span class="o">(</span><span class="n">re</span><span class="o">);</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="mi">31</span> <span class="o">*</span> <span class="n">result</span> <span class="o">+</span> <span class="n">hashDouble</span><span class="o">(</span><span class="n">im</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">hashDouble</span><span class="o">(</span><span class="kt">double</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">long</span> <span class="n">longBits</span> <span class="o">=</span> <span class="nc">Double</span><span class="o">.</span><span class="na">doubleToLongBits</span><span class="o">(</span><span class="n">val</span><span class="o">);</span>
+        <span class="k">return</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="o">(</span><span class="n">longBits</span> <span class="o">^</span> <span class="o">(</span><span class="n">longBits</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">32</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"("</span> <span class="o">+</span> <span class="n">re</span> <span class="o">+</span> <span class="s">" + "</span> <span class="o">+</span> <span class="n">im</span> <span class="o">+</span> <span class="s">"i)"</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<ul>
+  <li>간단하게 작성된 것이며 실제로 사용하기에는 부적합할 것이다.</li>
+</ul>
+
+<h1 id="단점">단점</h1>
+<p>유일한 단점은 만약 반환해야 한다면 새로운 객체를 만들어서 반환해햐 한다. 이러면 많은 메모리가 낭비 될수도 있다.</p>
+
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/effective%20java/2018/07/17/immutable-class/#" rel="contents">
+              더 읽어보기 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+        
+        
+        
+        
+          <div class="post-eof"></div>
+        
+      
+    </footer>
+  </article>
+
+  
+    
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://localhost:4000/android/2018/04/02/android-compile/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2120,171 +2373,6 @@
         
         
         
-          <div class="post-eof"></div>
-        
-      
-    </footer>
-  </article>
-
-  
-    
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://localhost:4000/pattern/2017/12/08/iterator-pattern/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Kim BoWoon">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="assets/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Notepad">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-                
-                <a class="post-title-link" href="/pattern/2017/12/08/iterator-pattern/" itemprop="url">
-                [pattern] Iterator Pattern
-              </a>
-            
-          
-        </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">작성일</span>
-              
-              <time title="" itemprop="dateCreated datePublished" datetime="2017-12-08T10:23:45+09:00">
-                2017-12-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/category/#/Pattern" itemprop="url" rel="index">
-                    <span itemprop="name">Pattern</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/pattern/2017/12/08/iterator-pattern/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="/pattern/2017/12/08/iterator-pattern/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="iterator-pattern">Iterator Pattern</h1>
-<p>for나 while를 대신하여 사용할 수 있는 도구</p>
-
-
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/pattern/2017/12/08/iterator-pattern/#" rel="contents">
-              더 읽어보기 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-        
-        
-        
-        
       
     </footer>
   </article>
@@ -2346,7 +2434,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">33</span>
+                <span class="site-state-item-count">34</span>
                 <span class="site-state-item-name">포스트</span>
               </a>
             </div>

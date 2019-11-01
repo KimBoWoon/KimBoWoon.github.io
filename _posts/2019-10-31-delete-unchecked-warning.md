@@ -1,6 +1,6 @@
 ---
 title: "[Effective Java] 무점검 경고를 제거하라"
-date: 2019-10-29 23:19:42
+date: 2019-10-31 23:19:42
 categories:
 - Effective Java
 ---
