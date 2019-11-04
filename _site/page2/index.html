@@ -283,6 +283,191 @@
   
 
   <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2018/07/19/extends-doc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+                
+                <a class="post-title-link" href="/effective%20java/2018/07/19/extends-doc/" itemprop="url">
+                [Effective Java] 계승을 위한 설계와 문서를 갖추거나, 그럴 수 없다면 계승을 금지하라
+              </a>
+            
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2018-07-19T10:23:45+09:00">
+                2018-07-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2018/07/19/extends-doc/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2018/07/19/extends-doc/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="상속을-위해서는-어떤-문서를-만들어야-할까">상속을 위해서는 어떤 문서를 만들어야 할까?</h1>
+<p>오버라이딩이 되는 메소드에 대해서는 내부적으로 어떻게 사용하지 문서에 남겨야한다. 좀 더 세부적으로 어떤 메소드를 호출하고 어떤 결과를 반환하는지를 명시하면 좋다.</p>
+
+<h1 id="java-doc-example">Java Doc Example</h1>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>public boolean remove(Object o)
+Removes a single instance of the specified element from this collection, if it is present (optional operation). More formally, removes an element e such that (o==null ? e==null : o.equals(e)), if this collection contains one or more such elements. Returns true if this collection contained the specified element (or equivalently, if this collection changed as a result of the call).
+This implementation iterates over the collection looking for the specified element. If it finds the element, it removes the element from the collection using the iterator's remove method.
+
+Note that this implementation throws an UnsupportedOperationException if the iterator returned by this collection's iterator method does not implement the remove method and this collection contains the specified object.
+
+Specified by:
+remove in interface Collection&lt;E&gt;
+Parameters:
+o - element to be removed from this collection, if present
+Returns:
+true if an element was removed as a result of this call
+Throws:
+UnsupportedOperationException - if the remove operation is not supported by this collection
+ClassCastException - if the type of the specified element is incompatible with this collection (optional)
+NullPointerException - if the specified element is null and this collection does not permit null elements (optional)
+</code></pre></div></div>
+
+<p>java8 버전에 있는 java.util.AbstractCollection에 remove 메소드이다. 메소드에 설명을 보면 어떤 예외가 발생할 수 있는지에 대한 명시가 제대로 적혀있다.</p>
+
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/effective%20java/2018/07/19/extends-doc/#" rel="contents">
+              더 읽어보기 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+        
+        
+        
+        
+          <div class="post-eof"></div>
+        
+      
+    </footer>
+  </article>
+
+  
+    
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2018/07/18/extends-wrapper/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2352,171 +2537,6 @@
         
         
         
-          <div class="post-eof"></div>
-        
-      
-    </footer>
-  </article>
-
-  
-    
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://localhost:4000/pattern/2017/12/11/strategy-pattern/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Kim BoWoon">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="assets/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Notepad">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-                
-                <a class="post-title-link" href="/pattern/2017/12/11/strategy-pattern/" itemprop="url">
-                [pattern] Strategy Pattern
-              </a>
-            
-          
-        </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">작성일</span>
-              
-              <time title="" itemprop="dateCreated datePublished" datetime="2017-12-11T10:23:45+09:00">
-                2017-12-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/category/#/Pattern" itemprop="url" rel="index">
-                    <span itemprop="name">Pattern</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/pattern/2017/12/11/strategy-pattern/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="/pattern/2017/12/11/strategy-pattern/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="strategy-pattern">Strategy Pattern</h1>
-<p>필요한 알고리즘을 캡슐화 시켜서 상황에 맞게 사용하는 방법</p>
-
-
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/pattern/2017/12/11/strategy-pattern/#" rel="contents">
-              더 읽어보기 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-        
-        
-        
-        
       
     </footer>
   </article>
@@ -2578,7 +2598,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-count">36</span>
                 <span class="site-state-item-name">포스트</span>
               </a>
             </div>

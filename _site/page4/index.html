@@ -283,6 +283,238 @@
   
 
   <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/09/27/unnecessary-object/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+                
+                <a class="post-title-link" href="/effective%20java/2017/09/27/unnecessary-object/" itemprop="url">
+                [Effective Java] 불필요한 객체는 만들지 말라
+              </a>
+            
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2017-09-27T10:23:45+09:00">
+                2017-09-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2017/09/27/unnecessary-object/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2017/09/27/unnecessary-object/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="불필요한-객체는-만들지-말라">불필요한 객체는 만들지 말라</h1>
+<p>기능적으로 객체를 새로 만드는 것보다 재사용하는 편이 훨씬 빠르다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">String</span><span class="o">(</span><span class="s">"Hello, World"</span><span class="o">);</span>
+</code></pre></div></div>
+<p>이런식으로 객체를 만들면 호출 될 때마다 항상 새로운 객체가 만들어지기 때문에 이러한 방법은 피하는 편이 좋고 아래와 같은 방법을 쓰는것이 좋다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"Hello, World"</span><span class="o">;</span>
+</code></pre></div></div>
+
+<p>실제로 다음과 같은 코드를 실행시키면 다음과 같은 결과를 얻는다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ImmutableObject</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">a</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">String</span><span class="o">(</span><span class="s">"Hello, World"</span><span class="o">);</span>
+        <span class="nc">String</span> <span class="n">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">String</span><span class="o">(</span><span class="s">"Hello, World"</span><span class="o">);</span>
+
+        <span class="nc">String</span> <span class="n">c</span> <span class="o">=</span> <span class="s">"Hello, World"</span><span class="o">;</span>
+        <span class="nc">String</span> <span class="n">d</span> <span class="o">=</span> <span class="s">"Hello, World"</span><span class="o">;</span>
+
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="o">);</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">c</span> <span class="o">==</span> <span class="n">d</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="/_img/effectivejava/string_address.png" alt="" /></p>
+
+<p>변경 불가능한 객체인 경우 정적 팩토리 메소드를 사용하면 새로운 객체를 만들지 않는다. 변경 가능한 객체도 재사용할 수 있다. 단, 변경하지 않는다면 말이다. 다음의 예를 보자</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Date</span> <span class="n">birthDate</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isBabyBoomer</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">Calendar</span> <span class="n">gmtCal</span> <span class="o">=</span> <span class="nc">Calendar</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="nc">TimeZone</span><span class="o">.</span><span class="na">getTimeZone</span><span class="o">(</span><span class="s">"GMT"</span><span class="o">));</span>
+
+        <span class="n">gmtCal</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="mi">1946</span><span class="o">,</span> <span class="nc">Calendar</span><span class="o">.</span><span class="na">JANUARY</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+        <span class="nc">Date</span> <span class="n">boomStart</span> <span class="o">=</span> <span class="n">gmtCal</span><span class="o">.</span><span class="na">getTime</span><span class="o">();</span>
+        <span class="n">gmtCal</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="mi">1965</span><span class="o">,</span> <span class="nc">Calendar</span><span class="o">.</span><span class="na">JANUARY</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+        <span class="nc">Date</span> <span class="n">boomEnd</span> <span class="o">=</span> <span class="n">gmtCal</span><span class="o">.</span><span class="na">getTime</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">birthDate</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">boomStart</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">birthDate</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">boomEnd</span><span class="o">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>이렇게 만들면 해당 메소드를 호출될 때마다 Calendar 객체 하나, TimeZone 객체 하나, 그리고 Date 객체 두 개를 쓸데없이 만들어 낸다. 이렇게 비효율적인 코드는 정적 초기화 블록(static initializer)을 통해 개선하는 것이 좋다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Date</span> <span class="n">birthDate</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Date</span> <span class="no">BOOM_START</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Date</span> <span class="no">BOOM_END</span><span class="o">;</span>
+    
+    <span class="kd">static</span> <span class="o">{</span>
+        <span class="nc">Calendar</span> <span class="n">gmtCal</span> <span class="o">=</span> <span class="nc">Calendar</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="nc">TimeZone</span><span class="o">.</span><span class="na">getTimeZone</span><span class="o">(</span><span class="s">"GMT"</span><span class="o">));</span>
+        <span class="n">gmtCal</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="mi">1946</span><span class="o">,</span> <span class="nc">Calendar</span><span class="o">.</span><span class="na">JANUARY</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+        <span class="no">BOOM_START</span> <span class="o">=</span> <span class="n">gmtCal</span><span class="o">.</span><span class="na">getTime</span><span class="o">();</span>
+        <span class="n">gmtCal</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="mi">1965</span><span class="o">,</span> <span class="nc">Calendar</span><span class="o">.</span><span class="na">JANUARY</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+        <span class="no">BOOM_END</span> <span class="o">=</span> <span class="n">gmtCal</span><span class="o">.</span><span class="na">getTime</span><span class="o">();</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isBabyBoomer</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">birthDate</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="no">BOOM_START</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">birthDate</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="no">BOOM_END</span><span class="o">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>이 클래스는 클래스가 초기화 될 때 한 번만 만든다. 그리고 BOOM_START와 BOOM_END가 한번만 초기화 되는 상수라는 사실도 알수있다. 또 객체 자료형보다 기본 자료형을 사용하는 것이 좋다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Integer</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">3</span><span class="o">;</span>
+<span class="c1">// Integer i = new Integer(3);</span>
+</code></pre></div></div>
+<p>auto-boxing이 되면서 불필요한 객체를 만들기 때문이다.</p>
+
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/effective%20java/2017/09/27/unnecessary-object/#" rel="contents">
+              더 읽어보기 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+        
+        
+        
+        
+          <div class="post-eof"></div>
+        
+      
+    </footer>
+  </article>
+
+  
+    
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/09/24/private-constructor/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1672,7 +1904,7 @@ public으로 선언되지 않은 클래스의 객체를 반환하는 API를 만�
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-count">36</span>
                 <span class="site-state-item-name">포스트</span>
               </a>
             </div>

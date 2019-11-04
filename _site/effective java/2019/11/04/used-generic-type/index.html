@@ -1,0 +1,967 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next muse use-motion" lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Notepad" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="제네릭 클래스 만들기 컬렉션 객체 선언을 제네릭화 하거나 JDK에서 제공하는 제네릭 자료형과 메서드를 사용하는 것은 어렵지않다. 제네릭 자료형을 직접 만드는 것은 좀 까다로운데 그래도 가치는 있다. 다음 Stack 클래스를 보자. public class Stack { private Object[] elements; private int size = 0; private static final int DEFAULT_INITAL_CAPACITY = 16; public Stack() { elements = new Object[DEFAULT_INITAL_CAPACITY]; } public void push(Object e) { ensureCapacity(); elements[size++] = e; } public Object pop() { if (size == 0) { throw new EmptyStackException(); } Object results = elements[--size]; elements[size] = null; // 만기 참조 제거 return results; } public boolean isEmpty() { return size == 0; } /** * 적어도 하나 이상의 원소를 담을 공간을 보장한다. * 배열의 길이를 늘려야 할 때마다 대략 두 배씩 늘인다. */ private void ensureCapacity() { if (elements.length == size) { elements = Arrays.copyOf(elements, 2 * size + 1); } } } 제네릭으로 변경하기 위한 딱 좋은 예제이다. 호환성을 유지하면서도 제네릭 자료형을 사용하도록 개선할 수 있다. 위의 코드에서는 스택에서 꺼낸 자료를 형변환해서 사용해야 하는데 실패할 가능성이 있다. 클래스를 제네릭화하는 첫 번째 단계는 선언부에 형인자를 추가하는 것이다. // 제네릭을 사용해 작성한 최초의 Stack 클래스 - 컴파일되지 않는다! public class Stack&amp;lt;E&amp;gt; { private E[] elements; private int size = 0; private static final int DEFAULT_INITAL_CAPACITY = 16; public Stack() { elements = new E[DEFAULT_INITAL_CAPACITY]; } public void push(E e) { ensureCapacity(); elements[size++] = e; } public E pop() { if (size == 0) { throw new EmptyStackException(); } E results = elements[--size]; elements[size] = null; // 만기 참조 제거 return results; } public boolean isEmpty() { return size == 0; } /** * 적어도 하나 이상의 원소를 담을 공간을 보장한다. * 배열의 길이를 늘려야 할 때마다 대략 두 배씩 늘인다. */ private void ensureCapacity() { if (elements.length == size) { elements = Arrays.copyOf(elements, 2 * size + 1); } } } 바로 경고나 오류없이 컴파일이 성공하면 좋겠지만 그럴 확률은 적다. 오히려 경고나 오류가 없다면 더욱 유심히 살펴봐야한다. 그나마 다행인것은 위의 코드에서 한군데에서 경고가 발생한다는 것이다. Stack.java: generic array creation elements = new E[DEFAULT_INITIAL_CAPACITY]; ＾ 경고 및 오류 수정 첫 번째로 제네릭 배열을 만들 수 없다는 조건을 우회하는 것. Object의 배열을 만들어서 제네릭 배열 자료형으로 형변환하는 방법이다. 문법적으로는 문제가 없지만 일반적으로 형 안전성을 보장하는 방법은 아니다. Stack.java: warning: [unchecked] unchecked cast found: Object[], required: E[] elements = (E[]) new Object[DEFAULT_INITIAL_CAPACITY]; ＾ 컴파일러는 형 안전성을 입증할 수 없을지 모르지만, 프로그래머는 할 수 있다. elements는 private이며 Stack 클래스내에서만 사용이 되고 push 메서드를 사용하여 데이터의 삽입이 이뤄지며 그 타입은 모두 E 이므로 무점검 형변환을 해도 아무런 문제가 되지 않는다. 무점검 형변환이 안전함을 증명했다면 경고를 억제하되 범위는 최소한으로 해야한다. Stack 클래스에 생성자에서 무점검 배열 생성을 하는 코드가 전부이므로 생성자 전체적으로 경고를 억제해도 무방하다. // elements 배열에는 push(E)를 통해 전달된 E 형의 객체만 저장된다. // 이 정도면 형 안전성은 보장할 수 있지만, 배열의 실생시간 자료형은 E[]가 // 아니라 항상 Object[]이다! @SuppressWarnings(&quot;unchecked&quot;) public Stack() { elements = new E[DEFAULT_INITAL_CAPACITY]; } 두 번째 방법은 elements의 자료형을 E[]에서 Object[]로 바꾸는 것이다. 그러면 아까와는 다른 오류 메시지를 보게 된다. Stack.java: incompatible types found: Object, required: E E result = elements[--size]; ＾ 배열에서 꺼낸 원소의 자료형을 Object에서 E로 변환하도록 코드를 수정하면, 이 오류는 경고로 바뀐다. Stack.java: warning: [unchecked] unchecked cast found: Object, required: E E result = (E) elements[--size]; ＾ E는 실체화 불가능 자료형이므로 컴파일러는 이 형변환을 실행 중에 검사할 수 없지만 위의 무점검 형변환이 안전하다는 것, 그래서 경고를 억제해도 좋다는 것은 개발자 스스로 쉽게 입증할 수 있다. 다음과 같이 pop 메서드를 수정한다. 단, pop 메서드 전체에 어노테이션을 붙이지 않는다. // 무점검 경고를 적절히 억제한 사례 public E pop() { if (size == 0) { throw new EmptyStackException(); } // 자료형이 E인 원소만 push하므로, 아래의 형변환은 안전하다. @SuppressWarnings(&quot;unchecked&quot;) E results = (E) elements[--size]; elements[size] = null; // 만기 참조 제거 return results; } 위 두가지 방법중 어떤 방법을 사용해도 상관없다. 다만 두 번째 방법은 많은 곳을 수정할 가능성이 있으므로 첫 번째 방법이 많이 사용된다.">
+<meta name="keywords" content="Jekyll, NexT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Effective Java] 가능하면 제네릭 자료형으로 만들 것">
+<meta property="og:url" content="http://localhost:4000/effective%20java/2019/11/04/used-generic-type/">
+<meta property="og:site_name" content="Notepad">
+<meta property="og:description" content="제네릭 클래스 만들기 컬렉션 객체 선언을 제네릭화 하거나 JDK에서 제공하는 제네릭 자료형과 메서드를 사용하는 것은 어렵지않다. 제네릭 자료형을 직접 만드는 것은 좀 까다로운데 그래도 가치는 있다. 다음 Stack 클래스를 보자. public class Stack { private Object[] elements; private int size = 0; private static final int DEFAULT_INITAL_CAPACITY = 16; public Stack() { elements = new Object[DEFAULT_INITAL_CAPACITY]; } public void push(Object e) { ensureCapacity(); elements[size++] = e; } public Object pop() { if (size == 0) { throw new EmptyStackException(); } Object results = elements[--size]; elements[size] = null; // 만기 참조 제거 return results; } public boolean isEmpty() { return size == 0; } /** * 적어도 하나 이상의 원소를 담을 공간을 보장한다. * 배열의 길이를 늘려야 할 때마다 대략 두 배씩 늘인다. */ private void ensureCapacity() { if (elements.length == size) { elements = Arrays.copyOf(elements, 2 * size + 1); } } } 제네릭으로 변경하기 위한 딱 좋은 예제이다. 호환성을 유지하면서도 제네릭 자료형을 사용하도록 개선할 수 있다. 위의 코드에서는 스택에서 꺼낸 자료를 형변환해서 사용해야 하는데 실패할 가능성이 있다. 클래스를 제네릭화하는 첫 번째 단계는 선언부에 형인자를 추가하는 것이다. // 제네릭을 사용해 작성한 최초의 Stack 클래스 - 컴파일되지 않는다! public class Stack&amp;lt;E&amp;gt; { private E[] elements; private int size = 0; private static final int DEFAULT_INITAL_CAPACITY = 16; public Stack() { elements = new E[DEFAULT_INITAL_CAPACITY]; } public void push(E e) { ensureCapacity(); elements[size++] = e; } public E pop() { if (size == 0) { throw new EmptyStackException(); } E results = elements[--size]; elements[size] = null; // 만기 참조 제거 return results; } public boolean isEmpty() { return size == 0; } /** * 적어도 하나 이상의 원소를 담을 공간을 보장한다. * 배열의 길이를 늘려야 할 때마다 대략 두 배씩 늘인다. */ private void ensureCapacity() { if (elements.length == size) { elements = Arrays.copyOf(elements, 2 * size + 1); } } } 바로 경고나 오류없이 컴파일이 성공하면 좋겠지만 그럴 확률은 적다. 오히려 경고나 오류가 없다면 더욱 유심히 살펴봐야한다. 그나마 다행인것은 위의 코드에서 한군데에서 경고가 발생한다는 것이다. Stack.java: generic array creation elements = new E[DEFAULT_INITIAL_CAPACITY]; ＾ 경고 및 오류 수정 첫 번째로 제네릭 배열을 만들 수 없다는 조건을 우회하는 것. Object의 배열을 만들어서 제네릭 배열 자료형으로 형변환하는 방법이다. 문법적으로는 문제가 없지만 일반적으로 형 안전성을 보장하는 방법은 아니다. Stack.java: warning: [unchecked] unchecked cast found: Object[], required: E[] elements = (E[]) new Object[DEFAULT_INITIAL_CAPACITY]; ＾ 컴파일러는 형 안전성을 입증할 수 없을지 모르지만, 프로그래머는 할 수 있다. elements는 private이며 Stack 클래스내에서만 사용이 되고 push 메서드를 사용하여 데이터의 삽입이 이뤄지며 그 타입은 모두 E 이므로 무점검 형변환을 해도 아무런 문제가 되지 않는다. 무점검 형변환이 안전함을 증명했다면 경고를 억제하되 범위는 최소한으로 해야한다. Stack 클래스에 생성자에서 무점검 배열 생성을 하는 코드가 전부이므로 생성자 전체적으로 경고를 억제해도 무방하다. // elements 배열에는 push(E)를 통해 전달된 E 형의 객체만 저장된다. // 이 정도면 형 안전성은 보장할 수 있지만, 배열의 실생시간 자료형은 E[]가 // 아니라 항상 Object[]이다! @SuppressWarnings(&quot;unchecked&quot;) public Stack() { elements = new E[DEFAULT_INITAL_CAPACITY]; } 두 번째 방법은 elements의 자료형을 E[]에서 Object[]로 바꾸는 것이다. 그러면 아까와는 다른 오류 메시지를 보게 된다. Stack.java: incompatible types found: Object, required: E E result = elements[--size]; ＾ 배열에서 꺼낸 원소의 자료형을 Object에서 E로 변환하도록 코드를 수정하면, 이 오류는 경고로 바뀐다. Stack.java: warning: [unchecked] unchecked cast found: Object, required: E E result = (E) elements[--size]; ＾ E는 실체화 불가능 자료형이므로 컴파일러는 이 형변환을 실행 중에 검사할 수 없지만 위의 무점검 형변환이 안전하다는 것, 그래서 경고를 억제해도 좋다는 것은 개발자 스스로 쉽게 입증할 수 있다. 다음과 같이 pop 메서드를 수정한다. 단, pop 메서드 전체에 어노테이션을 붙이지 않는다. // 무점검 경고를 적절히 억제한 사례 public E pop() { if (size == 0) { throw new EmptyStackException(); } // 자료형이 E인 원소만 push하므로, 아래의 형변환은 안전하다. @SuppressWarnings(&quot;unchecked&quot;) E results = (E) elements[--size]; elements[size] = null; // 만기 참조 제거 return results; } 위 두가지 방법중 어떤 방법을 사용해도 상관없다. 다만 두 번째 방법은 많은 곳을 수정할 가능성이 있으므로 첫 번째 방법이 많이 사용된다.">
+<meta property="og:locale" content="ko">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Effective Java] 가능하면 제네릭 자료형으로 만들 것">
+<meta name="twitter:description" content="제네릭 클래스 만들기 컬렉션 객체 선언을 제네릭화 하거나 JDK에서 제공하는 제네릭 자료형과 메서드를 사용하는 것은 어렵지않다. 제네릭 자료형을 직접 만드는 것은 좀 까다로운데 그래도 가치는 있다. 다음 Stack 클래스를 보자. public class Stack { private Object[] elements; private int size = 0; private static final int DEFAULT_INITAL_CAPACITY = 16; public Stack() { elements = new Object[DEFAULT_INITAL_CAPACITY]; } public void push(Object e) { ensureCapacity(); elements[size++] = e; } public Object pop() { if (size == 0) { throw new EmptyStackException(); } Object results = elements[--size]; elements[size] = null; // 만기 참조 제거 return results; } public boolean isEmpty() { return size == 0; } /** * 적어도 하나 이상의 원소를 담을 공간을 보장한다. * 배열의 길이를 늘려야 할 때마다 대략 두 배씩 늘인다. */ private void ensureCapacity() { if (elements.length == size) { elements = Arrays.copyOf(elements, 2 * size + 1); } } } 제네릭으로 변경하기 위한 딱 좋은 예제이다. 호환성을 유지하면서도 제네릭 자료형을 사용하도록 개선할 수 있다. 위의 코드에서는 스택에서 꺼낸 자료를 형변환해서 사용해야 하는데 실패할 가능성이 있다. 클래스를 제네릭화하는 첫 번째 단계는 선언부에 형인자를 추가하는 것이다. // 제네릭을 사용해 작성한 최초의 Stack 클래스 - 컴파일되지 않는다! public class Stack&amp;lt;E&amp;gt; { private E[] elements; private int size = 0; private static final int DEFAULT_INITAL_CAPACITY = 16; public Stack() { elements = new E[DEFAULT_INITAL_CAPACITY]; } public void push(E e) { ensureCapacity(); elements[size++] = e; } public E pop() { if (size == 0) { throw new EmptyStackException(); } E results = elements[--size]; elements[size] = null; // 만기 참조 제거 return results; } public boolean isEmpty() { return size == 0; } /** * 적어도 하나 이상의 원소를 담을 공간을 보장한다. * 배열의 길이를 늘려야 할 때마다 대략 두 배씩 늘인다. */ private void ensureCapacity() { if (elements.length == size) { elements = Arrays.copyOf(elements, 2 * size + 1); } } } 바로 경고나 오류없이 컴파일이 성공하면 좋겠지만 그럴 확률은 적다. 오히려 경고나 오류가 없다면 더욱 유심히 살펴봐야한다. 그나마 다행인것은 위의 코드에서 한군데에서 경고가 발생한다는 것이다. Stack.java: generic array creation elements = new E[DEFAULT_INITIAL_CAPACITY]; ＾ 경고 및 오류 수정 첫 번째로 제네릭 배열을 만들 수 없다는 조건을 우회하는 것. Object의 배열을 만들어서 제네릭 배열 자료형으로 형변환하는 방법이다. 문법적으로는 문제가 없지만 일반적으로 형 안전성을 보장하는 방법은 아니다. Stack.java: warning: [unchecked] unchecked cast found: Object[], required: E[] elements = (E[]) new Object[DEFAULT_INITIAL_CAPACITY]; ＾ 컴파일러는 형 안전성을 입증할 수 없을지 모르지만, 프로그래머는 할 수 있다. elements는 private이며 Stack 클래스내에서만 사용이 되고 push 메서드를 사용하여 데이터의 삽입이 이뤄지며 그 타입은 모두 E 이므로 무점검 형변환을 해도 아무런 문제가 되지 않는다. 무점검 형변환이 안전함을 증명했다면 경고를 억제하되 범위는 최소한으로 해야한다. Stack 클래스에 생성자에서 무점검 배열 생성을 하는 코드가 전부이므로 생성자 전체적으로 경고를 억제해도 무방하다. // elements 배열에는 push(E)를 통해 전달된 E 형의 객체만 저장된다. // 이 정도면 형 안전성은 보장할 수 있지만, 배열의 실생시간 자료형은 E[]가 // 아니라 항상 Object[]이다! @SuppressWarnings(&quot;unchecked&quot;) public Stack() { elements = new E[DEFAULT_INITAL_CAPACITY]; } 두 번째 방법은 elements의 자료형을 E[]에서 Object[]로 바꾸는 것이다. 그러면 아까와는 다른 오류 메시지를 보게 된다. Stack.java: incompatible types found: Object, required: E E result = elements[--size]; ＾ 배열에서 꺼낸 원소의 자료형을 Object에서 E로 변환하도록 코드를 수정하면, 이 오류는 경고로 바뀐다. Stack.java: warning: [unchecked] unchecked cast found: Object, required: E E result = (E) elements[--size]; ＾ E는 실체화 불가능 자료형이므로 컴파일러는 이 형변환을 실행 중에 검사할 수 없지만 위의 무점검 형변환이 안전하다는 것, 그래서 경고를 억제해도 좋다는 것은 개발자 스스로 쉽게 입증할 수 있다. 다음과 같이 pop 메서드를 수정한다. 단, pop 메서드 전체에 어노테이션을 붙이지 않는다. // 무점검 경고를 적절히 억제한 사례 public E pop() { if (size == 0) { throw new EmptyStackException(); } // 자료형이 E인 원소만 push하므로, 아래의 형변환은 안전하다. @SuppressWarnings(&quot;unchecked&quot;) E results = (E) elements[--size]; elements[size] = null; // 만기 참조 제거 return results; } 위 두가지 방법중 어떤 방법을 사용해도 상관없다. 다만 두 번째 방법은 많은 곳을 수정할 가능성이 있으므로 첫 번째 방법이 많이 사용된다.">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '작성자'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://localhost:4000/"/>
+
+
+
+
+
+  <title>[Effective Java] 가능하면 제네릭 자료형으로 만들 것</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="ko">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Notepad</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            홈
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            아카이브
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            태그
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2019/11/04/used-generic-type/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            [Effective Java] 가능하면 제네릭 자료형으로 만들 것
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2019-11-04T08:19:42+09:00">
+                2019-11-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2019/11/04/used-generic-type/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2019/11/04/used-generic-type/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="제네릭-클래스-만들기">제네릭 클래스 만들기</h1>
+
+<p>컬렉션 객체 선언을 제네릭화 하거나 JDK에서 제공하는 제네릭 자료형과 메서드를 사용하는 것은 어렵지않다. 제네릭 자료형을 직접 만드는 것은 좀 까다로운데 그래도 가치는 있다. 다음 Stack 클래스를 보자.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Stack</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">Object</span><span class="o">[]</span> <span class="n">elements</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="no">DEFAULT_INITAL_CAPACITY</span> <span class="o">=</span> <span class="mi">16</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="nf">Stack</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[</span><span class="no">DEFAULT_INITAL_CAPACITY</span><span class="o">];</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">push</span><span class="o">(</span><span class="nc">Object</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ensureCapacity</span><span class="o">();</span>
+        <span class="n">elements</span><span class="o">[</span><span class="n">size</span><span class="o">++]</span> <span class="o">=</span> <span class="n">e</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">pop</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">EmptyStackException</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="nc">Object</span> <span class="n">results</span> <span class="o">=</span> <span class="n">elements</span><span class="o">[--</span><span class="n">size</span><span class="o">];</span>
+        <span class="n">elements</span><span class="o">[</span><span class="n">size</span><span class="o">]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span> <span class="c1">// 만기 참조 제거</span>
+        <span class="k">return</span> <span class="n">results</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isEmpty</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 적어도 하나 이상의 원소를 담을 공간을 보장한다.
+     * 배열의 길이를 늘려야 할 때마다 대략 두 배씩 늘인다.
+     */</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">ensureCapacity</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">elements</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">copyOf</span><span class="o">(</span><span class="n">elements</span><span class="o">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>제네릭으로 변경하기 위한 딱 좋은 예제이다. 호환성을 유지하면서도 제네릭 자료형을 사용하도록 개선할 수 있다. 위의 코드에서는 스택에서 꺼낸 자료를 형변환해서 사용해야 하는데 실패할 가능성이 있다.</p>
+
+<p>클래스를 제네릭화하는 첫 번째 단계는 선언부에 형인자를 추가하는 것이다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 제네릭을 사용해 작성한 최초의 Stack 클래스 - 컴파일되지 않는다!</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Stack</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="no">E</span><span class="o">[]</span> <span class="n">elements</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="no">DEFAULT_INITAL_CAPACITY</span> <span class="o">=</span> <span class="mi">16</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="nf">Stack</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="k">new</span> <span class="no">E</span><span class="o">[</span><span class="no">DEFAULT_INITAL_CAPACITY</span><span class="o">];</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">push</span><span class="o">(</span><span class="no">E</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ensureCapacity</span><span class="o">();</span>
+        <span class="n">elements</span><span class="o">[</span><span class="n">size</span><span class="o">++]</span> <span class="o">=</span> <span class="n">e</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="no">E</span> <span class="nf">pop</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">EmptyStackException</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="no">E</span> <span class="n">results</span> <span class="o">=</span> <span class="n">elements</span><span class="o">[--</span><span class="n">size</span><span class="o">];</span>
+        <span class="n">elements</span><span class="o">[</span><span class="n">size</span><span class="o">]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span> <span class="c1">// 만기 참조 제거</span>
+        <span class="k">return</span> <span class="n">results</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isEmpty</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 적어도 하나 이상의 원소를 담을 공간을 보장한다.
+     * 배열의 길이를 늘려야 할 때마다 대략 두 배씩 늘인다.
+     */</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">ensureCapacity</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">elements</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">copyOf</span><span class="o">(</span><span class="n">elements</span><span class="o">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>바로 경고나 오류없이 컴파일이 성공하면 좋겠지만 그럴 확률은 적다. 오히려 경고나 오류가 없다면 더욱 유심히 살펴봐야한다. 그나마 다행인것은 위의 코드에서 한군데에서 경고가 발생한다는 것이다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stack</span><span class="o">.</span><span class="na">java</span><span class="o">:</span> <span class="n">generic</span> <span class="n">array</span> <span class="n">creation</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="k">new</span> <span class="no">E</span><span class="o">[</span><span class="no">DEFAULT_INITIAL_CAPACITY</span><span class="o">];</span>
+           <span class="err">＾</span>
+</code></pre></div></div>
+
+<h1 id="경고-및-오류-수정">경고 및 오류 수정</h1>
+<p>첫 번째로 제네릭 배열을 만들 수 없다는 조건을 우회하는 것. Object의 배열을 만들어서 제네릭 배열 자료형으로 형변환하는 방법이다. 문법적으로는 문제가 없지만 일반적으로 형 안전성을 보장하는 방법은 아니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stack</span><span class="o">.</span><span class="na">java</span><span class="o">:</span> <span class="nl">warning:</span> <span class="o">[</span><span class="n">unchecked</span><span class="o">]</span> <span class="n">unchecked</span> <span class="n">cast</span>
+<span class="nl">found:</span> <span class="nc">Object</span><span class="o">[],</span> <span class="nl">required:</span> <span class="no">E</span><span class="o">[]</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="o">(</span><span class="no">E</span><span class="o">[])</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[</span><span class="no">DEFAULT_INITIAL_CAPACITY</span><span class="o">];</span>
+             <span class="err">＾</span>
+</code></pre></div></div>
+
+<p>컴파일러는 형 안전성을 입증할 수 없을지 모르지만, 프로그래머는 할 수 있다. elements는 private이며 Stack 클래스내에서만 사용이 되고 push 메서드를 사용하여 데이터의 삽입이 이뤄지며 그 타입은 모두 E 이므로 무점검 형변환을 해도 아무런 문제가 되지 않는다.</p>
+
+<p>무점검 형변환이 안전함을 증명했다면 경고를 억제하되 범위는 최소한으로 해야한다. Stack 클래스에 생성자에서 무점검 배열 생성을 하는 코드가 전부이므로 생성자 전체적으로 경고를 억제해도 무방하다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// elements 배열에는 push(E)를 통해 전달된 E 형의 객체만 저장된다.</span>
+<span class="c1">// 이 정도면 형 안전성은 보장할 수 있지만, 배열의 실생시간 자료형은 E[]가</span>
+<span class="c1">// 아니라 항상 Object[]이다!</span>
+<span class="nd">@SuppressWarnings</span><span class="o">(</span><span class="s">"unchecked"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nf">Stack</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="k">new</span> <span class="no">E</span><span class="o">[</span><span class="no">DEFAULT_INITAL_CAPACITY</span><span class="o">];</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>두 번째 방법은 elements의 자료형을 E[]에서 Object[]로 바꾸는 것이다. 그러면 아까와는 다른 오류 메시지를 보게 된다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stack</span><span class="o">.</span><span class="na">java</span><span class="o">:</span> <span class="n">incompatible</span> <span class="n">types</span>
+<span class="nl">found:</span> <span class="nc">Object</span><span class="o">,</span> <span class="nl">required:</span> <span class="no">E</span>
+<span class="no">E</span> <span class="n">result</span> <span class="o">=</span> <span class="n">elements</span><span class="o">[--</span><span class="n">size</span><span class="o">];</span>
+                   <span class="err">＾</span>
+</code></pre></div></div>
+
+<p>배열에서 꺼낸 원소의 자료형을 Object에서 E로 변환하도록 코드를 수정하면, 이 오류는 경고로 바뀐다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stack</span><span class="o">.</span><span class="na">java</span><span class="o">:</span> <span class="nl">warning:</span> <span class="o">[</span><span class="n">unchecked</span><span class="o">]</span> <span class="n">unchecked</span> <span class="n">cast</span>
+<span class="nl">found:</span> <span class="nc">Object</span><span class="o">,</span> <span class="nl">required:</span> <span class="no">E</span>
+<span class="no">E</span> <span class="n">result</span> <span class="o">=</span> <span class="o">(</span><span class="no">E</span><span class="o">)</span> <span class="n">elements</span><span class="o">[--</span><span class="n">size</span><span class="o">];</span>
+                       <span class="err">＾</span>
+</code></pre></div></div>
+
+<p>E는 실체화 불가능 자료형이므로 컴파일러는 이 형변환을 실행 중에 검사할 수 없지만 위의 무점검 형변환이 안전하다는 것, 그래서 경고를 억제해도 좋다는 것은 개발자 스스로 쉽게 입증할 수 있다. 다음과 같이 pop 메서드를 수정한다. 단, pop 메서드 전체에 어노테이션을 붙이지 않는다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 무점검 경고를 적절히 억제한 사례</span>
+<span class="kd">public</span> <span class="no">E</span> <span class="nf">pop</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">EmptyStackException</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="c1">// 자료형이 E인 원소만 push하므로, 아래의 형변환은 안전하다.</span>
+    <span class="nd">@SuppressWarnings</span><span class="o">(</span><span class="s">"unchecked"</span><span class="o">)</span>
+    <span class="no">E</span> <span class="n">results</span> <span class="o">=</span> <span class="o">(</span><span class="no">E</span><span class="o">)</span> <span class="n">elements</span><span class="o">[--</span><span class="n">size</span><span class="o">];</span>
+    <span class="n">elements</span><span class="o">[</span><span class="n">size</span><span class="o">]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span> <span class="c1">// 만기 참조 제거</span>
+    <span class="k">return</span> <span class="n">results</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>위 두가지 방법중 어떤 방법을 사용해도 상관없다. 다만 두 번째 방법은 많은 곳을 수정할 가능성이 있으므로 첫 번째 방법이 많이 사용된다.</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/effective%20java/2019/11/02/not-array-used-List/" rel="prev" title="[Effective Java] 배열 대신 리스트를 써라">
+                [Effective Java] 배열 대신 리스트를 써라 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            목차
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            흝어보기
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/assets/images/avatar.gif"
+               alt="Kim BoWoon" />
+          <p class="site-author-name" itemprop="name">Kim BoWoon</p>
+           
+              <p class="site-description motion-element" itemprop="description">https://kimbowoon.github.io/</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">36</span>
+                <span class="site-state-item-name">포스트</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">카테고리</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+        
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-1"> <a class="nav-link" href="#제네릭-클래스-만들기"> <span class="nav-number">1</span> <span class="nav-text">제네릭 클래스 만들기</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-1"> <a class="nav-link" href="#경고-및-오류-수정"> <span class="nav-number">2</span> <span class="nav-text">경고 및 오류 수정</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child">
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kim BoWoon</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://jekyllrb.com">Jekyll</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/simpleyyt/jekyll-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://kimbowoon.disqus.com/count.js" async></script>
+    
+
+    
+      
+      <script type="text/javascript">
+          var disqus_config = function () {
+              this.page.url = 'http://localhost:4000/effective%20java/2019/11/04/used-generic-type/';
+              this.page.identifier = '/effective%20java/2019/11/04/used-generic-type/';
+              this.page.title = '[Effective Java] 가능하면 제네릭 자료형으로 만들 것';
+          };
+          var d = document, s = d.createElement('script');
+          s.src = 'https://kimbowoon.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', '' + +new Date());
+          (d.head || d.body).appendChild(s);
+      </script>
+      
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+

@@ -283,6 +283,316 @@
   
 
   <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2019/11/04/used-generic-type/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+                
+                <a class="post-title-link" href="/effective%20java/2019/11/04/used-generic-type/" itemprop="url">
+                [Effective Java] 가능하면 제네릭 자료형으로 만들 것
+              </a>
+            
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2019-11-04T08:19:42+09:00">
+                2019-11-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2019/11/04/used-generic-type/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2019/11/04/used-generic-type/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="제네릭-클래스-만들기">제네릭 클래스 만들기</h1>
+
+<p>컬렉션 객체 선언을 제네릭화 하거나 JDK에서 제공하는 제네릭 자료형과 메서드를 사용하는 것은 어렵지않다. 제네릭 자료형을 직접 만드는 것은 좀 까다로운데 그래도 가치는 있다. 다음 Stack 클래스를 보자.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Stack</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">Object</span><span class="o">[]</span> <span class="n">elements</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="no">DEFAULT_INITAL_CAPACITY</span> <span class="o">=</span> <span class="mi">16</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="nf">Stack</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[</span><span class="no">DEFAULT_INITAL_CAPACITY</span><span class="o">];</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">push</span><span class="o">(</span><span class="nc">Object</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ensureCapacity</span><span class="o">();</span>
+        <span class="n">elements</span><span class="o">[</span><span class="n">size</span><span class="o">++]</span> <span class="o">=</span> <span class="n">e</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="nc">Object</span> <span class="nf">pop</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">EmptyStackException</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="nc">Object</span> <span class="n">results</span> <span class="o">=</span> <span class="n">elements</span><span class="o">[--</span><span class="n">size</span><span class="o">];</span>
+        <span class="n">elements</span><span class="o">[</span><span class="n">size</span><span class="o">]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span> <span class="c1">// 만기 참조 제거</span>
+        <span class="k">return</span> <span class="n">results</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isEmpty</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 적어도 하나 이상의 원소를 담을 공간을 보장한다.
+     * 배열의 길이를 늘려야 할 때마다 대략 두 배씩 늘인다.
+     */</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">ensureCapacity</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">elements</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">copyOf</span><span class="o">(</span><span class="n">elements</span><span class="o">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>제네릭으로 변경하기 위한 딱 좋은 예제이다. 호환성을 유지하면서도 제네릭 자료형을 사용하도록 개선할 수 있다. 위의 코드에서는 스택에서 꺼낸 자료를 형변환해서 사용해야 하는데 실패할 가능성이 있다.</p>
+
+<p>클래스를 제네릭화하는 첫 번째 단계는 선언부에 형인자를 추가하는 것이다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 제네릭을 사용해 작성한 최초의 Stack 클래스 - 컴파일되지 않는다!</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Stack</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="no">E</span><span class="o">[]</span> <span class="n">elements</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="no">DEFAULT_INITAL_CAPACITY</span> <span class="o">=</span> <span class="mi">16</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="nf">Stack</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="k">new</span> <span class="no">E</span><span class="o">[</span><span class="no">DEFAULT_INITAL_CAPACITY</span><span class="o">];</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">push</span><span class="o">(</span><span class="no">E</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ensureCapacity</span><span class="o">();</span>
+        <span class="n">elements</span><span class="o">[</span><span class="n">size</span><span class="o">++]</span> <span class="o">=</span> <span class="n">e</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="no">E</span> <span class="nf">pop</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">EmptyStackException</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="no">E</span> <span class="n">results</span> <span class="o">=</span> <span class="n">elements</span><span class="o">[--</span><span class="n">size</span><span class="o">];</span>
+        <span class="n">elements</span><span class="o">[</span><span class="n">size</span><span class="o">]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span> <span class="c1">// 만기 참조 제거</span>
+        <span class="k">return</span> <span class="n">results</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isEmpty</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * 적어도 하나 이상의 원소를 담을 공간을 보장한다.
+     * 배열의 길이를 늘려야 할 때마다 대략 두 배씩 늘인다.
+     */</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">ensureCapacity</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">elements</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">copyOf</span><span class="o">(</span><span class="n">elements</span><span class="o">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>바로 경고나 오류없이 컴파일이 성공하면 좋겠지만 그럴 확률은 적다. 오히려 경고나 오류가 없다면 더욱 유심히 살펴봐야한다. 그나마 다행인것은 위의 코드에서 한군데에서 경고가 발생한다는 것이다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stack</span><span class="o">.</span><span class="na">java</span><span class="o">:</span> <span class="n">generic</span> <span class="n">array</span> <span class="n">creation</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="k">new</span> <span class="no">E</span><span class="o">[</span><span class="no">DEFAULT_INITIAL_CAPACITY</span><span class="o">];</span>
+           <span class="err">＾</span>
+</code></pre></div></div>
+
+<h1 id="경고-및-오류-수정">경고 및 오류 수정</h1>
+<p>첫 번째로 제네릭 배열을 만들 수 없다는 조건을 우회하는 것. Object의 배열을 만들어서 제네릭 배열 자료형으로 형변환하는 방법이다. 문법적으로는 문제가 없지만 일반적으로 형 안전성을 보장하는 방법은 아니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stack</span><span class="o">.</span><span class="na">java</span><span class="o">:</span> <span class="nl">warning:</span> <span class="o">[</span><span class="n">unchecked</span><span class="o">]</span> <span class="n">unchecked</span> <span class="n">cast</span>
+<span class="nl">found:</span> <span class="nc">Object</span><span class="o">[],</span> <span class="nl">required:</span> <span class="no">E</span><span class="o">[]</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="o">(</span><span class="no">E</span><span class="o">[])</span> <span class="k">new</span> <span class="nc">Object</span><span class="o">[</span><span class="no">DEFAULT_INITIAL_CAPACITY</span><span class="o">];</span>
+             <span class="err">＾</span>
+</code></pre></div></div>
+
+<p>컴파일러는 형 안전성을 입증할 수 없을지 모르지만, 프로그래머는 할 수 있다. elements는 private이며 Stack 클래스내에서만 사용이 되고 push 메서드를 사용하여 데이터의 삽입이 이뤄지며 그 타입은 모두 E 이므로 무점검 형변환을 해도 아무런 문제가 되지 않는다.</p>
+
+<p>무점검 형변환이 안전함을 증명했다면 경고를 억제하되 범위는 최소한으로 해야한다. Stack 클래스에 생성자에서 무점검 배열 생성을 하는 코드가 전부이므로 생성자 전체적으로 경고를 억제해도 무방하다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// elements 배열에는 push(E)를 통해 전달된 E 형의 객체만 저장된다.</span>
+<span class="c1">// 이 정도면 형 안전성은 보장할 수 있지만, 배열의 실생시간 자료형은 E[]가</span>
+<span class="c1">// 아니라 항상 Object[]이다!</span>
+<span class="nd">@SuppressWarnings</span><span class="o">(</span><span class="s">"unchecked"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nf">Stack</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="k">new</span> <span class="no">E</span><span class="o">[</span><span class="no">DEFAULT_INITAL_CAPACITY</span><span class="o">];</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>두 번째 방법은 elements의 자료형을 E[]에서 Object[]로 바꾸는 것이다. 그러면 아까와는 다른 오류 메시지를 보게 된다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stack</span><span class="o">.</span><span class="na">java</span><span class="o">:</span> <span class="n">incompatible</span> <span class="n">types</span>
+<span class="nl">found:</span> <span class="nc">Object</span><span class="o">,</span> <span class="nl">required:</span> <span class="no">E</span>
+<span class="no">E</span> <span class="n">result</span> <span class="o">=</span> <span class="n">elements</span><span class="o">[--</span><span class="n">size</span><span class="o">];</span>
+                   <span class="err">＾</span>
+</code></pre></div></div>
+
+<p>배열에서 꺼낸 원소의 자료형을 Object에서 E로 변환하도록 코드를 수정하면, 이 오류는 경고로 바뀐다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stack</span><span class="o">.</span><span class="na">java</span><span class="o">:</span> <span class="nl">warning:</span> <span class="o">[</span><span class="n">unchecked</span><span class="o">]</span> <span class="n">unchecked</span> <span class="n">cast</span>
+<span class="nl">found:</span> <span class="nc">Object</span><span class="o">,</span> <span class="nl">required:</span> <span class="no">E</span>
+<span class="no">E</span> <span class="n">result</span> <span class="o">=</span> <span class="o">(</span><span class="no">E</span><span class="o">)</span> <span class="n">elements</span><span class="o">[--</span><span class="n">size</span><span class="o">];</span>
+                       <span class="err">＾</span>
+</code></pre></div></div>
+
+<p>E는 실체화 불가능 자료형이므로 컴파일러는 이 형변환을 실행 중에 검사할 수 없지만 위의 무점검 형변환이 안전하다는 것, 그래서 경고를 억제해도 좋다는 것은 개발자 스스로 쉽게 입증할 수 있다. 다음과 같이 pop 메서드를 수정한다. 단, pop 메서드 전체에 어노테이션을 붙이지 않는다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 무점검 경고를 적절히 억제한 사례</span>
+<span class="kd">public</span> <span class="no">E</span> <span class="nf">pop</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">EmptyStackException</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="c1">// 자료형이 E인 원소만 push하므로, 아래의 형변환은 안전하다.</span>
+    <span class="nd">@SuppressWarnings</span><span class="o">(</span><span class="s">"unchecked"</span><span class="o">)</span>
+    <span class="no">E</span> <span class="n">results</span> <span class="o">=</span> <span class="o">(</span><span class="no">E</span><span class="o">)</span> <span class="n">elements</span><span class="o">[--</span><span class="n">size</span><span class="o">];</span>
+    <span class="n">elements</span><span class="o">[</span><span class="n">size</span><span class="o">]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span> <span class="c1">// 만기 참조 제거</span>
+    <span class="k">return</span> <span class="n">results</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>위 두가지 방법중 어떤 방법을 사용해도 상관없다. 다만 두 번째 방법은 많은 곳을 수정할 가능성이 있으므로 첫 번째 방법이 많이 사용된다.</p>
+
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/effective%20java/2019/11/04/used-generic-type/#" rel="contents">
+              더 읽어보기 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+        
+        
+        
+        
+          <div class="post-eof"></div>
+        
+      
+    </footer>
+  </article>
+
+  
+    
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2019/11/02/not-array-used-List/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2638,191 +2948,6 @@ Integer 클래스에 MAX_VALUE, MIN_VALUE 처럼 말이다.</p>
         
         
         
-          <div class="post-eof"></div>
-        
-      
-    </footer>
-  </article>
-
-  
-    
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2018/07/19/extends-doc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Kim BoWoon">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="assets/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Notepad">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-                
-                <a class="post-title-link" href="/effective%20java/2018/07/19/extends-doc/" itemprop="url">
-                [Effective Java] 계승을 위한 설계와 문서를 갖추거나, 그럴 수 없다면 계승을 금지하라
-              </a>
-            
-          
-        </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">작성일</span>
-              
-              <time title="" itemprop="dateCreated datePublished" datetime="2018-07-19T10:23:45+09:00">
-                2018-07-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
-                    <span itemprop="name">Effective Java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/effective%20java/2018/07/19/extends-doc/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="/effective%20java/2018/07/19/extends-doc/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="상속을-위해서는-어떤-문서를-만들어야-할까">상속을 위해서는 어떤 문서를 만들어야 할까?</h1>
-<p>오버라이딩이 되는 메소드에 대해서는 내부적으로 어떻게 사용하지 문서에 남겨야한다. 좀 더 세부적으로 어떤 메소드를 호출하고 어떤 결과를 반환하는지를 명시하면 좋다.</p>
-
-<h1 id="java-doc-example">Java Doc Example</h1>
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>public boolean remove(Object o)
-Removes a single instance of the specified element from this collection, if it is present (optional operation). More formally, removes an element e such that (o==null ? e==null : o.equals(e)), if this collection contains one or more such elements. Returns true if this collection contained the specified element (or equivalently, if this collection changed as a result of the call).
-This implementation iterates over the collection looking for the specified element. If it finds the element, it removes the element from the collection using the iterator's remove method.
-
-Note that this implementation throws an UnsupportedOperationException if the iterator returned by this collection's iterator method does not implement the remove method and this collection contains the specified object.
-
-Specified by:
-remove in interface Collection&lt;E&gt;
-Parameters:
-o - element to be removed from this collection, if present
-Returns:
-true if an element was removed as a result of this call
-Throws:
-UnsupportedOperationException - if the remove operation is not supported by this collection
-ClassCastException - if the type of the specified element is incompatible with this collection (optional)
-NullPointerException - if the specified element is null and this collection does not permit null elements (optional)
-</code></pre></div></div>
-
-<p>java8 버전에 있는 java.util.AbstractCollection에 remove 메소드이다. 메소드에 설명을 보면 어떤 예외가 발생할 수 있는지에 대한 명시가 제대로 적혀있다.</p>
-
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/effective%20java/2018/07/19/extends-doc/#" rel="contents">
-              더 읽어보기 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-        
-        
-        
-        
       
     </footer>
   </article>
@@ -2884,7 +3009,7 @@ NullPointerException - if the specified element is null and this collection does
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-count">36</span>
                 <span class="site-state-item-name">포스트</span>
               </a>
             </div>
