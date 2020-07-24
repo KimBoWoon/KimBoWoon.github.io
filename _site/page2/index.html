@@ -283,6 +283,197 @@
   
 
   <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2018/12/20/define-data-type/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim BoWoon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="assets/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notepad">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+                
+                <a class="post-title-link" href="/effective%20java/2018/12/20/define-data-type/" itemprop="url">
+                [Effective Java] 인터페이스는 자료형을 정의할 때만 사용하라
+              </a>
+            
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">작성일</span>
+              
+              <time title="" itemprop="dateCreated datePublished" datetime="2018-12-20T05:27:30+09:00">
+                2018-12-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
+                    <span itemprop="name">Effective Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/effective%20java/2018/12/20/define-data-type/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="/effective%20java/2018/12/20/define-data-type/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="인터페이스-사용의-부적절한-예">인터페이스 사용의 부적절한 예</h1>
+<p>인터페이스는 인스턴스를 만들지는 못하지만 인터페이스 자료형으로 해당하는 인터페이스를 구현하고 있는 클래스는 모두 참조가 가능하다.
+이 외의 다른 목적으로 사용은 바람직하지 않다. 그 예로 상수 인터페이스가 있다.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 상수 인터페이스 안티패턴 - 사용하지 말 것!</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">PhysicalConstants</span> <span class="o">{</span>
+    <span class="c1">// 아보가드로 수(1 / mod)</span>
+    <span class="kd">static</span> <span class="kd">final</span> <span class="kt">double</span> <span class="no">AVOGADROS_NUMBER</span> <span class="o">=</span> <span class="mf">6.02214199e23</span><span class="o">;</span>
+    
+    <span class="c1">// 볼쯔만 상수 (j / k)</span>
+    <span class="kd">static</span> <span class="kd">final</span> <span class="kt">double</span> <span class="no">BOLTZMANN_CONSTANT</span> <span class="o">=</span> <span class="mf">1.3806503</span><span class="n">e</span><span class="o">-</span><span class="mi">23</span><span class="o">;</span>
+    
+    <span class="c1">// 전자 질량 (kg)</span>
+    <span class="kd">static</span> <span class="kd">final</span> <span class="kt">double</span> <span class="no">ELECTRON_MASS</span> <span class="o">=</span> <span class="mf">9.10938188</span><span class="n">e</span><span class="o">-</span><span class="mi">31</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>클래스가 어떤 상수를 사용한다는 것은 구현의 세부 사항이고 클라이언트가 이를 알아둘 필요가 없다. 클라이언트를 혼란 시킬것이다.</p>
+
+<p>이를 해결할 방법이 있다. 상수가 해당 클래스에 강하게 연결 되어 있을 경우 그 상수들을 클래스에 추가 시킨다.
+Integer 클래스에 MAX_VALUE, MIN_VALUE 처럼 말이다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PhysicalConstants</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nf">PhysicalConstants</span><span class="o">()</span> <span class="o">{}</span> <span class="c1">// 객체의 생성을 막음</span>
+    
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">double</span> <span class="no">AVOGADROS_NUMBER</span> <span class="o">=</span> <span class="mf">6.02214199e23</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">double</span> <span class="no">BOLTZMANN_CONSTANT</span> <span class="o">=</span> <span class="mf">1.3806503</span><span class="n">e</span><span class="o">-</span><span class="mi">23</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">double</span> <span class="no">ELECTRON_MASS</span> <span class="o">=</span> <span class="mf">9.10938188</span><span class="n">e</span><span class="o">-</span><span class="mi">31</span><span class="o">;</span> 
+<span class="o">}</span>
+</code></pre></div></div>
+
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/effective%20java/2018/12/20/define-data-type/#" rel="contents">
+              더 읽어보기 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+        
+        
+        
+        
+          <div class="post-eof"></div>
+        
+      
+    </footer>
+  </article>
+
+  
+    
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2018/12/11/use-interface/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2324,250 +2515,6 @@ NullPointerException - if the specified element is null and this collection does
         
         
         
-          <div class="post-eof"></div>
-        
-      
-    </footer>
-  </article>
-
-  
-    
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://localhost:4000/effective%20java/2017/12/14/comparable-implement/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Kim BoWoon">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="assets/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Notepad">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-                
-                <a class="post-title-link" href="/effective%20java/2017/12/14/comparable-implement/" itemprop="url">
-                [Effective Java] Comparable 구현을 고려하라
-              </a>
-            
-          
-        </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">작성일</span>
-              
-              <time title="" itemprop="dateCreated datePublished" datetime="2017-12-14T10:23:45+09:00">
-                2017-12-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/category/#/Effective%20Java" itemprop="url" rel="index">
-                    <span itemprop="name">Effective Java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/effective%20java/2017/12/14/comparable-implement/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="/effective%20java/2017/12/14/comparable-implement/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="comparable">Comparable</h1>
-<p>이 인터페이스는 다른 인터페이스와 달리 하나의 메소드를 가지고 있다. compareTo 메소들을 가지고 있는데 이 메소드는 Object 클래스에는 포함되어 있지 않으며 오직 Comparable만이 가지고 있다. Comparable을 구현하는 클래스의 객체들은 모두 자연적 순서를 가지고 있다. 또한 최대/최소치를 계산하기도 간단하며, 그 컬렉션을 정렬된 상태로 유지하도 쉽다. 그리고 다양한 제네릭 알고리즘 및 Comparable 인터페이스를 이용하도록 작성된 컬렉션 구현체와도 전부 연동할 수 있다.</p>
-
-<h1 id="compareto-메소드의-일반-규약">compareTo 메소드의 일반 규약</h1>
-<ul>
-  <li>자신과 주어진 객체를 비교하는데 자신이 주어진 객체보다 작으면 음수를, 같으면 0, 크다면 양수를 반환한다. 만약 비교 불가능한 객체가 전달된다면 ClassCastException 예외를 던진다.</li>
-  <li>모든 x와 y에 대해 x.compareTo(y) == y.compareTo(x)는 같아야 한다. 만약 예외를 던진다면 역도 반드시 그래야한다.</li>
-  <li>compareTo를 구현할 때는 추이성이 만족되도록 해야한다. (x.compareTo(y) &gt; 0 &amp;&amp; y.compareTo(z) &gt; 0 이면 x.compareTo(z) &gt; 이어야한다.)</li>
-  <li>x.compareTo(y) == 0 이면 x.compareTo(z) == y.compareTo(z)의 관계가 모든 z에 대해 성립해야한다.</li>
-  <li>(x.compareTo(y) == 0) == x.equals(y) 이 규약은 강력히 추천하지만 절대적으로 요구되는 것이 아니다. 일반적으로, Compareable 인터페이스를 구현하면서 이 조건을 만족하지 않는 클래스는 반드시 그 사실을 명시해야한다.</li>
-</ul>
-
-<p>이 규약들은 모두 한 클래스 객체 사이에 자연적 순서가 존재하기만 하면 어떤 것이든 이 규약을 만족할 것이다.</p>
-
-<h1 id="코드">코드</h1>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ComparablePractice</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nc">Fruit</span><span class="o">[]</span> <span class="n">fruits</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Fruit</span><span class="o">[</span><span class="mi">5</span><span class="o">];</span>
-
-        <span class="n">fruits</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Fruit</span><span class="o">(</span><span class="s">"사과"</span><span class="o">,</span> <span class="mi">10</span><span class="o">);</span>
-        <span class="n">fruits</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Fruit</span><span class="o">(</span><span class="s">"오렌지"</span><span class="o">,</span> <span class="mi">34</span><span class="o">);</span>
-        <span class="n">fruits</span><span class="o">[</span><span class="mi">2</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Fruit</span><span class="o">(</span><span class="s">"포도"</span><span class="o">,</span> <span class="mi">24</span><span class="o">);</span>
-        <span class="n">fruits</span><span class="o">[</span><span class="mi">3</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Fruit</span><span class="o">(</span><span class="s">"배"</span><span class="o">,</span> <span class="mi">19</span><span class="o">);</span>
-        <span class="n">fruits</span><span class="o">[</span><span class="mi">4</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Fruit</span><span class="o">(</span><span class="s">"키위"</span><span class="o">,</span> <span class="mi">37</span><span class="o">);</span>
-
-        <span class="nc">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">fruits</span><span class="o">);</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">fruits</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">getName</span><span class="o">());</span>
-        <span class="o">}</span>
-        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"----------------------------"</span><span class="o">);</span>
-
-        <span class="nc">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">fruits</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Comparator</span><span class="o">&lt;</span><span class="nc">Fruit</span><span class="o">&gt;()</span> <span class="o">{</span>
-            <span class="nd">@Override</span>
-            <span class="kd">public</span> <span class="kt">int</span> <span class="nf">compare</span><span class="o">(</span><span class="nc">Fruit</span> <span class="n">o1</span><span class="o">,</span> <span class="nc">Fruit</span> <span class="n">o2</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="n">o2</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">compareTo</span><span class="o">(</span><span class="n">o1</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">fruits</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">getName</span><span class="o">());</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="kd">class</span> <span class="nc">Fruit</span> <span class="kd">implements</span> <span class="nc">Comparable</span><span class="o">&lt;</span><span class="nc">Fruit</span><span class="o">&gt;</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kt">int</span> <span class="n">price</span><span class="o">;</span>
-
-    <span class="kd">public</span> <span class="nf">Fruit</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="kt">int</span> <span class="n">price</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">price</span> <span class="o">=</span> <span class="n">price</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getPrice</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">price</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPrice</span><span class="o">(</span><span class="kt">int</span> <span class="n">price</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">price</span> <span class="o">=</span> <span class="n">price</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">compareTo</span><span class="o">(</span><span class="nc">Fruit</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">name</span><span class="o">.</span><span class="na">compareTo</span><span class="o">(</span><span class="n">o</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-<ul>
-  <li>compareTo 메소드에서 사용자가 원하는 값을 기준으로 정렬해야한다.</li>
-</ul>
-
-<h1 id="comparable와-comparator-차이">Comparable와 Comparator 차이</h1>
-<p>서로 같은일을 하는 인터페이스지만 왜 따로 존재하냐면 Comparable는 자기 자신과 다른 객체 하나를 비교하고 Comparator은 다른 두개의 객체를 비교한다. Comparator 인터페이스를 구현한 객체를 기준으로 다른 두개의 객체를 비교한다는 말이다.</p>
-
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/effective%20java/2017/12/14/comparable-implement/#" rel="contents">
-              더 읽어보기 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-        
-        
-        
-        
       
     </footer>
   </article>
@@ -2629,7 +2576,7 @@ NullPointerException - if the specified element is null and this collection does
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-count">38</span>
                 <span class="site-state-item-name">포스트</span>
               </a>
             </div>
@@ -2692,7 +2639,7 @@ NullPointerException - if the specified element is null and this collection does
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2019</span>
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
